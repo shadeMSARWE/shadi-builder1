@@ -10,7 +10,7 @@ const users = require("../core/users/service");
 
 const router = express.Router();
 
-// 🔥 التعديل: غيرنا المسار من /analyze إلى / ليتطابق مع طلب الصفحة generate.html
+// الرابط المباشر للتوليد المتوافق مع generate.html
 router.post("/", auth, async (req, res) => {
     try {
         const userId = req.user.id;
@@ -30,19 +30,19 @@ router.post("/", auth, async (req, res) => {
 
         console.log(`[Shadi-AI] Starting build for User: ${userId}`);
 
-        // 2. الخطوة الأولى: تحليل الفكرة
+        // 2. تحليل الفكرة
         const analysis = await analyze(description);
 
-        // 3. الخطوة الثانية: التخطيط البرمجي
+        // 3. التخطيط البرمجي واختيار المكونات
         const plan = await planAI(analysis);
 
-        // 4. الخطوة الثالثة: البناء الفعلي للكود
+        // 4. البناء الفعلي للكود
         const html = await buildHTML(plan); 
 
-        // 5. حفظ الملف بتنظيم أفضل (مجلد لكل مشروع)
-        const projectId = `project-${Date.now()}`;
-        const generatedDir = path.join(__dirname, "../../generated");
-        const projectPath = path.join(generatedDir, projectId);
+        // 5. حفظ الملف (التعديل الجوهري: الحفظ داخل مجلد public ليراه السيرفر)
+        const projectId = Date.now().toString();
+        // نستخدم مسار يبدأ من المجلد الحالي وصولاً إلى public/generated
+        const projectPath = path.join(__dirname, "../../public/generated", projectId);
 
         if (!fs.existsSync(projectPath)) {
             fs.mkdirSync(projectPath, { recursive: true });
@@ -54,12 +54,11 @@ router.post("/", auth, async (req, res) => {
         // 6. تحديث عداد الاستخدام للمستخدم
         users.incrementUsage(userId);
 
-        // 7. الرد النهائي (متوافق مع دالة gen() في الواجهة الأمامية)
+        // 7. الرد النهائي (المسارات الآن صحيحة 100% للعرض)
         res.json({
             ok: true,
-            projectId: projectId, // أضفنا هذا ليسهل التحميل والـ ZIP
+            projectId: projectId,
             previewUrl: `/generated/${projectId}/index.html`,
-            downloadUrl: `/api/v1/projects/export/${projectId}`, 
             details: {
                 projectName: analysis.title || "New Project",
                 status: "Completed"
