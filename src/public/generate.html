@@ -1,141 +1,205 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Generate | Shadi Builder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Builder | Create Magic</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 
-<style>
-body{
-  font-family:Tajawal;
-  background:#020617;
-  color:#fff
-}
-.glass{
-  background:rgba(15,23,42,.7);
-  backdrop-filter:blur(14px);
-  border:1px solid #1e293b
-}
-</style>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #a855f7;
+            --bg: #030712;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            color: #f3f4f6;
+            overflow: hidden;
+        }
+
+        .glass-sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .shadi-logo {
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        /* Loading Animation */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 
 <body class="flex h-screen">
 
-<!-- 🔐 AUTH CHECK + TOKEN CAPTURE (FINAL FIX) -->
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        const supabase = window.supabase.createClient(
+            "https://xfzelmpwthqywidyjgzo.supabase.co",
+            "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
+            { auth: { detectSessionInUrl: true, persistSession: true } }
+        );
 
-  const supabase = window.supabase.createClient(
-    "https://xfzelmpwthqywidyjgzo.supabase.co",
-    "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
-    {
-      auth: {
-        detectSessionInUrl: true,
-        persistSession: true
-      }
-    }
-  );
-
-  const { data, error } = await supabase.auth.getSession();
-
-  if (error || !data?.session) {
-    window.location.replace("/login.html");
-    return;
-  }
-
-  // خزّن التوكن
-  localStorage.setItem("token", data.session.access_token);
-
-  // نظّف الرابط من #access_token
-  window.history.replaceState(
-    {},
-    document.title,
-    window.location.pathname
-  );
-
-  // خلي Supabase متاح بكل الصفحة
-  window.supabaseClient = supabase;
-});
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data?.session) {
+            window.location.replace("/login.html");
+            return;
+        }
+        localStorage.setItem("token", data.session.access_token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.supabaseClient = supabase;
+    });
 </script>
 
-<!-- SIDEBAR -->
-<aside class="w-80 glass p-6 border-l border-slate-800 flex flex-col">
-  <h2 class="text-xl font-black mb-6">⚙️ Shadi Builder</h2>
+<aside class="w-72 glass-sidebar p-8 flex flex-col shadow-2xl">
+    <div class="mb-12">
+        <h2 class="text-2xl shadi-logo tracking-tighter">SHADI BUILDER</h2>
+        <p class="text-xs text-slate-500 mt-2 uppercase tracking-widest font-bold">Generation Engine v2.0</p>
+    </div>
 
-  <button onclick="logout()"
-    class="mt-auto w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold">
-    Logout
-  </button>
+    <nav class="space-y-4">
+        <div class="p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm">
+            ✨ Premium Mode Active
+        </div>
+    </nav>
+
+    <button onclick="logout()" class="mt-auto group flex items-center justify-center gap-2 text-slate-400 hover:text-red-400 transition-colors py-4">
+        <span>Logout</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1h3a2 2 0 012 2v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3a2 2 0 01-2 2h-3v1" />
+        </svg>
+    </button>
 </aside>
 
-<!-- MAIN -->
-<main class="flex-1 p-10 overflow-y-auto">
+<main class="flex-1 p-12 overflow-y-auto relative">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-12">
+            <h1 class="text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-l from-white to-slate-500">
+                ماذا تريد أن تبني اليوم؟
+            </h1>
+            <p class="text-slate-400 text-lg">أدخل وصفاً تفصيلياً، ودع ذكاء شادي الاصطناعي يتكفل بالباقي.</p>
+        </header>
 
-  <h1 class="text-3xl font-black mb-6">ابنِ موقعك بالذكاء الاصطناعي</h1>
+        <div class="glass-card rounded-3xl p-2 mb-8 shadow-2xl">
+            <textarea id="desc" 
+                class="w-full h-48 bg-transparent p-6 text-xl outline-none resize-none placeholder:text-slate-600"
+                placeholder="صف موقع أحلامك هنا..."></textarea>
+            
+            <div class="flex items-center justify-between p-4 border-t border-white/5">
+                <span class="text-xs text-slate-500">AI Model: Manus-Vision-X</span>
+                <button id="buildBtn" onclick="gen()" class="btn-premium px-12 py-4 rounded-2xl font-black text-white flex items-center">
+                    <span>🚀 ابدأ التوليد</span>
+                </button>
+            </div>
+        </div>
 
-  <textarea id="desc"
-    class="w-full h-40 bg-slate-900 p-4 rounded-xl border border-slate-700 mb-6"
-    placeholder="مثال: موقع SaaS فخم لشركة تقنية..."></textarea>
-
-  <button id="buildBtn" onclick="gen()"
-    class="bg-indigo-600 hover:bg-indigo-500 px-10 py-4 rounded-xl font-bold">
-    🚀 Generate
-  </button>
-
-  <iframe id="preview"
-    class="w-full h-[60vh] mt-10 rounded-xl bg-white hidden"></iframe>
-
+        <div id="previewContainer" class="hidden animate-fade-in">
+            <div class="flex items-center gap-2 mb-4 text-slate-400 text-sm">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Live Preview
+            </div>
+            <iframe id="preview" class="w-full h-[60vh] rounded-3xl bg-white border-none shadow-2xl"></iframe>
+        </div>
+    </div>
 </main>
 
 <script>
-async function gen(){
-  const description = document.getElementById("desc").value.trim();
-  if(!description) return alert("اكتب وصف الموقع أولاً");
+    async function gen(){
+        const description = document.getElementById("desc").value.trim();
+        if(!description) return;
 
-  const token = localStorage.getItem("token");
-  if(!token){
-    location.href="/login.html";
-    return;
-  }
+        const token = localStorage.getItem("token");
+        if(!token) { window.location.href="/login.html"; return; }
 
-  const btn = document.getElementById("buildBtn");
-  btn.disabled = true;
-  btn.innerText = "⏳ جاري البناء...";
+        const btn = document.getElementById("buildBtn");
+        const originalContent = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<div class="loader"></div> <span>جاري تحليل البيانات...</span>';
 
-  try{
-    const r = await fetch("/api/v1/brain/analyze",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer " + token
-      },
-      body:JSON.stringify({ description })
-    });
+        try {
+            const r = await fetch("/api/v1/brain/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ description })
+            });
 
-    const d = await r.json();
+            const d = await r.json();
+            if(!d.ok) throw new Error(d.error || "Build failed");
 
-    if(!d.ok) throw new Error(d.error || "Build failed");
+            const iframe = document.getElementById("preview");
+            const container = document.getElementById("previewContainer");
+            iframe.src = d.previewUrl;
+            container.classList.remove("hidden");
+            iframe.scrollIntoView({ behavior: 'smooth' });
 
-    const iframe = document.getElementById("preview");
-    iframe.src = d.previewUrl;
-    iframe.classList.remove("hidden");
+        } catch(err) {
+            alert("❌ خطأ: " + err.message);
+        }
 
-  }catch(err){
-    alert(err.message);
-  }
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    }
 
-  btn.disabled = false;
-  btn.innerText = "🚀 Generate";
-}
-
-async function logout(){
-  await window.supabaseClient.auth.signOut();
-  localStorage.clear();
-  location.href="/";
-}
+    async function logout(){
+        if(window.supabaseClient) {
+            await window.supabaseClient.auth.signOut();
+            localStorage.clear();
+            location.href="/";
+        }
+    }
 </script>
 
 </body>
