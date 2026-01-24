@@ -5,6 +5,8 @@
 <title>Shadi AI Builder</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
@@ -42,6 +44,45 @@ body{
     </a>
 
   </div>
+
+  <!-- ✅ الحل النهائي: التقاط access_token وتحويل المستخدم -->
+  <script>
+  const supabase = window.supabase.createClient(
+    "https://xfzelmpwthqywidyjgzo.supabase.co",
+    "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
+    {
+      auth: {
+        detectSessionInUrl: true,
+        persistSession: true
+      }
+    }
+  );
+
+  (async () => {
+    // إذا Supabase رجّعنا مع access_token
+    if (window.location.hash.includes("access_token")) {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        console.error("Auth error:", error);
+        return;
+      }
+
+      // خزّن التوكن للـ API
+      localStorage.setItem("token", data.session.access_token);
+
+      // نظّف الرابط
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+
+      // 🔥 التحويل النهائي
+      window.location.href = "/generate.html";
+    }
+  })();
+  </script>
 
 </body>
 </html>
