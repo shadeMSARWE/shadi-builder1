@@ -1,0 +1,21 @@
+{
+  "name": "ai-builder",
+  "version": "1.0.0",
+  "description": "AI Website Builder SaaS",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.91.1",
+    "archiver": "^7.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "openai": "^6.16.0"
+  }
+}

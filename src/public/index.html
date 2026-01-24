@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Shadi AI Builder</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+body{
+  font-family:Tajawal;
+  background:#010409;
+  color:#fff;
+}
+.glass{
+  background:rgba(15,23,42,.75);
+  backdrop-filter:blur(16px);
+  border:1px solid #1e293b;
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center">
+
+<div class="glass p-14 rounded-3xl max-w-xl w-full text-center">
+
+  <h1 class="text-5xl font-black mb-6">
+    SHADI <span class="text-indigo-500">AI</span>
+  </h1>
+
+  <p class="text-slate-400 text-lg mb-10">
+    ابنِ مواقع احترافية بالذكاء الاصطناعي  
+    <br>  
+    أسرع من Manus. أفخم.
+  </p>
+
+  <a href="/login.html"
+     class="inline-block bg-indigo-600 hover:bg-indigo-500 px-12 py-4 rounded-2xl font-black text-lg">
+    🚀 ابدأ الآن
+  </a>
+
+</div>
+
+<!-- 🔁 Redirect ذكي حسب login -->
+<script>
+if (localStorage.getItem("token")) {
+  location.href = "/dashboard.html";
+}
+</script>
+
+</body>
+</html>
+

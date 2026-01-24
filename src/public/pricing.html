@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Pricing | Shadi AI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:Tajawal;background:#020617;color:#fff}
+.glass{background:rgba(15,23,42,.75);backdrop-filter:blur(16px);border:1px solid #1e293b}
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center px-10">
+
+<!-- HEADER -->
+<div class="text-center mb-20">
+  <h1 class="text-5xl font-black mb-6">خطط الأسعار</h1>
+  <p class="text-slate-400 text-lg">اختر الخطة المناسبة وابدأ البناء مثل Manus</p>
+</div>
+
+<!-- PLANS -->
+<div class="grid md:grid-cols-2 gap-12 max-w-5xl w-full">
+
+<!-- FREE -->
+<div class="glass rounded-3xl p-12 flex flex-col justify-between">
+  <div>
+    <h2 class="text-3xl font-black mb-4">Free</h2>
+    <p class="text-slate-400 mb-8">تجربة أولية</p>
+
+    <ul class="space-y-3 text-sm text-slate-300 mb-10">
+      <li>✔️ 3 Generations</li>
+      <li>✔️ 1 Project</li>
+      <li>✔️ Preview فقط</li>
+      <li class="opacity-50">❌ ZIP Export</li>
+    </ul>
+  </div>
+
+  <div>
+    <p class="text-4xl font-black mb-6">$0</p>
+    <a href="/dashboard.html"
+       class="block text-center bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold">
+      استمر بالخطة المجانية
+    </a>
+  </div>
+</div>
+
+<!-- PRO -->
+<div class="glass rounded-3xl p-12 border-2 border-indigo-500 relative overflow-hidden">
+  <div class="absolute top-4 left-4 bg-indigo-600 px-4 py-1 rounded-full text-xs font-bold">
+    BEST VALUE
+  </div>
+
+  <div>
+    <h2 class="text-3xl font-black mb-4">Pro</h2>
+    <p class="text-slate-400 mb-8">للمحترفين وصناع الـ SaaS</p>
+
+    <ul class="space-y-3 text-sm text-slate-300 mb-10">
+      <li>🚀 Unlimited Generations</li>
+      <li>🚀 Unlimited Projects</li>
+      <li>🚀 ZIP Export</li>
+      <li>🚀 Priority Engine</li>
+    </ul>
+  </div>
+
+  <div>
+    <p class="text-4xl font-black mb-2">$19</p>
+    <p class="text-xs text-slate-400 mb-6">شهرياً</p>
+
+    <a href="/checkout.html"
+       class="block text-center bg-indigo-600 hover:bg-indigo-500 py-4 rounded-xl font-black shadow-lg shadow-indigo-600/30">
+      Upgrade to PRO
+    </a>
+  </div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="mt-20 text-xs text-slate-500">
+  © Shadi AI Builder — Build like Manus
+</div>
+
+</body>
+</html>
