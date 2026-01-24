@@ -30,7 +30,7 @@ body{
   </h1>
 
   <p class="text-slate-400 mb-10">
-    سجّل الدخول وابدأ بناء مواقع فخمة بالذكاء الاصطناعي
+    سجّل الدخول وابدأ بناء مشاريع احترافية بالذكاء الاصطناعي
   </p>
 
   <!-- زر تسجيل الدخول -->
@@ -42,12 +42,12 @@ body{
 </div>
 
 <script>
-/* إذا المستخدم مسجّل دخول مسبقاً → مباشرة صفحة البناء */
+/* ✅ إذا المستخدم مسجّل دخول → روح مباشرة على Projects */
 if (localStorage.getItem("token")) {
-  location.href = "/generate.html";
+  window.location.href = "/projects";
 }
 
-/* تسجيل الدخول عبر السيرفر (Supabase OAuth) */
+/* ✅ تسجيل الدخول (OAuth عبر السيرفر) */
 function signInWithGoogle(){
   window.location.href = "/api/v1/auth/google";
 }

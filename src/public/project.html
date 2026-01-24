@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Project Workspace | Shadi AI</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+body{font-family:Tajawal;background:#020617;color:#fff}
+.glass{background:rgba(15,23,42,.7);backdrop-filter:blur(14px);border:1px solid #1e293b}
+</style>
+</head>
+
+<body class="h-screen flex overflow-hidden">
+
+<!-- 🔐 AUTH -->
+<script>
+const supabase = window.supabase.createClient(
+  "https://xfzelmpwthqywidyjgzo.supabase.co",
+  "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H"
+);
+
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) {
+    location.href="/login.html";
+    return;
+  }
+  localStorage.setItem("token", data.session.access_token);
+})();
+</script>
+
+<!-- SIDEBAR -->
+<aside class="w-72 glass p-6 flex flex-col overflow-y-auto">
+  <h2 class="text-xl font-black mb-4">📄 الصفحات</h2>
+
+  <div id="pages" class="space-y-2 mb-6"></div>
+
+  <button onclick="addPage()"
+    class="bg-indigo-600 hover:bg-indigo-500 py-2 rounded-xl font-bold mb-6">
+    + صفحة
+  </button>
+
+  <h3 class="text-lg font-black mb-3">🧩 Sections</h3>
+  <div id="sections" class="space-y-2 text-sm"></div>
+
+  <button onclick="addSection()"
+    class="mt-3 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl font-bold">
+    + Section
+  </button>
+
+  <div class="mt-auto pt-6 border-t border-slate-800">
+    <a href="/projects.html" class="text-slate-400 underline">← رجوع</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="flex-1 p-8 grid grid-cols-2 gap-6 overflow-hidden">
+
+  <!-- EDITOR -->
+  <div class="glass p-6 rounded-3xl flex flex-col">
+    <h2 class="text-2xl font-black mb-4">✍️ Editor</h2>
+
+    <textarea id="desc"
+      class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm mb-4"
+      placeholder="اكتب وصف التعديل هنا..."></textarea>
+
+    <button onclick="regenerate()"
+      class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold">
+      🔄 Regenerate
+    </button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="glass p-4 rounded-3xl flex flex-col">
+    <h2 class="text-2xl font-black mb-4">👁️ Preview</h2>
+    <iframe id="preview" class="flex-1 rounded-xl bg-white"></iframe>
+  </div>
+
+</main>
+
+<!-- HISTORY -->
+<div class="fixed bottom-6 right-6 glass p-4 rounded-2xl w-80 max-h-96 overflow-y-auto">
+  <h3 class="font-black mb-3">🕘 History</h3>
+  <div id="history" class="text-xs space-y-2 text-slate-300"></div>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+const projectId = new URLSearchParams(location.search).get("id");
+
+if(!projectId){
+  alert("Project ID missing");
+  location.href="/projects.html";
+}
+
+const pagesEl = document.getElementById("pages");
+
+let pagesData = {};
+let currentPage = null;
+let currentSection = null;
+
+/* تحميل المشروع */
+fetch("/api/v1/projects/" + projectId, {
+  headers:{ Authorization:"Bearer "+token }
+})
+.then(r=>r.json())
+.then(d=>{
+  renderPages(d.pages || []);
+  if(d.previewUrl){
+    document.getElementById("preview").src = d.previewUrl;
+  }
+});
+
+/* ===== PAGES ===== */
+function renderPages(pages){
+  if(pages.length===0){
+    pages = [{
+      id:"home",
+      name:"Home",
+      sections:["Hero","Features","CTA"]
+    }];
+  }
+
+  pagesData = {};
+  pages.forEach(p => pagesData[p.id] = p);
+
+  pagesEl.innerHTML = pages.map(p=>`
+    <button onclick="selectPage('${p.id}')"
+      class="w-full text-right px-4 py-2 rounded-xl hover:bg-slate-800">
+      ${p.name}
+    </button>
+  `).join("");
+
+  selectPage(pages[0].id);
+}
+
+function selectPage(id){
+  currentPage = id;
+  renderSections(pagesData[id].sections || []);
+}
+
+/* ===== SECTIONS ===== */
+function renderSections(sections){
+  const el = document.getElementById("sections");
+  el.innerHTML = sections.map(s=>`
+    <button onclick="selectSection('${s}')"
+      class="w-full text-right px-3 py-2 rounded-lg hover:bg-slate-800">
+      ${s}
+    </button>
+  `).join("");
+
+  selectSection(sections[0]);
+}
+
+function selectSection(section){
+  currentSection = section;
+  document.getElementById("desc").value =
+    `Section: ${section}\n\nاكتب وصف التعديل هنا...`;
+}
+
+function addSection(){
+  const name = prompt("اسم السكشن:");
+  if(!name) return;
+
+  pagesData[currentPage].sections.push(name);
+  renderSections(pagesData[currentPage].sections);
+}
+
+/* ===== PAGE ADD ===== */
+function addPage(){
+  const name = prompt("اسم الصفحة:");
+  if(!name) return;
+
+  const id = name.toLowerCase().replace(/\s+/g,"-");
+  pagesData[id] = { id, name, sections:[] };
+  renderPages(Object.values(pagesData));
+}
+
+/* ===== HISTORY ===== */
+function addHistory(entry){
+  const h = document.getElementById("history");
+  h.innerHTML =
+    `<div>
+      <b>${entry.page}</b> / ${entry.section}<br>
+      <span class="text-slate-400">${new Date(entry.time).toLocaleString()}</span>
+    </div>` + h.innerHTML;
+}
+
+/* ===== REGENERATE ===== */
+function regenerate(){
+  const description = document.getElementById("desc").value;
+
+  fetch("/api/v1/projects/regenerate",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      projectId,
+      page: currentPage,
+      section: currentSection,
+      description
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.previewUrl){
+      document.getElementById("preview").src = d.previewUrl;
+      addHistory({
+        time: Date.now(),
+        page: currentPage,
+        section: currentSection
+      });
+    }
+  });
+}
+</script>
+
+</body>
+</html>

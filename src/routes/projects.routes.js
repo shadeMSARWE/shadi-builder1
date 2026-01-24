@@ -62,8 +62,19 @@ router.post("/analyze", auth, async (req, res) => {
       id: projectId,
       userId,
       name: analysis.website_name || "New Project",
-      createdAt: Date.now()
+      createdAt: Date.now(),
+
+      // 🧠 Manus-style structure
+      pages: [
+        {
+          id: "home",
+          name: "Home",
+          sections: ["Hero", "Features", "CTA"]
+        }
+      ],
+      history: []
     };
+
     writeDB(db);
 
     users.incrementUsage(userId);
@@ -92,6 +103,57 @@ router.get("/list", auth, (req, res) => {
   res.json({
     ok: true,
     projects
+  });
+});
+
+/* =========================
+   GET PROJECT (WORKSPACE)
+========================= */
+router.get("/:id", auth, (req, res) => {
+  const db = readDB();
+  const project = db[req.params.id];
+
+  if (!project || project.userId !== req.user.id) {
+    return res.status(404).json({ ok: false });
+  }
+
+  res.json({
+    ok: true,
+    id: project.id,
+    name: project.name,
+    pages: project.pages || [],
+    history: project.history || [],
+    previewUrl: `/generated/${project.id}/index.html`
+  });
+});
+
+/* =========================
+   REGENERATE PAGE / SECTION
+========================= */
+router.post("/regenerate", auth, async (req, res) => {
+  const { projectId, page, section, description } = req.body;
+  const db = readDB();
+
+  const project = db[projectId];
+  if (!project || project.userId !== req.user.id) {
+    return res.status(404).json({ ok: false });
+  }
+
+  // 🕘 History
+  project.history = project.history || [];
+  project.history.unshift({
+    time: Date.now(),
+    page,
+    section,
+    description
+  });
+
+  writeDB(db);
+
+  // 🔜 لاحقاً: AI regenerate حقيقي للـ section
+  res.json({
+    ok: true,
+    previewUrl: `/generated/${projectId}/index.html`
   });
 });
 
@@ -126,3 +188,4 @@ router.post("/upgrade", auth, (req, res) => {
 });
 
 module.exports = router;
+
