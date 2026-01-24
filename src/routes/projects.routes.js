@@ -63,8 +63,6 @@ router.post("/analyze", auth, async (req, res) => {
       userId,
       name: analysis.website_name || "New Project",
       createdAt: Date.now(),
-
-      // 🧠 Manus-style structure
       pages: [
         {
           id: "home",
@@ -188,4 +186,3 @@ router.post("/upgrade", auth, (req, res) => {
 });
 
 module.exports = router;
-
