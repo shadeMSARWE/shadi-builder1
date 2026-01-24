@@ -10,7 +10,8 @@ const users = require("../core/users/service");
 
 const router = express.Router();
 
-router.post("/analyze", auth, async (req, res) => {
+// 🔥 التعديل: غيرنا المسار من /analyze إلى / ليتطابق مع طلب الصفحة generate.html
+router.post("/", auth, async (req, res) => {
     try {
         const userId = req.user.id;
 
@@ -29,37 +30,36 @@ router.post("/analyze", auth, async (req, res) => {
 
         console.log(`[Shadi-AI] Starting build for User: ${userId}`);
 
-        // 2. الخطوة الأولى: تحليل الفكرة (الـ Brain العملي)
-        // ملاحظة: هون السيرفر بيشتغل، والواجهة الأمامية عندك بتعرض "تحليل وصف المشروع"
+        // 2. الخطوة الأولى: تحليل الفكرة
         const analysis = await analyze(description);
 
-        // 3. الخطوة الثانية: التخطيط البرمجي واختيار المكونات
+        // 3. الخطوة الثانية: التخطيط البرمجي
         const plan = await planAI(analysis);
 
-        // 4. الخطوة الثالثة: البناء الفعلي للكود وتنسيق الصور
-        // الـ buildHTML هون هو اللي رح نخليه "فخم" في الملف الجاي
+        // 4. الخطوة الثالثة: البناء الفعلي للكود
         const html = await buildHTML(plan); 
 
-        // 5. حفظ الملف في المجلد المخصص
-        const fileName = `site-${Date.now()}.html`;
-        const generatedPath = path.join(__dirname, "../../generated");
+        // 5. حفظ الملف بتنظيم أفضل (مجلد لكل مشروع)
+        const projectId = `project-${Date.now()}`;
+        const generatedDir = path.join(__dirname, "../../generated");
+        const projectPath = path.join(generatedDir, projectId);
 
-        // التأكد من وجود المجلد (لزيادة الأمان)
-        if (!fs.existsSync(generatedPath)) {
-            fs.mkdirSync(generatedPath, { recursive: true });
+        if (!fs.existsSync(projectPath)) {
+            fs.mkdirSync(projectPath, { recursive: true });
         }
 
-        const filePath = path.join(generatedPath, fileName);
+        const filePath = path.join(projectPath, "index.html");
         fs.writeFileSync(filePath, html, "utf8");
 
         // 6. تحديث عداد الاستخدام للمستخدم
         users.incrementUsage(userId);
 
-        // 7. الرد النهائي (نفس اللي بتوقعه الـ index.html الفخم اللي عملناه)
+        // 7. الرد النهائي (متوافق مع دالة gen() في الواجهة الأمامية)
         res.json({
             ok: true,
-            previewUrl: `/generated/${fileName}`,
-            downloadUrl: `/generated/${fileName}`,
+            projectId: projectId, // أضفنا هذا ليسهل التحميل والـ ZIP
+            previewUrl: `/generated/${projectId}/index.html`,
+            downloadUrl: `/api/v1/projects/export/${projectId}`, 
             details: {
                 projectName: analysis.title || "New Project",
                 status: "Completed"

@@ -13,8 +13,9 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// تسجيل الطلبات لمراقبة الـ API في الـ Logs تبعت Railway
 app.use((req, _, next) => {
-  console.log(`🟢 ${req.method} ${req.originalUrl}`);
+  console.log(`🟢 [${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
 
@@ -26,7 +27,7 @@ const PUBLIC_DIR = path.join(ROOT_DIR, "public");
 const GENERATED_DIR = path.join(ROOT_DIR, "generated");
 const PROJECTS_DIR = path.join(ROOT_DIR, "projects"); 
 
-[GENERATED_DIR, PROJECTS_DIR].forEach(dir => {
+[GENERATED_DIR, PROJECTS_DIR, PUBLIC_DIR].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -40,6 +41,7 @@ app.use("/projects", express.static(PROJECTS_DIR));
 /* =========================
    API ROUTES (CORE)
 ========================= */
+// تأكد يا شادي إن الملفات هاي موجودة في مجلد routes
 app.use("/api/v1/auth", require("./routes/auth.routes"));
 app.use("/api/v1/brain", require("./routes/brain.routes"));
 app.use("/api/v1/projects", require("./routes/projects.routes"));
@@ -47,66 +49,48 @@ app.use("/api/v1/plans", require("./routes/plans.routes"));
 app.use("/api/v1/users", require("./routes/users.routes"));
 
 /* =========================
-   PROJECT WORKSPACE API (Manus Logic)
+   WORKSPACE API
 ========================= */
 app.post("/api/v1/workspace/create", (req, res) => {
   const { projectId } = req.body;
-  if (!projectId) return res.status(400).json({ ok:false });
+  if (!projectId) return res.status(400).json({ ok: false, error: "Missing ID" });
   const dir = path.join(PROJECTS_DIR, projectId);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, "history.json"), JSON.stringify([], null, 2));
   }
-  res.json({ ok:true });
-});
-
-app.post("/api/v1/workspace/history", (req, res) => {
-  const { projectId, snapshot } = req.body;
-  const file = path.join(PROJECTS_DIR, projectId, "history.json");
-  if (!fs.existsSync(file)) return res.status(404).json({ ok:false });
-  const history = JSON.parse(fs.readFileSync(file));
-  history.unshift({ id: Date.now(), snapshot, createdAt: new Date() });
-  fs.writeFileSync(file, JSON.stringify(history, null, 2));
-  res.json({ ok:true });
-});
-
-app.get("/api/v1/workspace/history/:id", (req, res) => {
-  const file = path.join(PROJECTS_DIR, req.params.id, "history.json");
-  if (!fs.existsSync(file)) return res.json({ history:[] });
-  res.json({ history: JSON.parse(fs.readFileSync(file)) });
+  res.json({ ok: true });
 });
 
 /* =========================
-   HEALTH CHECK
+   FRONTEND ROUTES
 ========================= */
-app.get("/api/health", (_, res) => {
-  res.json({ ok: true, app: "Shadi AI Builder", time: Date.now() });
-});
+const page = name => (_, res) => {
+    const filePath = path.join(PUBLIC_DIR, name);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send(`File ${name} not found in public folder`);
+    }
+};
 
-/* =========================
-   FRONTEND ROUTES (MANUS STYLE)
-========================= */
-const page = name => (_, res) => res.sendFile(path.join(PUBLIC_DIR, name));
-
-// 🔥 التعديل: الرابط الأساسي الآن يوجهك فوراً لصفحة التوليد الفخمة
-app.get("/", (req, res) => {
-    res.redirect("/generate.html");
-});
-
+app.get("/", (req, res) => res.redirect("/generate.html"));
 app.get("/login", page("login.html"));
 app.get("/generate", page("generate.html"));
-app.get("/projects", page("projects.html"));
-app.get("/pricing", page("pricing.html"));
-app.get("/checkout", page("checkout.html"));
-app.get("/success", page("success.html"));
 
 /* =========================
    SMART 404
 ========================= */
 app.use((req, res) => {
   if (req.path.startsWith("/api"))
-    return res.status(404).json({ ok:false, error:"API Not Found" });
-  res.status(404).sendFile(path.join(PUBLIC_DIR, "404.html"));
+    return res.status(404).json({ ok: false, error: "API Not Found - Check Route Definition" });
+  
+  const errorPage = path.join(PUBLIC_DIR, "404.html");
+  if (fs.existsSync(errorPage)) {
+      res.status(404).sendFile(errorPage);
+  } else {
+      res.status(404).send("404 - Page Not Found");
+  }
 });
 
 /* =========================
@@ -114,8 +98,6 @@ app.use((req, res) => {
 ========================= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("\n" + "🔥".repeat(32));
-  console.log("🚀 SHADI AI BUILDER (MANUS MODE)");
-  console.log(`🌐 ${process.env.APP_URL || "http://localhost:" + PORT}`);
-  console.log("🔥".repeat(32) + "\n");
+  console.log("\n🚀 SHADI AI BUILDER IS LIVE");
+  console.log(`🌐 URL: http://0.0.0.0:${PORT}\n`);
 });
