@@ -26,7 +26,6 @@ body{
 <body class="min-h-screen flex items-center justify-center">
 
   <div class="glass p-14 rounded-3xl max-w-xl w-full text-center">
-
     <h1 class="text-5xl font-black mb-6">
       SHADI <span class="text-indigo-500">AI</span>
     </h1>
@@ -37,45 +36,46 @@ body{
       أسرع من Manus. أفخم.
     </p>
 
-    <!-- زر واحد فقط -->
     <a href="/login.html"
        class="inline-block bg-indigo-600 hover:bg-indigo-500 px-12 py-4 rounded-2xl font-black text-lg">
       🚀 ابدأ الآن
     </a>
-
   </div>
 
-  <!-- ✅ التقاط access_token وتحويل تلقائي -->
+  <!-- ✅ AUTH CHECK – FINAL -->
   <script>
-    const supabase = window.supabase.createClient(
-      "https://xfzelmpwthqywidyjgzo.supabase.co",
-      "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
-      {
-        auth: {
-          detectSessionInUrl: true,
-          persistSession: true
-        }
-      }
-    );
+    document.addEventListener("DOMContentLoaded", async () => {
 
-    (async () => {
-      const { data } = await supabase.auth.getSession();
+      const supabase = window.supabase.createClient(
+        "https://xfzelmpwthqywidyjgzo.supabase.co",
+        "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
+        {
+          auth: {
+            detectSessionInUrl: true,
+            persistSession: true
+          }
+        }
+      );
+
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Auth error:", error);
+        return;
+      }
 
       if (data?.session) {
         // خزّن التوكن
         localStorage.setItem("token", data.session.access_token);
 
-        // نظّف الرابط من #access_token
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
+        // نظّف الرابط
+        window.history.replaceState({}, "", "/");
 
-        // 🔥 تحويل مباشر
-        window.location.href = "/generate.html";
+        // 🔥 تحويل إجباري بدون رجعة
+        window.location.replace("/generate.html");
       }
-    })();
+
+    });
   </script>
 
 </body>
