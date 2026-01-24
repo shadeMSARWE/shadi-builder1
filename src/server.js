@@ -24,7 +24,8 @@ app.use((req, _, next) => {
 ========================= */
 const ROOT_DIR = __dirname;
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
-const GENERATED_DIR = path.join(ROOT_DIR, "generated");
+/** مجلد generated في جذر المشروع – تُحفظ فيه مواقع HTML المُولَّدة ويُخدم عبر /generated */
+const GENERATED_DIR = path.join(ROOT_DIR, "..", "generated");
 const PROJECTS_DIR = path.join(ROOT_DIR, "projects"); 
 
 [GENERATED_DIR, PROJECTS_DIR, PUBLIC_DIR].forEach(dir => {

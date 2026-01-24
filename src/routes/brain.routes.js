@@ -39,10 +39,9 @@ router.post("/", auth, async (req, res) => {
         // 4. البناء الفعلي للكود
         const html = await buildHTML(plan); 
 
-        // 5. حفظ الملف (التعديل الجوهري: الحفظ داخل مجلد public ليراه السيرفر)
+        // 5. حفظ الملف في مجلد generated (جذر المشروع) لخدمته عبر /generated
         const projectId = Date.now().toString();
-        // نستخدم مسار يبدأ من المجلد الحالي وصولاً إلى public/generated
-        const projectPath = path.join(__dirname, "../../public/generated", projectId);
+        const projectPath = path.join(__dirname, "../../generated", projectId);
 
         if (!fs.existsSync(projectPath)) {
             fs.mkdirSync(projectPath, { recursive: true });

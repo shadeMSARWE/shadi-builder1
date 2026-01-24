@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const archiver = require("archiver");
 
-// التعديل هنا فقط: المسار لازم يروح لـ public/generated عشان يشوف الشغل الجديد
-const GENERATED_DIR = path.join(__dirname, "../../public/generated");
+/** مجلد generated في جذر المشروع – نفس المسار الذي يخدمه السيرفر عبر /generated */
+const GENERATED_DIR = path.join(__dirname, "../../../generated");
 
 function exportZip(siteId, res) {
     // مسار الملف أو المجلد

@@ -27,7 +27,7 @@ router.post("/analyze", auth, async (req, res) => {
 
     // 5. حفظ الملف في مجلد الـ public عشان يفتح في المتصفح
     const name = `site-${Date.now()}.html`;
-    const dir = path.join(__dirname, "../../public/generated"); 
+    const dir = path.join(__dirname, "../../../generated"); 
     
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
