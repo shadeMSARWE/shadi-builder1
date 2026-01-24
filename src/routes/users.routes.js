@@ -3,6 +3,8 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const users = require("../core/users/service");
 const { PLANS } = require("../core/users/plans");
+const fs = require("fs");
+const path = require("path");
 
 /* =========================
    CURRENT USER (ME)
@@ -25,14 +27,21 @@ router.get("/me", auth, (req, res) => {
 
 /* =========================
    ADMIN – LIST ALL USERS
+   (PROTECTED)
 ========================= */
 router.get("/admin/all", auth, (req, res) => {
-  // عدّل الإيميل لإيميلك الحقيقي
-  if (req.user.email !== "admin@you.com") {
+  // 🔐 حماية حقيقية (مش hardcoded)
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+  if (!ADMIN_EMAIL || req.user.email !== ADMIN_EMAIL) {
     return res.status(403).json({ ok: false, error: "Not allowed" });
   }
 
-  const allUsers = require("../../data/users.json");
+  const file = path.join(__dirname, "../../data/users.json");
+  if (!fs.existsSync(file)) {
+    return res.json({ ok: true, users: {} });
+  }
+
+  const allUsers = JSON.parse(fs.readFileSync(file, "utf8"));
   res.json({ ok: true, users: allUsers });
 });
 

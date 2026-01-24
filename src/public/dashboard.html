@@ -15,6 +15,33 @@ body{font-family:Tajawal;background:#010409;color:#fff}
 
 <body class="h-screen flex overflow-hidden">
 
+<!-- 🔑 OAUTH TOKEN CAPTURE (المهم جداً) -->
+<script>
+/*
+  التقاط access_token من Supabase OAuth
+*/
+(function () {
+  if (window.location.hash.includes("access_token")) {
+    const hash = new URLSearchParams(
+      window.location.hash.substring(1)
+    );
+
+    const accessToken = hash.get("access_token");
+
+    if (accessToken) {
+      localStorage.setItem("token", accessToken);
+
+      // تنظيف الرابط من #access_token
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+    }
+  }
+})();
+</script>
+
 <!-- SIDEBAR -->
 <aside class="w-[340px] glass flex flex-col p-6 gap-6">
 
@@ -69,6 +96,7 @@ body{font-family:Tajawal;background:#010409;color:#fff}
 <script>
 const token = localStorage.token;
 
+// لو ما في توكن → رجّع لصفحة الدخول
 if(!token) location.href="/";
 
 function logout(){
@@ -76,7 +104,7 @@ function logout(){
   location.href="/";
 }
 
-// load plan
+// تحميل بيانات المستخدم والخطة
 fetch("/api/v1/users/me",{
   headers:{ Authorization:"Bearer "+token }
 })
@@ -90,6 +118,7 @@ fetch("/api/v1/users/me",{
   }
 });
 
+// بناء الموقع
 function build(){
   const desc = document.getElementById("desc").value.trim();
   if(!desc) return alert("اكتب وصف أولاً");

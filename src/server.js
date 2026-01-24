@@ -110,6 +110,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log("\n" + "⭐".repeat(32));
   console.log("🚀 SHADI AI BUILDER READY");
-  console.log(`🌐 http://localhost:${PORT}`);
+  console.log(`🌐 Server running on port ${PORT}`);
   console.log("⭐".repeat(32) + "\n");
 });

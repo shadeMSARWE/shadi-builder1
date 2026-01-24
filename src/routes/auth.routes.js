@@ -10,35 +10,28 @@ const supabase = createClient(
 
 /*
   Google OAuth
-  يرجّع URL للفرونت (مش redirect)
+  Redirect مباشر (صح)
 */
 router.get("/google", async (req, res) => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: process.env.APP_URL || "http://localhost:3000/dashboard.html"
+        redirectTo: `${process.env.APP_URL}/dashboard`
       }
     });
 
     if (error) {
-      return res.status(400).json({
-        ok: false,
-        error: error.message
-      });
+      console.error("SUPABASE OAUTH ERROR:", error);
+      return res.status(400).send("OAuth Error");
     }
 
-    res.json({
-      ok: true,
-      url: data.url
-    });
+    // 🔥 المهم: redirect مباشر
+    return res.redirect(data.url);
 
   } catch (err) {
     console.error("AUTH ERROR:", err);
-    res.status(500).json({
-      ok: false,
-      error: "Auth failed"
-    });
+    return res.status(500).send("Auth failed");
   }
 });
 
