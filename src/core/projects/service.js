@@ -2,42 +2,46 @@ const fs = require("fs");
 const path = require("path");
 const archiver = require("archiver");
 
-// المسار لازم يكون دقيق جداً حسب هيكل ملفاتك
-const GENERATED_DIR = path.join(__dirname, "../../../generated");
+// التعديل هنا فقط: المسار لازم يروح لـ public/generated عشان يشوف الشغل الجديد
+const GENERATED_DIR = path.join(__dirname, "../../public/generated");
 
 function exportZip(siteId, res) {
-    // مسار المجلد اللي فيه ملفات الموقع (index, about, etc...)
-    const siteDir = path.join(GENERATED_DIR, siteId);
+    // مسار الملف أو المجلد
+    const sitePath = path.join(GENERATED_DIR, siteId);
 
-    // 1. التأكد إن الموقع موجود فعلاً
-    if (!fs.existsSync(siteDir)) {
-        console.error(`❌ Export failed: Site ${siteId} not found at ${siteDir}`);
+    // 1. التأكد إن الموقع موجود فعلاً (كودك الأصلي)
+    if (!fs.existsSync(sitePath)) {
+        console.error(`❌ Export failed: Site ${siteId} not found at ${sitePath}`);
         return res.status(404).json({ 
             ok: false, 
             error: "الموقع غير موجود، ربما انتهت صلاحية الملفات المؤقتة." 
         });
     }
 
-    // 2. إعدادات الـ Headers لتحميل الملف
+    // 2. إعدادات الـ Headers لتحميل الملف (كودك الأصلي)
     res.setHeader("Content-Disposition", `attachment; filename=ShadiAI_${siteId}.zip`);
     res.setHeader("Content-Type", "application/zip");
 
-    // 3. بدء عملية الضغط
-    const archive = archiver("zip", { zlib: { level: 9 } }); // أعلى مستوى ضغط
+    // 3. بدء عملية الضغط (كودك الأصلي)
+    const archive = archiver("zip", { zlib: { level: 9 } }); 
 
-    // التعامل مع الأخطاء أثناء الضغط
     archive.on("error", (err) => {
         console.error("🔥 Archiver Error:", err);
         res.status(500).send({ error: "فشل في إنشاء ملف الـ ZIP" });
     });
 
-    // ربط الـ archive بالـ response (الرد)
     archive.pipe(res);
 
-    // إضافة محتويات المجلد (الملفات اللي ولدها الـ AI)
-    archive.directory(siteDir, false);
+    // إضافة المحتويات (تعديل ذكي: لو ملف واحد يضغطه، ولو مجلد يضغطه)
+    const stats = fs.statSync(sitePath);
+    if (stats.isDirectory()) {
+        archive.directory(sitePath, false);
+    } else {
+        // إذا كان ملف HTML (زي ما بنعمل في htmlBuilder)، بنسميه index.html جوا الـ ZIP
+        archive.file(sitePath, { name: "index.html" });
+    }
 
-    // إنهاء وإرسال
+    // إنهاء وإرسال (كودك الأصلي)
     archive.finalize();
 
     console.log(`✅ Project ${siteId} exported successfully as ZIP.`);
