@@ -18,28 +18,27 @@ const supabase = window.supabase.createClient(
   }
 );
 
-// 2️⃣ أول ما الصفحة تفتح → افحص الجلسة أو الـ hash
-(async () => {
-  const { data, error } = await supabase.auth.getSession();
-
-  if (data?.session) {
-    // نظّف الرابط من #access_token
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-
-    // حوّل مباشرة
-    if (!window.location.pathname.includes("generate.html")) {
-      window.location.href = "/generate.html";
+// 2️⃣ فحص فوري ومباشر عند فتح الصفحة
+async function checkAuth() {
+    const { data } = await supabase.auth.getSession();
+    
+    // إذا فيه جلسة أو فيه توكن في الرابط فوق
+    if (data?.session || window.location.hash.includes('access_token')) {
+        console.log("تم كشف المفتاح.. جاري الانتقال لصفحة البناء 🏗️");
+        
+        // إذا كنا بصفحة index أو login، نحول فوراً لـ generate
+        if (!window.location.pathname.includes("generate.html")) {
+            window.location.href = "/generate.html";
+        }
     }
-  }
-})();
+}
 
-// 3️⃣ Listener احتياطي (لو الجلسة إجت متأخرة)
+// شغل الفحص أول ما الملف يفتح
+checkAuth();
+
+// 3️⃣ المستشعر الاحتياطي
 supabase.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_IN" && session) {
+  if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
     if (!window.location.pathname.includes("generate.html")) {
       window.location.href = "/generate.html";
     }
@@ -51,10 +50,8 @@ async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo:
-        "https://shadi-builder1-production.up.railway.app"
-      // ⬆️ خلي الرجوع على /
-      // index.html هو اللي يحوّل
+      // تعديل مهم: التوجيه لصفحة الـ generate مباشرة
+      redirectTo: "https://shadi-builder1-production.up.railway.app/generate.html"
     }
   });
 
@@ -68,13 +65,12 @@ async function signInWithGoogle() {
 async function logout() {
   await supabase.auth.signOut();
   localStorage.clear();
-  window.location.href = "/";
+  window.location.href = "/index.html";
 }
 
 // 6️⃣ توليد الموقع (محمي)
 async function generate() {
   const description = document.getElementById("desc")?.value?.trim();
-  const statusOut = document.getElementById("out");
   const buildBtn = document.querySelector("button");
 
   const { data: { session } } = await supabase.auth.getSession();
@@ -98,7 +94,7 @@ async function generate() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + session.access_token
+        "Authorization": "Bearer " + session.access_token
       },
       body: JSON.stringify({ description })
     });
