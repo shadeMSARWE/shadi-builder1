@@ -45,43 +45,37 @@ body{
 
   </div>
 
-  <!-- ✅ الحل النهائي: التقاط access_token وتحويل المستخدم -->
+  <!-- ✅ التقاط access_token وتحويل تلقائي -->
   <script>
-  const supabase = window.supabase.createClient(
-    "https://xfzelmpwthqywidyjgzo.supabase.co",
-    "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
-    {
-      auth: {
-        detectSessionInUrl: true,
-        persistSession: true
+    const supabase = window.supabase.createClient(
+      "https://xfzelmpwthqywidyjgzo.supabase.co",
+      "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
+      {
+        auth: {
+          detectSessionInUrl: true,
+          persistSession: true
+        }
       }
-    }
-  );
+    );
 
-  (async () => {
-    // إذا Supabase رجّعنا مع access_token
-    if (window.location.hash.includes("access_token")) {
-      const { data, error } = await supabase.auth.getSession();
+    (async () => {
+      const { data } = await supabase.auth.getSession();
 
-      if (error || !data.session) {
-        console.error("Auth error:", error);
-        return;
+      if (data?.session) {
+        // خزّن التوكن
+        localStorage.setItem("token", data.session.access_token);
+
+        // نظّف الرابط من #access_token
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        // 🔥 تحويل مباشر
+        window.location.href = "/generate.html";
       }
-
-      // خزّن التوكن للـ API
-      localStorage.setItem("token", data.session.access_token);
-
-      // نظّف الرابط
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-      );
-
-      // 🔥 التحويل النهائي
-      window.location.href = "/generate.html";
-    }
-  })();
+    })();
   </script>
 
 </body>
