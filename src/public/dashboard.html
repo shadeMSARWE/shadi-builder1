@@ -15,7 +15,7 @@ body{font-family:Tajawal;background:#010409;color:#fff}
 
 <body class="h-screen flex overflow-hidden">
 
-<!-- 🔑 OAUTH TOKEN CAPTURE (المهم جداً) -->
+<!-- 🔑 OAUTH TOKEN CAPTURE (أهم سطر بالمشروع) -->
 <script>
 /*
   التقاط access_token من Supabase OAuth
@@ -74,7 +74,6 @@ body{font-family:Tajawal;background:#010409;color:#fff}
     اكتب الوصف — والباقي علينا.
   </p>
 
-  <!-- INPUT -->
   <textarea id="desc"
     class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 h-40 text-lg mb-6"
     placeholder="مثال: موقع SaaS لشركة تقنية فخمة، ألوان داكنة، أسلوب Manus..."></textarea>
@@ -84,7 +83,6 @@ body{font-family:Tajawal;background:#010409;color:#fff}
     🚀 ابدأ البناء
   </button>
 
-  <!-- PREVIEW -->
   <div id="previewWrap" class="hidden mt-12">
     <h3 class="text-2xl font-black mb-4">🔍 المعاينة</h3>
     <iframe id="preview"
@@ -93,18 +91,19 @@ body{font-family:Tajawal;background:#010409;color:#fff}
 
 </main>
 
+<!-- APP LOGIC -->
 <script>
 const token = localStorage.token;
 
 // لو ما في توكن → رجّع لصفحة الدخول
-if(!token) location.href="/";
+if (!token) location.href = "/login.html";
 
 function logout(){
   localStorage.clear();
-  location.href="/";
+  location.href = "/";
 }
 
-// تحميل بيانات المستخدم والخطة
+// تحميل بيانات المستخدم
 fetch("/api/v1/users/me",{
   headers:{ Authorization:"Bearer "+token }
 })
