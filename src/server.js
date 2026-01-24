@@ -19,7 +19,7 @@ app.use((req, _, next) => {
 });
 
 /* =========================
-   FOLDERS
+   DIRECTORIES
 ========================= */
 const PUBLIC_DIR = path.join(__dirname, "public");
 const GENERATED_DIR = path.join(__dirname, "generated");
@@ -35,7 +35,7 @@ app.use(express.static(PUBLIC_DIR));
 app.use("/generated", express.static(GENERATED_DIR));
 
 /* =========================
-   API ROUTES
+   API ROUTES (FIRST)
 ========================= */
 app.use("/api/v1/auth", require("./routes/auth.routes"));
 app.use("/api/v1/brain", require("./routes/brain.routes"));
@@ -62,27 +62,27 @@ app.get("/", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "index.html"))
 );
 
-app.get("/login", (_, res) =>
+app.get("/login.html", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "login.html"))
 );
 
-app.get("/dashboard", (_, res) =>
-  res.sendFile(path.join(PUBLIC_DIR, "dashboard.html"))
+app.get("/generate.html", (_, res) =>
+  res.sendFile(path.join(PUBLIC_DIR, "generate.html"))
 );
 
-app.get("/projects", (_, res) =>
+app.get("/projects.html", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "projects.html"))
 );
 
-app.get("/pricing", (_, res) =>
+app.get("/pricing.html", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "pricing.html"))
 );
 
-app.get("/checkout", (_, res) =>
+app.get("/checkout.html", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "checkout.html"))
 );
 
-app.get("/success", (_, res) =>
+app.get("/success.html", (_, res) =>
   res.sendFile(path.join(PUBLIC_DIR, "success.html"))
 );
 
@@ -110,6 +110,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log("\n" + "⭐".repeat(32));
   console.log("🚀 SHADI AI BUILDER READY");
-  console.log(`🌐 Server running on port ${PORT}`);
+  console.log(`🌐 ${process.env.APP_URL || "http://localhost:" + PORT}`);
   console.log("⭐".repeat(32) + "\n");
 });
+

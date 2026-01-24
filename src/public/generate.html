@@ -16,32 +16,45 @@ body{font-family:Tajawal;background:#020617;color:#fff}
 
 <body class="flex h-screen">
 
-<!-- 🔐 حماية الصفحة (أول كود – مهم جدًا) -->
+<!-- 🔐 AUTH + TOKEN CAPTURE (الحل النهائي) -->
 <script>
 const supabase = window.supabase.createClient(
   "https://xfzelmpwthqywidyjgzo.supabase.co",
-  "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H"
+  "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H",
+  {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true
+    }
+  }
 );
 
 (async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
 
-  if (!session) {
+  if (error || !data.session) {
     location.href = "/login.html";
     return;
   }
 
-  // خزّن التوكن للاستخدام مع API
-  localStorage.setItem("token", session.access_token);
+  // ✅ خزّن التوكن للـ API
+  localStorage.setItem("token", data.session.access_token);
+
+  // ✅ نظّف الرابط من #access_token
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
 })();
 </script>
 
 <!-- SIDEBAR -->
-<aside class="w-80 glass p-6 border-l border-slate-800">
+<aside class="w-80 glass p-6 border-l border-slate-800 flex flex-col">
   <h2 class="text-xl font-black mb-6">⚙️ Shadi Builder</h2>
 
   <button onclick="logout()"
-    class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold">
+    class="mt-auto w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold">
     Logout
   </button>
 </aside>
@@ -55,7 +68,7 @@ const supabase = window.supabase.createClient(
     class="w-full h-40 bg-slate-900 p-4 rounded-xl border border-slate-700 mb-6"
     placeholder="مثال: موقع SaaS فخم لشركة تقنية..."></textarea>
 
-  <button onclick="gen()"
+  <button id="buildBtn" onclick="gen()"
     class="bg-indigo-600 hover:bg-indigo-500 px-10 py-4 rounded-xl font-bold">
     🚀 Generate
   </button>
@@ -71,6 +84,14 @@ async function gen(){
   if(!description) return alert("اكتب وصف الموقع أولاً");
 
   const token = localStorage.getItem("token");
+  if(!token){
+    location.href="/login.html";
+    return;
+  }
+
+  const btn = document.getElementById("buildBtn");
+  btn.disabled = true;
+  btn.innerText = "⏳ جاري البناء...";
 
   const r = await fetch("/api/v1/brain/analyze",{
     method:"POST",
@@ -82,6 +103,10 @@ async function gen(){
   });
 
   const d = await r.json();
+
+  btn.disabled = false;
+  btn.innerText = "🚀 Generate";
+
   if(!d.ok) return alert(d.error || "Build failed");
 
   const iframe = document.getElementById("preview");
