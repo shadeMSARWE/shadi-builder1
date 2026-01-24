@@ -1,8 +1,8 @@
 /* ======================================================
-   SHADI BUILDER – FRONTEND AUTH + GENERATE (FINAL)
+   SHADI BUILDER – AUTH + GENERATE (PRODUCTION FINAL)
 ====================================================== */
 
-// 1️⃣ تهيئة Supabase (مشروع shadi-builder1)
+// 1️⃣ Supabase config (Production)
 const supabaseUrl = "https://xfzelmpwthqywidyjgzo.supabase.co";
 const supabaseKey = "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H";
 
@@ -11,19 +11,20 @@ const supabase = window.supabase.createClient(
   supabaseKey
 );
 
-// 2️⃣ 🔁 Redirect تلقائي بعد تسجيل الدخول (السطر الذهبي)
+// 2️⃣ Redirect تلقائي بعد تسجيل الدخول
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_IN" && session) {
-    window.location.href = "/dashboard.html";
+    window.location.href = "/generate.html";
   }
 });
 
-// 3️⃣ تسجيل الدخول بجوجل (Production)
+// 3️⃣ تسجيل الدخول بجوجل (Railway URL)
 async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://shadi-builder1-production.up.railway.app/dashboard.html"
+      redirectTo:
+        "https://shadi-builder1-production.up.railway.app/generate.html"
     }
   });
 
@@ -40,19 +41,18 @@ async function logout() {
   window.location.href = "/";
 }
 
-// 5️⃣ التوليد (محمي – لازم user مسجل)
+// 5️⃣ توليد الموقع (محمي)
 async function generate() {
   const description = document.getElementById("desc")?.value?.trim();
   const statusOut = document.getElementById("out");
   const buildBtn = document.querySelector("button");
 
-  // تأكيد الجلسة
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
     statusOut.innerHTML = `
       <div class="p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-lg text-yellow-400">
-        ⚠️ لازم تسجل دخول بجوجل أولاً
+        ⚠️ سجل دخول بجوجل أولاً
       </div>
     `;
     setTimeout(signInWithGoogle, 1500);
@@ -64,15 +64,13 @@ async function generate() {
     return;
   }
 
-  // UI loading
   buildBtn.disabled = true;
   buildBtn.innerText = "جاري البناء... 🏗️";
 
   statusOut.innerHTML = `
     <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-indigo-400 text-sm">
       <p>👤 ${session.user.email}</p>
-      <p>🧠 جاري تحليل الوصف...</p>
-      <p class="animate-pulse">⏳ ${description}</p>
+      <p class="animate-pulse">⏳ جاري البناء...</p>
     </div>
   `;
 
@@ -87,7 +85,6 @@ async function generate() {
     });
 
     const data = await res.json();
-
     if (!data.ok) throw new Error(data.error || "Build failed");
 
     statusOut.innerHTML = `
@@ -103,7 +100,6 @@ async function generate() {
     }, 1200);
 
   } catch (err) {
-    console.error(err);
     statusOut.innerHTML = `
       <div class="p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500">
         ❌ ${err.message}

@@ -2,40 +2,97 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Generate</title>
+<title>Generate | Shadi Builder</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
 <style>
 body{font-family:Tajawal;background:#020617;color:#fff}
-.glass{background:rgba(15,23,42,.7);backdrop-filter:blur(14px)}
+.glass{background:rgba(15,23,42,.7);backdrop-filter:blur(14px);border:1px solid #1e293b}
 </style>
 </head>
+
 <body class="flex h-screen">
 
+<!-- 🔐 حماية الصفحة (أول كود – مهم جدًا) -->
+<script>
+const supabase = window.supabase.createClient(
+  "https://xfzelmpwthqywidyjgzo.supabase.co",
+  "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H"
+);
+
+(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    location.href = "/login.html";
+    return;
+  }
+
+  // خزّن التوكن للاستخدام مع API
+  localStorage.setItem("token", session.access_token);
+})();
+</script>
+
+<!-- SIDEBAR -->
 <aside class="w-80 glass p-6 border-l border-slate-800">
-<a href="/dashboard.html" class="block mb-6">← رجوع</a>
+  <h2 class="text-xl font-black mb-6">⚙️ Shadi Builder</h2>
+
+  <button onclick="logout()"
+    class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold">
+    Logout
+  </button>
 </aside>
 
-<main class="flex-1 p-10">
-<h1 class="text-3xl font-black mb-6">ابنِ موقعك</h1>
-<textarea id="desc" class="w-full h-40 bg-slate-900 p-4 rounded-xl"></textarea>
-<button onclick="gen()" class="mt-6 bg-indigo-600 px-10 py-4 rounded-xl font-bold">Generate</button>
+<!-- MAIN -->
+<main class="flex-1 p-10 overflow-y-auto">
 
-<iframe id="preview" class="w-full h-[60vh] mt-8 rounded-xl bg-white"></iframe>
+  <h1 class="text-3xl font-black mb-6">ابنِ موقعك بالذكاء الاصطناعي</h1>
+
+  <textarea id="desc"
+    class="w-full h-40 bg-slate-900 p-4 rounded-xl border border-slate-700 mb-6"
+    placeholder="مثال: موقع SaaS فخم لشركة تقنية..."></textarea>
+
+  <button onclick="gen()"
+    class="bg-indigo-600 hover:bg-indigo-500 px-10 py-4 rounded-xl font-bold">
+    🚀 Generate
+  </button>
+
+  <iframe id="preview"
+    class="w-full h-[60vh] mt-10 rounded-xl bg-white hidden"></iframe>
+
 </main>
 
 <script>
 async function gen(){
-const r=await fetch("/api/v1/brain/analyze",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-Authorization:"Bearer "+localStorage.token
-},
-body:JSON.stringify({description:desc.value})
-});
-const d=await r.json();
-preview.src=d.previewUrl;
+  const description = document.getElementById("desc").value.trim();
+  if(!description) return alert("اكتب وصف الموقع أولاً");
+
+  const token = localStorage.getItem("token");
+
+  const r = await fetch("/api/v1/brain/analyze",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer " + token
+    },
+    body:JSON.stringify({ description })
+  });
+
+  const d = await r.json();
+  if(!d.ok) return alert(d.error || "Build failed");
+
+  const iframe = document.getElementById("preview");
+  iframe.src = d.previewUrl;
+  iframe.classList.remove("hidden");
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  localStorage.clear();
+  location.href="/";
 }
 </script>
 

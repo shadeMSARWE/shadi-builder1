@@ -33,7 +33,8 @@ body{
     سجّل الدخول وابدأ بناء مواقع فخمة بالذكاء الاصطناعي
   </p>
 
-  <button onclick="login()"
+  <!-- زر تسجيل الدخول -->
+  <button onclick="signInWithGoogle()"
     class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
     🔐 تسجيل الدخول بجوجل
   </button>
@@ -41,16 +42,17 @@ body{
 </div>
 
 <script>
-/* لو مسجّل دخول → مباشرة Dashboard */
-if(localStorage.token){
-  location.href="/dashboard.html";
+/* إذا المستخدم مسجّل دخول مسبقاً → مباشرة صفحة البناء */
+if (localStorage.getItem("token")) {
+  location.href = "/generate.html";
 }
 
-/* تسجيل دخول Google – Redirect مباشر */
-function login(){
+/* تسجيل الدخول عبر السيرفر (Supabase OAuth) */
+function signInWithGoogle(){
   window.location.href = "/api/v1/auth/google";
 }
 </script>
 
 </body>
 </html>
+
