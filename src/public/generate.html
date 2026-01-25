@@ -47,9 +47,10 @@
             <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.2em] font-black">Manus-Vision-X Engine</p>
         </div>
         <div class="space-y-3">
-            <div class="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10">
-                <p class="text-xs text-indigo-400 font-bold mb-1">PRO PLAN</p>
-                <p class="text-[10px] text-slate-500">تم تفعيل كافة ميزات الذكاء الاصطناعي</p>
+            <div id="creditsBox" class="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10">
+                <p class="text-xs text-indigo-400 font-bold mb-1">النقاط</p>
+                <p id="creditsCount" class="text-lg font-black text-white">--</p>
+                <p class="text-[10px] text-slate-500">نقطة لكل موقع (10 نقاط)</p>
             </div>
         </div>
         <button onclick="logout()" class="mt-auto group flex items-center justify-center gap-3 text-slate-500 hover:text-white transition-all py-3 border border-white/5 rounded-xl hover:bg-white/5">
@@ -66,10 +67,16 @@
 
             <div class="glass-card rounded-[2.5rem] p-3 shadow-2xl mb-10">
                 <textarea id="desc" class="w-full h-40 bg-transparent p-6 text-xl outline-none resize-none placeholder:text-slate-700 font-medium" placeholder="مثال: ابني لي بنك إلكتروني عصري بستايل نيون بنفسجي..."></textarea>
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-[2rem] border border-white/5">
-                    <div class="flex items-center gap-2 text-slate-500">
-                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        <span class="text-xs font-bold uppercase tracking-widest">System Ready</span>
+                <div id="enhanceHint" class="hidden mx-4 mb-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
+                <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-white/5 rounded-[2rem] border border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 text-slate-500">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span class="text-xs font-bold uppercase tracking-widest">System Ready</span>
+                        </div>
+                        <button type="button" id="enhanceBtn" onclick="enhancePrompt()" class="text-xs font-bold px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition">
+                            ✨ تحسين الوصف (Prompt Enhancer)
+                        </button>
                     </div>
                     <button id="buildBtn" onclick="gen()" class="btn-premium px-10 py-4 rounded-2xl font-black text-white text-sm">
                         🚀 ابدأ السحر الآن
@@ -100,7 +107,41 @@
             const { data } = await _supabase.auth.getSession();
             if (!data?.session) { window.location.replace("/login.html"); return; }
             localStorage.setItem("token", data.session.access_token);
+            loadCredits();
         });
+
+        async function loadCredits() {
+            try {
+                const r = await fetch("/api/v1/users/me", { headers: { "Authorization": "Bearer " + localStorage.getItem("token") } });
+                const d = await r.json();
+                if (d.ok && d.credits != null) document.getElementById("creditsCount").textContent = d.credits;
+                else if (d.ok) document.getElementById("creditsCount").textContent = "∞";
+            } catch (_) { document.getElementById("creditsCount").textContent = "—"; }
+        }
+
+        async function enhancePrompt() {
+            const desc = document.getElementById("desc").value.trim();
+            if (!desc) { alert("اكتب وصفاً أولاً ثم اضغط تحسين الوصف"); return; }
+            const btn = document.getElementById("enhanceBtn");
+            const hint = document.getElementById("enhanceHint");
+            btn.disabled = true;
+            btn.textContent = "جاري التحسين...";
+            hint.classList.add("hidden");
+            try {
+                const r = await fetch("/api/v1/brain/enhance-prompt", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") },
+                    body: JSON.stringify({ description: desc })
+                });
+                const d = await r.json();
+                if (d.ok && d.enhanced) {
+                    document.getElementById("desc").value = d.enhanced;
+                    if (d.suggestions) { hint.textContent = "اقتراحنا: " + d.suggestions; hint.classList.remove("hidden"); }
+                } else alert(d.error || "لم يتم تحسين الوصف");
+            } catch (e) { alert("فشل الاتصال: " + e.message); }
+            btn.disabled = false;
+            btn.textContent = "✨ تحسين الوصف (Prompt Enhancer)";
+        }
 
         async function gen() {
             const description = document.getElementById("desc").value.trim();
@@ -126,6 +167,7 @@
 
                 const d = await r.json();
                 if(!d.ok) throw new Error(d.error || "خطأ في التوليد");
+                loadCredits();
 
                 const iframe = document.getElementById("preview");
                 iframe.src = d.previewUrl || `/generated/${d.projectId}/index.html`;

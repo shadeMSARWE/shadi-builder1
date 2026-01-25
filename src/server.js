@@ -24,8 +24,7 @@ app.use((req, _, next) => {
 ========================= */
 const ROOT_DIR = __dirname;
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
-/** مجلد generated في جذر المشروع – تُحفظ فيه مواقع HTML المُولَّدة ويُخدم عبر /generated */
-const GENERATED_DIR = path.join(ROOT_DIR, "..", "generated");
+const { GENERATED_DIR } = require("./config/paths");
 const PROJECTS_DIR = path.join(ROOT_DIR, "projects"); 
 
 [GENERATED_DIR, PROJECTS_DIR, PUBLIC_DIR].forEach(dir => {
@@ -48,6 +47,8 @@ app.use("/api/v1/brain", require("./routes/brain.routes"));
 app.use("/api/v1/projects", require("./routes/projects.routes"));
 app.use("/api/v1/plans", require("./routes/plans.routes"));
 app.use("/api/v1/users", require("./routes/users.routes"));
+app.use("/api/v1/payments", require("./routes/payments.routes"));
+app.use("/api/v1/videos", require("./routes/videos.routes"));
 
 /* =========================
    WORKSPACE API

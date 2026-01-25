@@ -4,22 +4,45 @@ const planAI = require("../core/brain/plan");
 const buildHTML = require("../core/brain/htmlBuilder");
 const fs = require("fs");
 const path = require("path");
+const { GENERATED_DIR } = require("../config/paths");
 
 const auth = require("../middleware/auth");
 const users = require("../core/users/service");
+const credits = require("../core/credits/service");
 
+const enhancePrompt = require("../core/brain/enhancePrompt");
 const router = express.Router();
+
+/**
+ * POST /api/v1/brain/enhance-prompt
+ * Prompt Enhancer – اقتراح تحسينات على وصف المستخدم قبل التوليد
+ * Body: { description }
+ */
+router.post("/enhance-prompt", auth, async (req, res) => {
+  try {
+    const { description } = req.body || {};
+    const result = await enhancePrompt(description);
+    if (!result.ok) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (err) {
+    console.error("[Brain] enhance-prompt error:", err);
+    res.status(500).json({ ok: false, error: "فشل تحسين الوصف" });
+  }
+});
 
 // الرابط المباشر للتوليد المتوافق مع generate.html
 router.post("/", auth, async (req, res) => {
     try {
         const userId = req.user.id;
 
-        // 1. التحقق من الصلاحيات (نظام الخطط)
-        if (!users.canGenerate(userId)) {
+        // 1. التحقق من النقاط (Supabase) أو الحدّ القديم (محلي)
+        const canByCredits = await credits.canGenerateSite(userId).catch(() => false);
+        if (!canByCredits && !users.canGenerate(userId)) {
             return res.status(403).json({
                 ok: false,
-                error: "وصلت للحد الأقصى للخطة المجانية. يرجى الترقية لـ PRO"
+                error: "نقاطك غير كافية. كل موقع يستهلك 10 نقاط. اشترِ المزيد أو استخدم باقاتك المجانية."
             });
         }
 
@@ -36,21 +59,24 @@ router.post("/", auth, async (req, res) => {
         // 3. التخطيط البرمجي واختيار المكونات
         const plan = await planAI(analysis);
 
-        // 4. البناء الفعلي للكود
-        const html = await buildHTML(plan); 
+        // 4. البناء الفعلي للكود (HTML و CSS و JS منفصلة)
+        const output = await buildHTML(plan);
+        const { html, css, js } = typeof output === "string" ? { html: output, css: "", js: "" } : output;
 
-        // 5. حفظ الملف في مجلد generated (جذر المشروع) لخدمته عبر /generated
+        // 5. حفظ الملفات في مجلد generated الموحد (جذر المشروع) لخدمتها عبر /generated
         const projectId = Date.now().toString();
-        const projectPath = path.join(__dirname, "../../generated", projectId);
+        const projectPath = path.join(GENERATED_DIR, projectId);
 
         if (!fs.existsSync(projectPath)) {
             fs.mkdirSync(projectPath, { recursive: true });
         }
 
-        const filePath = path.join(projectPath, "index.html");
-        fs.writeFileSync(filePath, html, "utf8");
+        fs.writeFileSync(path.join(projectPath, "index.html"), html, "utf8");
+        if (css) fs.writeFileSync(path.join(projectPath, "styles.css"), css, "utf8");
+        if (js) fs.writeFileSync(path.join(projectPath, "script.js"), js, "utf8");
 
-        // 6. تحديث عداد الاستخدام للمستخدم
+        // 6. خصم النقاط (Supabase) و/أو عداد الاستخدام المحلي
+        await credits.deductSite(userId).catch(() => {});
         users.incrementUsage(userId);
 
         // 7. الرد النهائي (المسارات الآن صحيحة 100% للعرض)

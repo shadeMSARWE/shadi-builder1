@@ -7,14 +7,16 @@ const analyze = require("../core/brain/analyze");
 const planAI = require("../core/brain/plan");
 const buildHTML = require("../core/brain/htmlBuilder");
 const users = require("../core/users/service");
+const { exportZip } = require("../core/projects/service");
 
+const { GENERATED_DIR } = require("../config/paths");
 const router = express.Router();
 
 /* =========================
-   STORAGE
+   STORAGE – مسار generated موحد من config/paths
 ========================= */
 const DATA_DIR = path.join(__dirname, "../../data/projects");
-const GEN_DIR = path.join(__dirname, "../../generated");
+const GEN_DIR = GENERATED_DIR;
 const DB_FILE = path.join(DATA_DIR, "projects.json");
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -49,13 +51,16 @@ router.post("/analyze", auth, async (req, res) => {
 
     const analysis = await analyze(description);
     const plan = await planAI(analysis);
-    const html = await buildHTML(plan);
+    const output = await buildHTML(plan);
+    const { html, css, js } = typeof output === "string" ? { html: output, css: "", js: "" } : output;
 
     const projectId = "site_" + Date.now();
     const projectDir = path.join(GEN_DIR, projectId);
 
     fs.mkdirSync(projectDir, { recursive: true });
     fs.writeFileSync(path.join(projectDir, "index.html"), html, "utf8");
+    if (css) fs.writeFileSync(path.join(projectDir, "styles.css"), css, "utf8");
+    if (js) fs.writeFileSync(path.join(projectDir, "script.js"), js, "utf8");
 
     const db = readDB();
     db[projectId] = {
@@ -87,6 +92,14 @@ router.post("/analyze", auth, async (req, res) => {
     console.error("PROJECT BUILD ERROR:", err);
     res.status(500).json({ ok: false, error: "Build failed" });
   }
+});
+
+/* =========================
+   EXPORT SITE AS ZIP (من generated)
+========================= */
+router.get("/export/:id", auth, (req, res) => {
+  const id = req.params.id;
+  exportZip(id, res);
 });
 
 /* =========================

@@ -1,9 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const archiver = require("archiver");
-
-/** مجلد generated في جذر المشروع – نفس المسار الذي يخدمه السيرفر عبر /generated */
-const GENERATED_DIR = path.join(__dirname, "../../../generated");
+const { GENERATED_DIR } = require("../../config/paths");
 
 function exportZip(siteId, res) {
     // مسار الملف أو المجلد
