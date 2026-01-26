@@ -11,51 +11,63 @@ const router = express.Router();
 
 /**
  * GET /api/v1/videos/spec
- * مواصفات الفيديو المسموحة (للواجهة)
+ * Durations: 5,10,20,30s | Styles: Realistic, Cinematic, 3D Cartoon, Anime, Digital Art
  */
 router.get("/spec", (req, res) => {
   res.json({
     ok: true,
-    minDurationSeconds: videos.MIN_DURATION_SEC,
-    maxDurationSeconds: videos.MAX_DURATION_SEC,
-    styles: videos.STYLES
+    durationsSeconds: videos.DURATIONS_SEC || [5, 10, 20, 30],
+    styles: (videos.STYLE_LIST || []).length ? videos.STYLE_LIST : [
+      { id: "realistic", nameEn: "Realistic", nameAr: "واقعي" },
+      { id: "cinematic", nameEn: "Cinematic", nameAr: "سینمائي" },
+      { id: "3d_cartoon", nameEn: "3D Cartoon", nameAr: "كرتون 3D" },
+      { id: "anime", nameEn: "Anime", nameAr: "أنمي" },
+      { id: "digital_art", nameEn: "Digital Art", nameAr: "فن رقمي" }
+    ]
   });
 });
 
 /**
  * POST /api/v1/videos
- * إنشاء طلب فيديو جديد
- * Body: { description, durationSeconds, style }
+ * Body: { description, durationSeconds, style, voiceOver }
+ * Pricing by duration + style + voice-over (see config/videoPricing.js)
  */
 router.post("/", auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { description, durationSeconds, style } = req.body;
+    const { description, durationSeconds, style, voiceOver } = req.body;
 
-    const durationMin = (durationSeconds || 10) / 60;
-    const cost = Math.max(credits.CREDITS_PER_VIDEO_PER_MINUTE, Math.ceil(durationMin) * credits.CREDITS_PER_VIDEO_PER_MINUTE);
+    const cost = (videos.getVideoCost && videos.getVideoCost(Number(durationSeconds) || 10, style || "realistic", !!voiceOver))
+      || 40;
     const userCredits = await credits.getCredits(userId).catch(() => 0);
     if (userCredits < cost) {
       return res.status(403).json({
         ok: false,
-        error: "نقاطك غير كافية لتوليد فيديو بهذه المدة. يمكنك شراء المزيد من النقاط."
+        error: "Not enough credits for this video. Top up or try shorter duration / different style.",
+        required: cost
       });
     }
 
     const result = videos.createVideoJob(userId, {
       description: description || "",
       durationSeconds: durationSeconds || 10,
-      style: style || "realistic"
+      style: style || "realistic",
+      voiceOver: !!voiceOver
     });
 
     if (!result.ok) {
       return res.status(400).json(result);
     }
 
+    const deducted = await credits.deductVideoByAmount(userId, cost).catch(() => false);
+    if (!deducted) {
+      return res.status(403).json({ ok: false, error: "Credit deduction failed.", required: cost });
+    }
+
     res.json(result);
   } catch (err) {
     console.error("[Videos] create error:", err);
-    res.status(500).json({ ok: false, error: "فشل إنشاء طلب الفيديو" });
+    res.status(500).json({ ok: false, error: "Video creation failed" });
   }
 });
 

@@ -83,8 +83,15 @@ async function deductSite(userId) {
  */
 async function deductVideo(userId, durationMinutes) {
   const amount = Math.max(CREDITS_PER_VIDEO_PER_MINUTE, Math.ceil(durationMinutes) * CREDITS_PER_VIDEO_PER_MINUTE);
-  const { data: row } = await supabase.from("profiles").select("credits").eq("id", userId).single();
-  if (!row || row.credits < amount) return false;
+  return deductVideoByAmount(userId, amount);
+}
+
+/**
+ * خصم مقدار محدد من النقاط (فيديو حسب المدة/النمط/الصوت)
+ */
+async function deductVideoByAmount(userId, amount) {
+  const { data: row, error: fetchErr } = await supabase.from("profiles").select("credits").eq("id", userId).single();
+  if (fetchErr || !row || row.credits < amount) return false;
   const { error } = await supabase
     .from("profiles")
     .update({
@@ -121,5 +128,6 @@ module.exports = {
   canGenerateSite,
   deductSite,
   deductVideo,
+  deductVideoByAmount,
   addCredits
 };

@@ -1,17 +1,17 @@
 /**
- * نظام الفيديوهات – هيكلية برمجية لتوليد فيديوهات من الوصف
- * المدة: من 5 ثوانٍ إلى 10 دقائق
- * الأنماط: realistic | cartoon
- *
- * الربط مع مزود فيديو (Runway / Pika / etc.) يتم لاحقاً عبر تنفيذ createVideoJob
+ * Video generation engine – precise controls for Manus-style SaaS
+ * Durations: 5s, 10s, 20s, 30s
+ * Styles: Realistic, Cinematic, 3D Cartoon, Anime, Digital Art
+ * Voice-over: optional AI speech
  */
 const path = require("path");
 const fs = require("fs");
 const { GENERATED_DIR } = require("../../config/paths");
+const { DURATIONS_SEC, STYLES: STYLE_LIST, getVideoCost } = require("../../config/videoPricing");
 
 const MIN_DURATION_SEC = 5;
-const MAX_DURATION_SEC = 10 * 60; // 10 دقائق
-const STYLES = ["realistic", "cartoon"];
+const MAX_DURATION_SEC = 30;
+const STYLES = STYLE_LIST.map((s) => s.id);
 
 function getGeneratedDir() {
   return GENERATED_DIR;
@@ -23,30 +23,31 @@ function getVideosDir() {
   return dir;
 }
 
-/**
- * التحقق من صحة المواصفات
- */
 function validateSpec(spec) {
   const duration = typeof spec.durationSeconds === "number"
     ? spec.durationSeconds
     : parseInt(spec.durationSeconds, 10);
-  const style = (spec.style || "realistic").toLowerCase();
+  const style = (spec.style || "realistic").toLowerCase().replace(/\s+/g, "_");
   const desc = (spec.description || "").trim();
+  const voiceOver = !!spec.voiceOver;
 
-  if (!Number.isFinite(duration) || duration < MIN_DURATION_SEC || duration > MAX_DURATION_SEC) {
-    return { ok: false, error: `المدة يجب بين ${MIN_DURATION_SEC} ثانية و ${MAX_DURATION_SEC / 60} دقيقة` };
+  if (!Number.isFinite(duration) || !DURATIONS_SEC.includes(duration)) {
+    return { ok: false, error: `Duration must be one of: ${DURATIONS_SEC.join(", ")} seconds` };
   }
   if (!STYLES.includes(style)) {
-    return { ok: false, error: `النمط يجب أن يكون: ${STYLES.join(" أو ")}` };
+    return { ok: false, error: `Style must be one of: ${STYLES.join(", ")}` };
   }
   if (!desc) {
-    return { ok: false, error: "وصف الفيديو مطلوب" };
+    return { ok: false, error: "Video description is required" };
   }
+  const creditsRequired = getVideoCost(duration, style, voiceOver);
   return {
     ok: true,
     durationSeconds: duration,
     style,
-    description: desc
+    description: desc,
+    voiceOver,
+    creditsRequired
   };
 }
 
@@ -69,6 +70,8 @@ function createVideoJob(userId, spec) {
     durationSeconds: validated.durationSeconds,
     style: validated.style,
     description: validated.description,
+    voiceOver: !!validated.voiceOver,
+    creditsRequired: validated.creditsRequired,
     status: "pending",
     createdAt: new Date().toISOString(),
     outputPath: null,
@@ -139,11 +142,14 @@ function getVideo(videoId, userId) {
 module.exports = {
   MIN_DURATION_SEC,
   MAX_DURATION_SEC,
+  DURATIONS_SEC,
   STYLES,
+  STYLE_LIST: require("../../config/videoPricing").STYLES,
   getGeneratedDir,
   getVideosDir,
   validateSpec,
   createVideoJob,
   listUserVideos,
-  getVideo
+  getVideo,
+  getVideoCost: require("../../config/videoPricing").getVideoCost
 };

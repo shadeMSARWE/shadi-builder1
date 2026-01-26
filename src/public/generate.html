@@ -1,200 +1,387 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="root">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHADI BUILDER | Generation Engine</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-
-    <style>
-        :root { --primary: #6366f1; --accent: #a855f7; --bg: #030712; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
-            color: #f3f4f6;
-            overflow-x: hidden;
-        }
-        .glass-sidebar { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(30px); border-left: 1px solid rgba(255, 255, 255, 0.05); }
-        .glass-card { background: rgba(30, 41, 59, 0.3); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        #loadingOverlay { background: rgba(3, 7, 18, 0.95); backdrop-filter: blur(10px); z-index: 100; display: none; position: fixed; inset: 0; }
-        .neon-spinner { width: 80px; height: 80px; border: 4px solid transparent; border-top: 4px solid var(--primary); border-bottom: 4px solid var(--accent); border-radius: 50%; animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .shadi-logo { background: linear-gradient(to right, #fff, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .btn-premium { background: linear-gradient(135deg, var(--primary), var(--accent)); transition: all 0.3s ease; }
-        .btn-premium:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 25px rgba(99, 102, 241, 0.5); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadi AI | Pro SaaS Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/i18n.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(18, 18, 24, 0.85);
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --primary: #6366f1;
+      --accent: #a855f7;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    [dir="ltr"] { font-family: 'Outfit', sans-serif; }
+    [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+    body {
+      background: var(--bg);
+      background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.12), transparent),
+                        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(168, 85, 247, 0.08), transparent);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass-panel {
+      background: var(--surface);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+    }
+    .chat-bubble {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px 20px 6px 20px;
+    }
+    .gradient-text { background: linear-gradient(135deg, #c4b5fd, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    #loadingOverlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(10,10,15,0.95); backdrop-filter: blur(12px);
+      display: none; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .spinner { width: 56px; height: 56px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .tab-active { background: var(--glass); color: var(--text); border-color: var(--primary); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
+    .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
+    #preview { min-height: 420px; }
+  </style>
 </head>
+<body class="flex h-screen">
+  <div id="loadingOverlay">
+    <div class="spinner mb-6"></div>
+    <p id="loadingStatus" class="text-lg font-semibold gradient-text">Loading...</p>
+  </div>
 
-<body class="flex h-screen overflow-hidden">
+  <aside class="w-72 flex-shrink-0 glass-panel flex flex-col border-l border-white/5 overflow-hidden">
+    <div class="p-6 border-b border-white/5">
+      <h1 class="text-xl font-black gradient-text">Shadi AI</h1>
+      <p class="text-[10px] text-slate-500 mt-0.5 uppercase tracking-widest" data-i18n="tagline">Pro SaaS Platform</p>
+    </div>
+    <div class="p-4">
+      <div class="glass-card rounded-2xl p-4">
+        <p class="text-xs text-indigo-400 font-bold mb-1" data-i18n="credits">Credits</p>
+        <p id="creditsCount" class="text-2xl font-black text-white">--</p>
+        <p class="text-[10px] text-slate-500" data-i18n="creditsHint">10/site</p>
+        <a href="/pricing.html" class="mt-2 inline-block text-xs font-bold text-indigo-400 hover:text-indigo-300" data-i18n="topUp">Top Up</a>
+      </div>
+    </div>
+    <div class="flex-1 overflow-y-auto px-4 pb-4">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" data-i18n="history">Project History</p>
+      <div id="historyList" class="space-y-1 text-sm text-slate-400">
+        <p class="py-4 text-center text-slate-600" data-i18n="noHistory">No projects yet</p>
+      </div>
+    </div>
+    <div class="p-4 border-t border-white/5 flex gap-2">
+      <button type="button" id="langToggle" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10">EN / ع</button>
+      <button type="button" onclick="logout()" class="flex-1 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10" data-i18n="logout">Log out</button>
+    </div>
+  </aside>
 
-    <div id="loadingOverlay" class="flex flex-col items-center justify-center">
-        <div class="neon-spinner mb-8"></div>
-        <div id="loadingStatus" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-            جاري تحضير المحرك...
-        </div>
-        <p class="text-slate-500 mt-4 text-sm tracking-widest animate-pulse">SHADI AI VISION X IS WORKING</p>
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex border-b border-white/5">
+      <button type="button" id="tabWebsite" class="tab-active px-6 py-4 text-sm font-bold border-b-2 border-indigo-500 -mb-px" data-i18n="tabWebsite">Website Builder</button>
+      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px" data-i18n="tabVideo">Video Generator</button>
     </div>
 
-    <aside class="w-72 glass-sidebar p-8 flex flex-col shadow-2xl">
-        <div class="mb-12">
-            <h2 class="text-2xl shadi-logo tracking-tighter">SHADI BUILDER</h2>
-            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.2em] font-black">Manus-Vision-X Engine</p>
-        </div>
-        <div class="space-y-3">
-            <div id="creditsBox" class="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10">
-                <p class="text-xs text-indigo-400 font-bold mb-1">النقاط</p>
-                <p id="creditsCount" class="text-lg font-black text-white">--</p>
-                <p class="text-[10px] text-slate-500">نقطة لكل موقع (10 نقاط)</p>
+    <div id="panelWebsite" class="flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto flex-1 flex flex-col">
+        <div class="glass-card rounded-3xl p-4 mb-4 flex-1 flex flex-col min-h-0">
+          <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 mb-4 min-h-[120px]"></div>
+          <textarea id="desc" class="w-full h-28 bg-transparent resize-none outline-none p-4 text-base placeholder-slate-600" placeholder="Describe your site..." data-i18n-placeholder="promptPlaceholder"></textarea>
+          <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/5">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="text-xs font-bold text-slate-500" data-i18n="statusReady">Ready</span>
+              <button type="button" id="enhanceBtn" class="text-xs font-bold px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10" data-i18n="enhance">Enhance Prompt</button>
             </div>
+            <button type="button" id="buildBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate</button>
+          </div>
         </div>
-        <button onclick="logout()" class="mt-auto group flex items-center justify-center gap-3 text-slate-500 hover:text-white transition-all py-3 border border-white/5 rounded-xl hover:bg-white/5">
-            <span class="text-sm font-bold">تسجيل خروج</span>
-        </button>
-    </aside>
-
-    <main class="flex-1 p-8 overflow-y-auto relative">
-        <div class="max-w-5xl mx-auto">
-            <header class="mb-10 text-center mt-10">
-                <h1 class="text-6xl font-black mb-4 tracking-tight">ابني مستقبلك <span class="text-indigo-500">بلمحة</span></h1>
-                <p class="text-slate-500 text-lg">أدخل وصف الموقع الذي تتخيله، وسأقوم ببنائه وتجهيزه لك في ثوانٍ.</p>
-            </header>
-
-            <div class="glass-card rounded-[2.5rem] p-3 shadow-2xl mb-10">
-                <textarea id="desc" class="w-full h-40 bg-transparent p-6 text-xl outline-none resize-none placeholder:text-slate-700 font-medium" placeholder="مثال: ابني لي بنك إلكتروني عصري بستايل نيون بنفسجي..."></textarea>
-                <div id="enhanceHint" class="hidden mx-4 mb-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
-                <div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-white/5 rounded-[2rem] border border-white/5">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2 text-slate-500">
-                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                            <span class="text-xs font-bold uppercase tracking-widest">System Ready</span>
-                        </div>
-                        <button type="button" id="enhanceBtn" onclick="enhancePrompt()" class="text-xs font-bold px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition">
-                            ✨ تحسين الوصف (Prompt Enhancer)
-                        </button>
-                    </div>
-                    <button id="buildBtn" onclick="gen()" class="btn-premium px-10 py-4 rounded-2xl font-black text-white text-sm">
-                        🚀 ابدأ السحر الآن
-                    </button>
-                </div>
-            </div>
-
-            <div id="previewContainer" class="hidden">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-black uppercase tracking-widest">Live Environment</div>
-                    <button id="downloadBtn" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-xl text-xs font-bold transition">📦 تحميل ملفات (ZIP)</button>
-                </div>
-                <div class="rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl">
-                    <iframe id="preview" class="w-full h-[70vh] bg-white border-none"></iframe>
-                </div>
-            </div>
+        <div id="previewWrap" class="hidden glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between p-4 border-b border-white/5">
+            <span class="text-xs font-bold text-green-400 uppercase tracking-wider" data-i18n="liveEnv">Live</span>
+            <a id="downloadBtn" href="#" class="text-xs font-bold px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" data-i18n="download">Download ZIP</a>
+          </div>
+          <iframe id="preview" class="w-full flex-1 bg-white border-0" src="about:blank" title="Live Preview"></iframe>
         </div>
-    </main>
+      </div>
+    </div>
 
-    <script>
-        // تعريف واحد فقط للسوبابيز لمنع أخطاء الـ Console
-        const _supabase = window.supabase.createClient(
-            "https://xfzelmpwthqywidyjgzo.supabase.co",
-            "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H"
-        );
+    <div id="panelVideo" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="glass-card rounded-3xl p-6">
+          <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
+          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-4">
+            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="duration">Duration</label>
+            <select id="videoDuration" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="5">5 sec</option>
+              <option value="10">10 sec</option>
+              <option value="20">20 sec</option>
+              <option value="30">30 sec</option>
+            </select>
+          </div>
+          <div class="glass-card rounded-2xl p-4">
+            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="style">Visual Style</label>
+            <select id="videoStyle" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="realistic">Realistic</option>
+              <option value="cinematic">Cinematic</option>
+              <option value="3d_cartoon">3D Cartoon</option>
+              <option value="anime">Anime</option>
+              <option value="digital_art">Digital Art</option>
+            </select>
+          </div>
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-end">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
+              <span class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</span>
+            </label>
+            <p class="text-[10px] text-slate-500 mt-1" data-i18n="voiceOverHint">Add AI-generated speech</p>
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
+        </div>
+        <div id="videoPreviewWrap" class="hidden glass-card rounded-2xl p-4">
+          <p class="text-sm text-slate-400 mb-2" data-i18n="liveEnv">Live</p>
+          <div id="videoPreviewPlaceholder" class="rounded-xl bg-white/5 border border-white/10 flex items-center justify-center min-h-[240px] text-slate-500 text-sm">
+            Video will appear here when ready. (Engine hook: Runway/Pika)
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            const { data } = await _supabase.auth.getSession();
-            if (!data?.session) { window.location.replace("/login.html"); return; }
-            localStorage.setItem("token", data.session.access_token);
-            loadCredits();
+  <script>
+    (function(){
+      var l = localStorage.getItem("lang") || "ar";
+      window.__locale = l;
+      try { document.documentElement.lang = l === "ar" ? "ar" : "en"; document.documentElement.dir = l === "ar" ? "rtl" : "ltr"; } catch(_) {}
+    })();
+    (function() {
+      var SUPABASE_URL = "https://xfzelmpwthqywidyjgzo.supabase.co";
+      var SUPABASE_ANON = "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H";
+      try {
+        if (window.__SUPABASE_URL) SUPABASE_URL = window.__SUPABASE_URL;
+        if (window.__SUPABASE_ANON) SUPABASE_ANON = window.__SUPABASE_ANON;
+      } catch (_) {}
+      window._supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    })();
+
+    var token = localStorage.getItem("token");
+    var currentLang = (localStorage.getItem("lang") || "ar");
+    var sessionProjects = [];
+
+    function setLang(lang) {
+      currentLang = lang;
+      window.__locale = lang;
+      document.documentElement.lang = lang === "ar" ? "ar" : "en";
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      localStorage.setItem("lang", lang);
+      document.querySelectorAll("[data-i18n]").forEach(function(el) {
+        var v = __t(el.getAttribute("data-i18n"));
+        if (v) el.textContent = v;
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(function(el) {
+        var v = __t(el.getAttribute("data-i18n-placeholder"));
+        if (v) el.placeholder = v;
+      });
+      document.getElementById("langToggle").textContent = lang === "ar" ? "EN / ع" : "EN / ع";
+    }
+
+    document.getElementById("langToggle").addEventListener("click", function() {
+      setLang(currentLang === "ar" ? "en" : "ar");
+    });
+
+    function addChatLine(text, isUser) {
+      var area = document.getElementById("chatArea");
+      var div = document.createElement("div");
+      div.className = isUser ? "chat-bubble ml-8 mr-0 p-4" : "glass-card rounded-2xl p-4 mr-8 ml-0";
+      div.textContent = text;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function loadCredits() {
+      if (!token) return;
+      fetch("/api/v1/users/me", { headers: { "Authorization": "Bearer " + token } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var el = document.getElementById("creditsCount");
+          if (d.ok && typeof d.credits === "number") el.textContent = d.credits;
+          else if (d.ok) el.textContent = "∞";
+          else el.textContent = "—";
+        })
+        .catch(function() { document.getElementById("creditsCount").textContent = "—"; });
+    }
+
+    function loadHistory() {
+      if (!token) return;
+      fetch("/api/v1/projects/list", { headers: { "Authorization": "Bearer " + token } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var list = (d.projects || []).concat(sessionProjects);
+          list = list.sort(function(a,b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+          var el = document.getElementById("historyList");
+          if (!list.length) {
+            el.innerHTML = "<p class=\"py-4 text-center text-slate-600\">" + __t("noHistory") + "</p>";
+            return;
+          }
+          el.innerHTML = list.slice(0, 20).map(function(p) {
+            var name = (p.name || p.id || "Project").slice(0, 28);
+            var url = p.previewUrl || ("/generated/" + p.id + "/index.html");
+            return "<a href=\"" + url + "\" target=\"_blank\" class=\"history-item block py-2 px-2 rounded-xl text-slate-400 hover:text-white truncate\" title=\"" + name + "\">" + name + "</a>";
+          }).join("");
+        })
+        .catch(function() {});
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      currentLang = localStorage.getItem("lang") || "ar";
+      setLang(currentLang);
+      window._supabase.auth.getSession().then(function(_ref) {
+        var data = _ref.data;
+        if (!data || !data.session) {
+          window.location.replace("/login.html");
+          return;
+        }
+        token = data.session.access_token;
+        localStorage.setItem("token", token);
+        loadCredits();
+        loadHistory();
+      });
+    });
+
+    document.getElementById("tabWebsite").addEventListener("click", function() {
+      document.getElementById("panelWebsite").classList.remove("hidden");
+      document.getElementById("panelVideo").classList.add("hidden");
+      this.classList.add("tab-active");
+      this.classList.remove("text-slate-500");
+      document.getElementById("tabVideo").classList.remove("tab-active");
+      document.getElementById("tabVideo").classList.add("text-slate-500");
+    });
+    document.getElementById("tabVideo").addEventListener("click", function() {
+      document.getElementById("panelVideo").classList.remove("hidden");
+      document.getElementById("panelWebsite").classList.add("hidden");
+      this.classList.add("tab-active");
+      this.classList.remove("text-slate-500");
+      document.getElementById("tabWebsite").classList.remove("tab-active");
+      document.getElementById("tabWebsite").classList.add("text-slate-500");
+    });
+
+    document.getElementById("enhanceBtn").addEventListener("click", function() {
+      var desc = document.getElementById("desc").value.trim();
+      if (!desc) { alert(__t("errorPrompt")); return; }
+      var btn = this;
+      var hint = document.getElementById("enhanceHint");
+      btn.disabled = true;
+      btn.textContent = __t("enhancing");
+      hint.classList.add("hidden");
+      fetch("/api/v1/brain/enhance-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ description: desc })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok && d.enhanced) {
+            document.getElementById("desc").value = d.enhanced;
+            if (d.suggestions) { hint.textContent = __t("suggestion") + ": " + d.suggestions; hint.classList.remove("hidden"); }
+          } else alert(d.error || "Could not enhance.");
+        })
+        .catch(function(e) { alert(e.message); })
+        .finally(function() { btn.disabled = false; btn.textContent = __t("enhance"); });
+    });
+
+    document.getElementById("buildBtn").addEventListener("click", function() {
+      var description = document.getElementById("desc").value.trim();
+      if (!description) { alert(__t("errorPrompt")); return; }
+      addChatLine(description, true);
+      var overlay = document.getElementById("loadingOverlay");
+      var status = document.getElementById("loadingStatus");
+      overlay.style.display = "flex";
+      var steps = [__t("statusAnalyzing"), __t("statusDesigning"), __t("statusBuilding"), __t("statusFinal")];
+      var i = 0;
+      var timer = setInterval(function() { if (i < steps.length) status.textContent = steps[i++]; }, 1400);
+      fetch("/api/v1/brain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ description: description })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          clearInterval(timer);
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Generation failed");
+          loadCredits();
+          sessionProjects.push({ id: d.projectId, name: (d.details && d.details.projectName) || __t("newProject"), createdAt: Date.now(), previewUrl: d.previewUrl });
+          loadHistory();
+          var url = d.previewUrl || "/generated/" + d.projectId + "/index.html";
+          document.getElementById("preview").src = url;
+          document.getElementById("previewWrap").classList.remove("hidden");
+          document.getElementById("downloadBtn").href = "/api/v1/projects/export/" + d.projectId;
+          addChatLine(__t("openPreview") + ": " + url, false);
+        })
+        .catch(function(err) {
+          clearInterval(timer);
+          overlay.style.display = "none";
+          alert(err.message || __t("errorNoCredits"));
         });
+    });
 
-        async function loadCredits() {
-            try {
-                const r = await fetch("/api/v1/users/me", { headers: { "Authorization": "Bearer " + localStorage.getItem("token") } });
-                const d = await r.json();
-                if (d.ok && d.credits != null) document.getElementById("creditsCount").textContent = d.credits;
-                else if (d.ok) document.getElementById("creditsCount").textContent = "∞";
-            } catch (_) { document.getElementById("creditsCount").textContent = "—"; }
-        }
+    document.getElementById("genVideoBtn").addEventListener("click", function() {
+      var description = document.getElementById("videoDesc").value.trim();
+      if (!description) { alert(__t("errorPrompt")); return; }
+      var duration = parseInt(document.getElementById("videoDuration").value, 10) || 10;
+      var style = document.getElementById("videoStyle").value || "realistic";
+      var voiceOver = document.getElementById("voiceOver").checked;
+      var overlay = document.getElementById("loadingOverlay");
+      var status = document.getElementById("loadingStatus");
+      overlay.style.display = "flex";
+      status.textContent = "Creating video job...";
+      fetch("/api/v1/videos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ description: description, durationSeconds: duration, style: style, voiceOver: voiceOver })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Video creation failed");
+          loadCredits();
+          document.getElementById("videoPreviewWrap").classList.remove("hidden");
+          document.getElementById("videoPreviewPlaceholder").textContent = "Video job " + (d.videoId || "") + " created. (Connect Runway/Pika for output)";
+        })
+        .catch(function(err) {
+          overlay.style.display = "none";
+          alert(err.message || __t("errorNoCredits"));
+        });
+    });
 
-        async function enhancePrompt() {
-            const desc = document.getElementById("desc").value.trim();
-            if (!desc) { alert("اكتب وصفاً أولاً ثم اضغط تحسين الوصف"); return; }
-            const btn = document.getElementById("enhanceBtn");
-            const hint = document.getElementById("enhanceHint");
-            btn.disabled = true;
-            btn.textContent = "جاري التحسين...";
-            hint.classList.add("hidden");
-            try {
-                const r = await fetch("/api/v1/brain/enhance-prompt", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") },
-                    body: JSON.stringify({ description: desc })
-                });
-                const d = await r.json();
-                if (d.ok && d.enhanced) {
-                    document.getElementById("desc").value = d.enhanced;
-                    if (d.suggestions) { hint.textContent = "اقتراحنا: " + d.suggestions; hint.classList.remove("hidden"); }
-                } else alert(d.error || "لم يتم تحسين الوصف");
-            } catch (e) { alert("فشل الاتصال: " + e.message); }
-            btn.disabled = false;
-            btn.textContent = "✨ تحسين الوصف (Prompt Enhancer)";
-        }
-
-        async function gen() {
-            const description = document.getElementById("desc").value.trim();
-            if(!description) return alert("اكتب وصفاً أولاً!");
-
-            const overlay = document.getElementById("loadingOverlay");
-            const statusText = document.getElementById("loadingStatus");
-            const token = localStorage.getItem("token");
-
-            overlay.style.display = "flex";
-            
-            const steps = ["🔍 تحليل الفكرة...", "🎨 جاري التصميم...", "🏗️ بناء الكود...", "✨ اللمسات النهائية..."];
-            let i = 0;
-            const timer = setInterval(() => { if(i < steps.length) statusText.innerText = steps[i++]; }, 1500);
-
-            try {
-                // تعديل الرابط ليتوافق مع server.js
-                const r = await fetch("/api/v1/brain", { 
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                    body: JSON.stringify({ description, prompt: description }) 
-                });
-
-                const d = await r.json();
-                if(!d.ok) throw new Error(d.error || "خطأ في التوليد");
-                loadCredits();
-
-                const iframe = document.getElementById("preview");
-                iframe.src = d.previewUrl || `/generated/${d.projectId}/index.html`;
-                document.getElementById("previewContainer").classList.remove("hidden");
-                
-                document.getElementById("downloadBtn").onclick = () => {
-                    window.location.href = `/api/v1/projects/export/${d.projectId}`;
-                };
-
-                setTimeout(() => { 
-                    overlay.style.display = "none"; 
-                    clearInterval(timer);
-                    iframe.scrollIntoView({ behavior: 'smooth' });
-                }, 1000);
-
-            } catch(err) {
-                overlay.style.display = "none";
-                clearInterval(timer);
-                alert("❌ فشل: " + err.message);
-            }
-        }
-
-        async function logout() {
-            await _supabase.auth.signOut();
-            localStorage.clear();
-            window.location.href = "/login.html";
-        }
-    </script>
+    function logout() {
+      window._supabase.auth.signOut().then(function() {
+        localStorage.clear();
+        window.location.href = "/login.html";
+      });
+    }
+  </script>
 </body>
 </html>

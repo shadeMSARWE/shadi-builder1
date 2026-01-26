@@ -65,6 +65,18 @@ app.post("/api/v1/workspace/create", (req, res) => {
 });
 
 /* =========================
+   HEALTH (Railway / production)
+========================= */
+app.get("/health", (_, res) => {
+  res.status(200).json({
+    ok: true,
+    service: "shadi-ai-builder",
+    ts: new Date().toISOString(),
+    paypal: !!(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET)
+  });
+});
+
+/* =========================
    FRONTEND ROUTES
 ========================= */
 const page = name => (_, res) => {
@@ -100,6 +112,7 @@ app.use((req, res) => {
 ========================= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("\n🚀 SHADI AI BUILDER IS LIVE");
-  console.log(`🌐 URL: http://0.0.0.0:${PORT}\n`);
+  console.log("\n🚀 Shadi AI — Production-ready SaaS");
+  console.log(`🌐 http://0.0.0.0:${PORT}`);
+  console.log(`   Health: /health | PayPal: ${process.env.PAYPAL_CLIENT_ID ? "active" : "configure PAYPAL_*"}\n`);
 });

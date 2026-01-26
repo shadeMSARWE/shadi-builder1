@@ -75,19 +75,32 @@ router.post("/", auth, async (req, res) => {
         if (css) fs.writeFileSync(path.join(projectPath, "styles.css"), css, "utf8");
         if (js) fs.writeFileSync(path.join(projectPath, "script.js"), js, "utf8");
 
-        // 6. خصم النقاط (Supabase) و/أو عداد الاستخدام المحلي
+        // 6. تسجيل المشروع في سجل المشاريع لعرضه في الـ sidebar
+        const dataDir = path.join(__dirname, "../../data/projects");
+        const dbFile = path.join(dataDir, "projects.json");
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        const db = fs.existsSync(dbFile) ? JSON.parse(fs.readFileSync(dbFile, "utf8")) : {};
+        const projectName = analysis.title || "New Project";
+        db[projectId] = {
+            id: projectId,
+            userId,
+            name: projectName,
+            createdAt: Date.now(),
+            previewUrl: `/generated/${projectId}/index.html`,
+            pages: [{ id: "home", name: "Home", sections: ["Hero", "Features", "CTA"] }],
+            history: []
+        };
+        fs.writeFileSync(dbFile, JSON.stringify(db, null, 2));
+
+        // 7. خصم النقاط وعداد الاستخدام
         await credits.deductSite(userId).catch(() => {});
         users.incrementUsage(userId);
 
-        // 7. الرد النهائي (المسارات الآن صحيحة 100% للعرض)
         res.json({
             ok: true,
             projectId: projectId,
             previewUrl: `/generated/${projectId}/index.html`,
-            details: {
-                projectName: analysis.title || "New Project",
-                status: "Completed"
-            }
+            details: { projectName, status: "Completed" }
         });
 
     } catch (error) {
