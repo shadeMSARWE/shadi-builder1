@@ -6,6 +6,7 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const videos = require("../core/videos/service");
 const credits = require("../core/credits/service");
+const pricing = require("../config/videoPricing");
 
 const router = express.Router();
 
@@ -17,28 +18,31 @@ router.get("/spec", (req, res) => {
   res.json({
     ok: true,
     durationsSeconds: videos.DURATIONS_SEC || [5, 10, 20, 30],
-    styles: (videos.STYLE_LIST || []).length ? videos.STYLE_LIST : [
-      { id: "realistic", nameEn: "Realistic", nameAr: "واقعي" },
-      { id: "cinematic", nameEn: "Cinematic", nameAr: "سینمائي" },
-      { id: "3d_cartoon", nameEn: "3D Cartoon", nameAr: "كرتون 3D" },
-      { id: "anime", nameEn: "Anime", nameAr: "أنمي" },
-      { id: "digital_art", nameEn: "Digital Art", nameAr: "فن رقمي" }
-    ]
+    formats: pricing.FORMATS,
+    styles: pricing.STYLES,
+    music: pricing.MUSIC,
+    voiceLanguages: pricing.VOICE_LANGS,
+    voiceOverCredits: pricing.VOICEOVER_CREDITS,
+    autoAudioSyncCredits: pricing.AUTO_SYNC_CREDITS
   });
 });
 
 /**
  * POST /api/v1/videos
- * Body: { description, durationSeconds, style, voiceOver }
+ * Body: { description, durationSeconds, style, voiceOver, voiceLanguage, bgMusic, autoAudioSync, format }
  * Pricing by duration + style + voice-over (see config/videoPricing.js)
  */
 router.post("/", auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { description, durationSeconds, style, voiceOver } = req.body;
+    const { description, durationSeconds, style, voiceOver, voiceLanguage, bgMusic, autoAudioSync, format } = req.body;
 
-    const cost = (videos.getVideoCost && videos.getVideoCost(Number(durationSeconds) || 10, style || "realistic", !!voiceOver))
-      || 40;
+    const cost = pricing.getVideoCost(
+      Number(durationSeconds) || 10,
+      (style || "realistic"),
+      !!voiceOver,
+      { voiceLanguage, bgMusic, autoAudioSync, format }
+    );
     const userCredits = await credits.getCredits(userId).catch(() => 0);
     if (userCredits < cost) {
       return res.status(403).json({
@@ -52,7 +56,11 @@ router.post("/", auth, async (req, res) => {
       description: description || "",
       durationSeconds: durationSeconds || 10,
       style: style || "realistic",
-      voiceOver: !!voiceOver
+      voiceOver: !!voiceOver,
+      voiceLanguage: voiceLanguage || "ar",
+      bgMusic: bgMusic || "none",
+      autoAudioSync: !!autoAudioSync,
+      format: format || "16:9"
     });
 
     if (!result.ok) {

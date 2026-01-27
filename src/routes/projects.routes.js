@@ -103,6 +103,37 @@ router.get("/export/:id", auth, (req, res) => {
 });
 
 /* =========================
+   LIVE EDITOR: SAVE GENERATED OUTPUT
+   - Used by the Manus-clone live editor to persist edits from iframe
+========================= */
+router.post("/save/:id", auth, (req, res) => {
+  try {
+    const id = req.params.id;
+    const { html, css, js } = req.body || {};
+
+    const db = readDB();
+    const project = db[id];
+    if (!project || project.userId !== req.user.id) {
+      return res.status(404).json({ ok: false, error: "Project not found" });
+    }
+
+    const projectDir = path.join(GEN_DIR, id);
+    if (!fs.existsSync(projectDir)) fs.mkdirSync(projectDir, { recursive: true });
+    if (typeof html === "string") fs.writeFileSync(path.join(projectDir, "index.html"), html, "utf8");
+    if (typeof css === "string") fs.writeFileSync(path.join(projectDir, "styles.css"), css, "utf8");
+    if (typeof js === "string") fs.writeFileSync(path.join(projectDir, "script.js"), js, "utf8");
+
+    project.updatedAt = Date.now();
+    writeDB(db);
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("[Projects] save error:", e);
+    res.status(500).json({ ok: false, error: "Save failed" });
+  }
+});
+
+/* =========================
    LIST USER PROJECTS
 ========================= */
 router.get("/list", auth, (req, res) => {

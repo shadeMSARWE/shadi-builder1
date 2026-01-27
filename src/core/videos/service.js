@@ -1,17 +1,28 @@
 /**
- * Video generation engine – precise controls for Manus-style SaaS
- * Durations: 5s, 10s, 20s, 30s
- * Styles: Realistic, Cinematic, 3D Cartoon, Anime, Digital Art
- * Voice-over: optional AI speech
+ * Video generation engine – Manus-clone controls
+ * - Duration: 5/10/20/30s
+ * - Style: Realistic/Cinematic/3D Cartoon/Anime/Digital Art
+ * - Audio: Voice-over language + background music + auto audio sync
+ * - Format: 16:9 or 9:16
  */
 const path = require("path");
 const fs = require("fs");
 const { GENERATED_DIR } = require("../../config/paths");
-const { DURATIONS_SEC, STYLES: STYLE_LIST, getVideoCost } = require("../../config/videoPricing");
+const {
+  DURATIONS_SEC,
+  STYLES: STYLE_LIST,
+  MUSIC,
+  FORMATS,
+  VOICE_LANGS,
+  getVideoCost
+} = require("../../config/videoPricing");
 
 const MIN_DURATION_SEC = 5;
 const MAX_DURATION_SEC = 30;
 const STYLES = STYLE_LIST.map((s) => s.id);
+const MUSIC_IDS = MUSIC.map((m) => m.id);
+const FORMAT_IDS = FORMATS.map((f) => f.id);
+const VOICE_LANG_IDS = VOICE_LANGS.map((l) => l.id);
 
 function getGeneratedDir() {
   return GENERATED_DIR;
@@ -30,6 +41,10 @@ function validateSpec(spec) {
   const style = (spec.style || "realistic").toLowerCase().replace(/\s+/g, "_");
   const desc = (spec.description || "").trim();
   const voiceOver = !!spec.voiceOver;
+  const voiceLanguage = (spec.voiceLanguage || "ar").toLowerCase();
+  const bgMusic = (spec.bgMusic || "none").toLowerCase();
+  const autoAudioSync = !!spec.autoAudioSync;
+  const format = (spec.format || "16:9").toLowerCase();
 
   if (!Number.isFinite(duration) || !DURATIONS_SEC.includes(duration)) {
     return { ok: false, error: `Duration must be one of: ${DURATIONS_SEC.join(", ")} seconds` };
@@ -37,16 +52,34 @@ function validateSpec(spec) {
   if (!STYLES.includes(style)) {
     return { ok: false, error: `Style must be one of: ${STYLES.join(", ")}` };
   }
+  if (!VOICE_LANG_IDS.includes(voiceLanguage)) {
+    return { ok: false, error: `Voice language must be one of: ${VOICE_LANG_IDS.join(", ")}` };
+  }
+  if (!MUSIC_IDS.includes(bgMusic)) {
+    return { ok: false, error: `Background music must be one of: ${MUSIC_IDS.join(", ")}` };
+  }
+  if (!FORMAT_IDS.includes(format)) {
+    return { ok: false, error: `Format must be one of: ${FORMAT_IDS.join(", ")}` };
+  }
   if (!desc) {
     return { ok: false, error: "Video description is required" };
   }
-  const creditsRequired = getVideoCost(duration, style, voiceOver);
+  const creditsRequired = getVideoCost(duration, style, voiceOver, {
+    voiceLanguage,
+    bgMusic,
+    autoAudioSync,
+    format
+  });
   return {
     ok: true,
     durationSeconds: duration,
     style,
     description: desc,
     voiceOver,
+    voiceLanguage,
+    bgMusic,
+    autoAudioSync,
+    format,
     creditsRequired
   };
 }
@@ -71,6 +104,10 @@ function createVideoJob(userId, spec) {
     style: validated.style,
     description: validated.description,
     voiceOver: !!validated.voiceOver,
+    voiceLanguage: validated.voiceLanguage,
+    bgMusic: validated.bgMusic,
+    autoAudioSync: validated.autoAudioSync,
+    format: validated.format,
     creditsRequired: validated.creditsRequired,
     status: "pending",
     createdAt: new Date().toISOString(),
