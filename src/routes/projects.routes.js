@@ -104,7 +104,7 @@ router.get("/export/:id", auth, (req, res) => {
 
 /* =========================
    LIVE EDITOR: SAVE GENERATED OUTPUT
-   - Used by the Manus-clone live editor to persist edits from iframe
+   - Used by the FERDOUS Live Editor to persist edits from iframe
 ========================= */
 router.post("/save/:id", auth, (req, res) => {
   try {

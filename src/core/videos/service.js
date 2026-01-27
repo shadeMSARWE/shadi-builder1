@@ -1,5 +1,5 @@
 /**
- * Video generation engine – Manus-clone controls
+ * Video generation engine – FERDOUS Studio controls
  * - Duration: 5/10/20/30s
  * - Style: Realistic/Cinematic/3D Cartoon/Anime/Digital Art
  * - Audio: Voice-over language + background music + auto audio sync

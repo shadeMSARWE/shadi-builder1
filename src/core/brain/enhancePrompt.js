@@ -1,5 +1,5 @@
 /**
- * Prompt Enhancer – تحسين وصف المستخدم قبل التوليد لنتائج أفضل (مثل Manus)
+ * Prompt Enhancer – تحسين وصف المستخدم قبل التوليد لنتائج أفضل (FERDOUS AI)
  */
 const openai = require("../../utils/openai");
 

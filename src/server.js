@@ -49,6 +49,7 @@ app.use("/api/v1/plans", require("./routes/plans.routes"));
 app.use("/api/v1/users", require("./routes/users.routes"));
 app.use("/api/v1/payments", require("./routes/payments.routes"));
 app.use("/api/v1/videos", require("./routes/videos.routes"));
+app.use("/api/v1/studio", require("./routes/studio.routes"));
 
 /* =========================
    WORKSPACE API
@@ -112,7 +113,7 @@ app.use((req, res) => {
 ========================= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("\n🚀 Shadi AI — Production-ready SaaS");
+  console.log("\n🚀 FERDOUS AI — Premium AI Studio");
   console.log(`🌐 http://0.0.0.0:${PORT}`);
   console.log(`   Health: /health | PayPal: ${process.env.PAYPAL_CLIENT_ID ? "active" : "configure PAYPAL_*"}\n`);
 });

@@ -1,11 +1,11 @@
 /**
- * i18n – Arabic & English for Manus-style SaaS UI
+ * i18n – Arabic & English for FERDOUS AI
  * Usage: window.__t('key') or __t('key')
  */
 window.__locale = window.__locale || 'ar';
 window.__strings = {
   ar: {
-    appName: 'شادي AI',
+    appName: 'FERDOUS AI',
     tagline: 'منصة SaaS الذكية',
     credits: 'النقاط',
     creditsHint: '10 نقطة/موقع',
@@ -42,7 +42,7 @@ window.__strings = {
     openPreview: 'فتح المعاينة',
   },
   en: {
-    appName: 'Shadi AI',
+    appName: 'FERDOUS AI',
     tagline: 'Pro SaaS Platform',
     credits: 'Credits',
     creditsHint: '10/site',

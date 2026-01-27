@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shadi AI | Pro SaaS Platform</title>
+  <title>FERDOUS AI Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="/i18n.js"></script>
-  <link rel="stylesheet" href="/manus.css">
-  <script src="/manus-ui.js"></script>
+  <link rel="stylesheet" href="/ferdous.css">
+  <script src="/ferdous-ui.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -56,100 +56,129 @@
     }
     .spinner { width: 56px; height: 56px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .tab-active { background: var(--glass); color: var(--text); border-color: var(--primary); }
+    /* legacy tab styles removed (FERDOUS uses gold underline) */
     .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
     .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
     .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
     #preview { min-height: 420px; }
   </style>
 </head>
-<body class="manus flex h-screen">
+<body class="ferdous flex h-screen">
   <div id="loadingOverlay">
     <div class="spinner mb-6"></div>
     <p id="loadingStatus" class="text-lg font-semibold gradient-text">Loading...</p>
   </div>
 
-  <aside class="m-float-sidebar p-4">
+  <aside class="f-sidebar p-4">
     <div class="h-full flex flex-col">
       <div class="px-2 py-2 flex items-center justify-between">
         <div>
-          <div class="text-sm font-extrabold" style="letter-spacing:-0.02em">manus</div>
-          <div class="text-[11px] m-muted" data-i18n="tagline">Pro SaaS Platform</div>
+          <div class="text-base f-brand">FERDOUS AI</div>
+          <div class="text-[11px] f-muted">Premium AI Studio</div>
         </div>
-        <div class="text-[11px] m-muted">Manus 1.6 Lite</div>
+        <div class="text-[11px] f-muted">Studio</div>
       </div>
 
-      <div class="m-surface p-4 mt-3">
-        <div class="text-[12px] font-bold m-muted" data-i18n="credits">Credits</div>
+      <div class="f-glass p-4 mt-3">
+        <div class="text-[12px] font-bold f-muted">Credits</div>
         <div class="text-2xl font-extrabold mt-1" id="creditsCount">--</div>
-        <div class="text-[11px] m-muted mt-1" data-i18n="creditsHint">10/site</div>
-        <a class="inline-block mt-2 text-[12px] font-bold" style="color:var(--m-primary)" href="/pricing.html" data-i18n="topUp">Top Up</a>
+        <div class="text-[11px] f-muted mt-1">Credits auto-sync with Supabase</div>
+        <a class="inline-block mt-2 text-[12px] font-bold" style="color:var(--f-gold)" href="/pricing.html">Top Up (PayPal)</a>
       </div>
 
       <div class="mt-4 flex-1 overflow-y-auto">
-        <div class="text-[12px] font-bold m-muted mb-2" data-i18n="history">Project History</div>
+        <div class="text-[12px] font-bold f-muted mb-2">History</div>
         <div id="historyList" class="space-y-1 text-[13px]">
-          <div class="m-muted text-center py-6" data-i18n="noHistory">No projects yet</div>
+          <div class="f-muted text-center py-6">No outputs yet</div>
         </div>
       </div>
 
       <div class="mt-3 flex gap-2">
-        <button type="button" id="langToggle" class="m-btn flex-1 py-2 text-xs font-bold">EN / ع</button>
-        <button type="button" onclick="logout()" class="m-btn flex-1 py-2 text-xs font-bold" data-i18n="logout">Log out</button>
+        <button type="button" id="langToggle" class="f-btn flex-1 py-2 text-xs font-bold">EN / ع</button>
+        <button type="button" onclick="logout()" class="f-btn flex-1 py-2 text-xs font-bold">Log out</button>
       </div>
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col min-w-0 overflow-hidden" style="padding-right:320px">
-    <div class="flex border-b border-white/5">
-      <button type="button" id="tabWebsite" class="tab-active px-6 py-4 text-sm font-bold border-b-2 border-indigo-500 -mb-px" data-i18n="tabWebsite">Website Builder</button>
-      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px" data-i18n="tabVideo">Video Generator</button>
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden" style="padding-right:332px">
+    <div class="flex border-b" style="border-color:rgba(255,255,255,0.06)">
+      <button type="button" id="tabWebsite" class="px-6 py-4 text-sm font-extrabold -mb-px" style="border-bottom:2px solid var(--f-gold)">Website</button>
+      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Video</button>
+      <button type="button" id="tabImage" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Image</button>
+      <button type="button" id="tabSocial" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Social</button>
     </div>
 
     <div id="panelWebsite" class="flex-1 flex flex-col overflow-hidden p-6">
       <div class="max-w-4xl w-full mx-auto flex-1 flex flex-col">
-        <div class="m-surface p-4 mb-4 flex-1 flex flex-col min-h-0">
+        <div class="f-glass p-4 mb-4 flex-1 flex flex-col min-h-0">
           <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 mb-4 min-h-[120px]"></div>
-          <div class="m-gradient-border rounded-[22px]">
-            <div class="m-inputbar p-3">
-              <textarea id="desc" class="w-full h-20 bg-transparent resize-none outline-none px-2 text-base placeholder-slate-500" placeholder="Describe your site..." data-i18n-placeholder="promptPlaceholder"></textarea>
+          <div class="f-inputwrap p-3">
+              <textarea id="desc" class="w-full h-20 bg-transparent resize-none outline-none px-2 text-base placeholder-slate-500" placeholder="Describe your landing page..." data-i18n-placeholder="promptPlaceholder"></textarea>
               <div class="flex items-center justify-between pt-2">
                 <div class="flex gap-2">
-                  <button type="button" id="enhanceBtn" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="enhance">Enhance Prompt</button>
-                  <button type="button" id="editModeBtn" class="m-btn px-3 py-2 text-xs font-bold">Live Editor</button>
-                  <button type="button" id="saveEditsBtn" class="m-btn px-3 py-2 text-xs font-bold hidden">Save</button>
+                  <button type="button" id="enhanceBtn" class="f-btn px-3 py-2 text-xs font-bold">Enhance</button>
+                  <button type="button" id="editModeBtn" class="f-btn px-3 py-2 text-xs font-bold">Live Editor</button>
+                  <button type="button" id="saveEditsBtn" class="f-btn px-3 py-2 text-xs font-bold hidden">Save</button>
                 </div>
-                <button type="button" id="buildBtn" class="m-btn m-btn-primary px-6 py-2 text-xs font-extrabold" data-i18n="generate">Generate</button>
+                <button type="button" id="buildBtn" class="f-btn f-btn-primary px-6 py-2 text-xs font-extrabold">Generate</button>
               </div>
-            </div>
           </div>
           <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
           <div class="mt-3 flex flex-wrap gap-2">
-            <button type="button" class="m-chip" onclick="insertHint('إنشاء موقع ويب')">إنشاء موقع ويب</button>
-            <button type="button" class="m-chip" onclick="insertHint('تطوير تطبيق')">تطوير تطبيق</button>
-            <button type="button" class="m-chip" onclick="insertHint('تصميم')">تصميم</button>
-            <button type="button" class="m-chip" onclick="insertHint('المزيد')">المزيد</button>
+            <button type="button" class="f-chip" onclick="insertHint('Landing page for a premium brand with strong CTA and pricing section')">Preset: Landing</button>
+            <button type="button" class="f-chip" onclick="insertHint('Add FAQ, testimonials, and clear benefits list')">Preset: Conversion</button>
+            <button type="button" class="f-chip" onclick="insertHint('Use dark + gold luxury palette, minimal layout, spacious typography')">Preset: Luxury</button>
           </div>
         </div>
-        <div id="previewWrap" class="hidden m-surface overflow-hidden flex flex-col">
-          <div class="flex items-center justify-between p-3 border-b" style="border-color:var(--m-border)">
-            <span class="text-[12px] font-bold m-muted" data-i18n="preview">Live Preview</span>
-            <a id="downloadBtn" href="#" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="download">Download ZIP</a>
+        <div id="previewWrap" class="hidden f-glass overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between p-3 border-b" style="border-color:rgba(255,255,255,0.06)">
+            <span class="text-[12px] font-bold f-muted">Live Preview</span>
+            <a id="downloadBtn" href="#" class="f-btn px-3 py-2 text-xs font-bold">Download ZIP</a>
           </div>
           <iframe id="preview" class="w-full flex-1 bg-white border-0" src="about:blank" title="Live Preview"></iframe>
+        </div>
+
+        <!-- AI Recommendations Panel -->
+        <div id="recoPanel" class="hidden f-glass mt-4 p-4">
+          <div class="flex items-center justify-between">
+            <div class="text-sm font-extrabold" style="color:var(--f-gold)">AI Recommendations</div>
+            <div class="flex gap-2">
+              <button id="autoImproveBtn" class="f-btn px-3 py-2 text-xs font-bold">Auto Improve</button>
+              <button id="genMissingBtn" class="f-btn px-3 py-2 text-xs font-bold">Generate Missing Parts</button>
+            </div>
+          </div>
+          <div id="recoList" class="mt-3 space-y-2 text-sm f-muted"></div>
         </div>
       </div>
     </div>
 
     <div id="panelVideo" class="hidden flex-1 flex flex-col overflow-hidden p-6">
       <div class="max-w-4xl w-full mx-auto space-y-6">
-        <div class="glass-card rounded-3xl p-6">
-          <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
-          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
+        <div class="f-glass p-6">
+          <label class="block text-sm font-bold f-muted mb-2">Prompt</label>
+          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="One prompt → video output"></textarea>
         </div>
+        
+        <!-- Quick Start Presets (1 click) -->
+        <div class="f-glass p-4">
+          <div class="text-sm font-extrabold" style="color:var(--f-gold)">Quick Start</div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetKids">Kids Cartoon Video</button>
+            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetCine">Cinematic Story</button>
+            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetBiz">Business Explainer</button>
+          </div>
+          <div class="mt-2 text-[12px] f-muted">One click configures duration, voice, language, music, and aspect ratio.</div>
+        </div>
+
+        <!-- Visual-first Style Cards -->
+        <div class="f-glass p-4">
+          <div class="text-sm font-extrabold" style="color:var(--f-gold)">Choose Style (Visual)</div>
+          <div id="styleGrid" class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="glass-card rounded-2xl p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="duration">Duration</label>
+            <label class="block text-xs font-bold text-slate-400 mb-2">Duration</label>
             <select id="videoDuration" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
               <option value="5">5 sec</option>
               <option value="10">10 sec</option>
@@ -158,21 +187,18 @@
             </select>
           </div>
           <div class="glass-card rounded-2xl p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="style">Visual Style</label>
-            <select id="videoStyle" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="realistic">Realistic</option>
-              <option value="cinematic">Cinematic</option>
-              <option value="3d_cartoon">3D Cartoon</option>
-              <option value="anime">Anime</option>
-              <option value="digital_art">Digital Art</option>
-            </select>
+            <label class="block text-xs font-bold text-slate-400 mb-2">Aspect Ratio</label>
+            <div class="flex gap-2">
+              <button type="button" class="f-btn px-4 py-2 text-xs font-bold" id="fmt169">16:9</button>
+              <button type="button" class="f-btn px-4 py-2 text-xs font-bold" id="fmt916">9:16</button>
+            </div>
           </div>
           <div class="glass-card rounded-2xl p-4 flex flex-col justify-end">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
-              <span class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</span>
+              <span class="text-sm font-bold">Voice-over</span>
             </label>
-            <p class="text-[10px] text-slate-500 mt-1" data-i18n="voiceOverHint">Add AI-generated speech</p>
+            <p class="text-[10px] text-slate-500 mt-1">High-fidelity voice (provider hook)</p>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -209,15 +235,8 @@
             <p class="text-[10px] text-slate-500 mt-1">Auto-sync VO + music timing</p>
           </div>
         </div>
-        <div class="glass-card rounded-2xl p-4">
-          <label class="block text-xs font-bold text-slate-400 mb-2">Format</label>
-          <div class="flex gap-2">
-            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt169">16:9</button>
-            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt916">9:16</button>
-          </div>
-        </div>
         <div class="flex justify-end">
-          <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
+          <button type="button" id="genVideoBtn" class="f-btn f-btn-primary px-8 py-3 rounded-2xl font-black text-sm">Generate</button>
         </div>
         <div id="videoPreviewWrap" class="hidden glass-card rounded-2xl p-4">
           <p class="text-sm text-slate-400 mb-2" data-i18n="liveEnv">Live</p>
@@ -329,22 +348,24 @@
       });
     });
 
-    document.getElementById("tabWebsite").addEventListener("click", function() {
+    function setActiveTab(tab) {
+      ["Website","Video","Image","Social"].forEach(function(name){
+        var p = document.getElementById("panel" + name);
+        if (p) p.classList.add("hidden");
+        var b = document.getElementById("tab" + name);
+        if (b) { b.classList.remove("f-muted"); b.style.borderBottom = "2px solid transparent"; }
+      });
+      var panel = document.getElementById("panel" + tab);
+      if (panel) panel.classList.remove("hidden");
+      var btn = document.getElementById("tab" + tab);
+      if (btn) { btn.classList.remove("f-muted"); btn.style.borderBottom = "2px solid var(--f-gold)"; }
+    }
+
+    document.getElementById("tabWebsite").addEventListener("click", function() { setActiveTab("Website"); });
       document.getElementById("panelWebsite").classList.remove("hidden");
-      document.getElementById("panelVideo").classList.add("hidden");
-      this.classList.add("tab-active");
-      this.classList.remove("text-slate-500");
-      document.getElementById("tabVideo").classList.remove("tab-active");
-      document.getElementById("tabVideo").classList.add("text-slate-500");
-    });
-    document.getElementById("tabVideo").addEventListener("click", function() {
-      document.getElementById("panelVideo").classList.remove("hidden");
-      document.getElementById("panelWebsite").classList.add("hidden");
-      this.classList.add("tab-active");
-      this.classList.remove("text-slate-500");
-      document.getElementById("tabWebsite").classList.remove("tab-active");
-      document.getElementById("tabWebsite").classList.add("text-slate-500");
-    });
+    document.getElementById("tabVideo").addEventListener("click", function() { setActiveTab("Video"); });
+    if (document.getElementById("tabImage")) document.getElementById("tabImage").addEventListener("click", function(){ setActiveTab("Image"); });
+    if (document.getElementById("tabSocial")) document.getElementById("tabSocial").addEventListener("click", function(){ setActiveTab("Social"); });
 
     document.getElementById("enhanceBtn").addEventListener("click", function() {
       var desc = document.getElementById("desc").value.trim();
@@ -370,7 +391,7 @@
         .finally(function() { btn.disabled = false; btn.textContent = __t("enhance"); });
     });
 
-    // Quick prompt chips (Manus-like)
+    // Quick prompt chips
     function insertHint(text) {
       var t = document.getElementById("desc");
       if (!t) return;
@@ -386,14 +407,71 @@
       var b1 = document.getElementById("fmt169");
       var b2 = document.getElementById("fmt916");
       if (!b1 || !b2) return;
-      if (fmt === "16:9") { b1.classList.add("m-btn-primary"); b2.classList.remove("m-btn-primary"); }
-      else { b2.classList.add("m-btn-primary"); b1.classList.remove("m-btn-primary"); }
+      if (fmt === "16:9") { b1.classList.add("f-btn-primary"); b2.classList.remove("f-btn-primary"); }
+      else { b2.classList.add("f-btn-primary"); b1.classList.remove("f-btn-primary"); }
     }
     if (document.getElementById("fmt169")) document.getElementById("fmt169").addEventListener("click", function(){ setFormat("16:9"); });
     if (document.getElementById("fmt916")) document.getElementById("fmt916").addEventListener("click", function(){ setFormat("9:16"); });
     setFormat("16:9");
 
-    // Live editor (basic Manus-like click-to-edit)
+    // Visual Style Cards (gallery)
+    var STYLE_CARDS = [
+      { id: "cartoon", title: "Cartoon", desc: "Bold shapes, friendly colors", gradient: "linear-gradient(135deg, rgba(243,210,143,0.22), rgba(124,58,237,0.18))" },
+      { id: "anime", title: "Anime", desc: "Expressive, stylized frames", gradient: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(215,180,106,0.14))" },
+      { id: "cinematic", title: "Cinematic", desc: "Lighting + lens look", gradient: "linear-gradient(135deg, rgba(215,180,106,0.18), rgba(15,23,42,0.10))" },
+      { id: "real_life", title: "Real Life", desc: "Natural, realistic footage", gradient: "linear-gradient(135deg, rgba(56,189,248,0.14), rgba(215,180,106,0.14))" },
+      { id: "nature", title: "Nature", desc: "Landscapes + calm", gradient: "linear-gradient(135deg, rgba(34,197,94,0.14), rgba(215,180,106,0.14))" },
+      { id: "kids", title: "Kids", desc: "Safe + playful", gradient: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(124,58,237,0.12))" },
+      { id: "animals", title: "Animals", desc: "Cute wildlife scenes", gradient: "linear-gradient(135deg, rgba(16,185,129,0.14), rgba(243,210,143,0.12))" },
+      { id: "business", title: "Business", desc: "Clean explainer visuals", gradient: "linear-gradient(135deg, rgba(148,163,184,0.14), rgba(215,180,106,0.12))" },
+    ];
+
+    var selectedStyle = "cinematic";
+    function renderStyleCards() {
+      var grid = document.getElementById("styleGrid");
+      if (!grid) return;
+      grid.innerHTML = STYLE_CARDS.map(function(s){
+        var sel = s.id === selectedStyle ? "true" : "false";
+        return (
+          "<div class=\"f-style-card\" data-style=\""+s.id+"\" data-selected=\""+sel+"\">" +
+            "<div class=\"f-style-thumb\" style=\"background:"+s.gradient+"\"></div>" +
+            "<div class=\"p-3\">" +
+              "<div class=\"text-sm font-extrabold\">"+s.title+"</div>" +
+              "<div class=\"text-[12px] f-muted mt-1\">"+s.desc+"</div>" +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+
+      FERDOUS.selectOne(grid, ".f-style-card", function(card){
+        selectedStyle = card.getAttribute("data-style") || "cinematic";
+      });
+    }
+    renderStyleCards();
+
+    // Smart Presets (one click sets everything)
+    function applyPreset(p) {
+      if (!p) return;
+      document.getElementById("videoDuration").value = String(p.durationSeconds);
+      setFormat(p.format);
+      document.getElementById("voiceOver").checked = !!p.voiceOver;
+      if (document.getElementById("voiceLang")) document.getElementById("voiceLang").value = p.voiceLanguage;
+      if (document.getElementById("bgMusic")) document.getElementById("bgMusic").value = p.bgMusic;
+      if (document.getElementById("autoAudioSync")) document.getElementById("autoAudioSync").checked = !!p.autoAudioSync;
+      selectedStyle = p.style;
+      renderStyleCards();
+    }
+
+    var PRESETS = {
+      kids: { durationSeconds: 10, style: "kids", voiceOver: true, voiceLanguage: "ar", bgMusic: "upbeat", autoAudioSync: true, format: "9:16" },
+      cine: { durationSeconds: 20, style: "cinematic", voiceOver: true, voiceLanguage: "en", bgMusic: "cinematic", autoAudioSync: true, format: "16:9" },
+      biz:  { durationSeconds: 30, style: "business", voiceOver: true, voiceLanguage: "en", bgMusic: "lofi", autoAudioSync: true, format: "16:9" },
+    };
+    if (document.getElementById("presetKids")) document.getElementById("presetKids").addEventListener("click", function(){ applyPreset(PRESETS.kids); });
+    if (document.getElementById("presetCine")) document.getElementById("presetCine").addEventListener("click", function(){ applyPreset(PRESETS.cine); });
+    if (document.getElementById("presetBiz")) document.getElementById("presetBiz").addEventListener("click", function(){ applyPreset(PRESETS.biz); });
+
+    // Live editor (click-to-edit)
     var editMode = false;
     var currentProjectId = null;
     function enableIframeEditing() {
@@ -428,11 +506,11 @@
     if (editBtn) editBtn.addEventListener("click", function() {
       editMode = !editMode;
       if (editMode) {
-        editBtn.classList.add("m-btn-primary");
+        editBtn.classList.add("f-btn-primary");
         if (saveBtn) saveBtn.classList.remove("hidden");
         enableIframeEditing();
       } else {
-        editBtn.classList.remove("m-btn-primary");
+        editBtn.classList.remove("f-btn-primary");
         if (saveBtn) saveBtn.classList.add("hidden");
       }
     });
@@ -493,7 +571,7 @@
       var description = document.getElementById("videoDesc").value.trim();
       if (!description) { alert(__t("errorPrompt")); return; }
       var duration = parseInt(document.getElementById("videoDuration").value, 10) || 10;
-      var style = document.getElementById("videoStyle").value || "realistic";
+      var style = selectedStyle || "cinematic";
       var voiceOver = document.getElementById("voiceOver").checked;
       var voiceLanguage = (document.getElementById("voiceLang") && document.getElementById("voiceLang").value) || "ar";
       var bgMusic = (document.getElementById("bgMusic") && document.getElementById("bgMusic").value) || "none";
@@ -508,7 +586,8 @@
         body: JSON.stringify({
           description: description,
           durationSeconds: duration,
-          style: style,
+          // map gallery categories to engine styles
+          style: (style === "cartoon" ? "3d_cartoon" : (style === "real_life" ? "realistic" : style)),
           voiceOver: voiceOver,
           voiceLanguage: voiceLanguage,
           bgMusic: bgMusic,
