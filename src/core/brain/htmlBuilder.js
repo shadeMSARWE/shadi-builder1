@@ -6,7 +6,7 @@ module.exports = async (plan) => {
   const category = plan.category || "technology";
   const title = plan.title || "AI Generated Project";
 
-  const css = `/* FERDOUS AI – styles */
+  const css = `/* Shadi AI Builder – ملف التنسيقات */
 * { box-sizing: border-box; }
 body {
   font-family: 'Tajawal', sans-serif;
@@ -26,12 +26,12 @@ body {
 nav a:hover, .btn-cta:hover { opacity: 0.9; }
 `;
 
-  const js = `// FERDOUS AI – script
+  const js = `// Shadi AI Builder – السكربت التفاعلي
 document.addEventListener('DOMContentLoaded', function() {
   var btns = document.querySelectorAll('.btn-cta, button');
   btns.forEach(function(btn) {
     btn.addEventListener('click', function() {
-      console.log('FERDOUS AI – Element clicked');
+      console.log('Shadi AI – Element clicked');
     });
   });
 });
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <section class="relative py-20 px-6 overflow-hidden hero-gradient">
     <div class="max-w-6xl mx-auto text-center relative z-10">
       <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">مستقبل الـ ${title} <br> <span class="text-indigo-500">بلمسة ذكاء اصطناعي</span></h1>
-      <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">هذا الموقع تم توليده بالكامل بواسطة FERDOUS AI. تجربة فاخرة، محتوى واضح، وتحويل أعلى.</p>
+      <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">هذا الموقع تم توليده بالكامل بواسطة Shadi AI Builder. حلول ذكية، تصاميم عصرية، وأداء لا يضاهى.</p>
       <div class="flex flex-wrap justify-center gap-4">
         <button class="btn-cta bg-white text-black px-8 py-4 rounded-2xl font-black hover:bg-slate-200 transition">تجربة مجانية</button>
         <button class="btn-cta glass px-8 py-4 rounded-2xl font-black hover:bg-white/5 transition">شاهد الفيديو</button>
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
   </section>
 
   <footer class="py-12 border-t border-white/5 text-center text-slate-500 text-sm">
-    <p>© 2026 ${title} – built with FERDOUS AI</p>
+    <p>© 2026 ${title} – تم التطوير بواسطة Shadi AI Builder</p>
   </footer>
   <script src="./script.js"></script>
 </body>

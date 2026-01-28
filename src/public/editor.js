@@ -1,5 +1,5 @@
 // ===============================
-// FERDOUS AI – Project Editor (MVP)
+// Shadi AI – Project Editor (MVP)
 // ===============================
 
 let pages = [

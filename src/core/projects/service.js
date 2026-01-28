@@ -17,7 +17,7 @@ function exportZip(siteId, res) {
     }
 
     // 2. إعدادات الـ Headers لتحميل الملف (كودك الأصلي)
-    res.setHeader("Content-Disposition", `attachment; filename=FERDOUS_AI_${siteId}.zip`);
+    res.setHeader("Content-Disposition", `attachment; filename=ShadiAI_${siteId}.zip`);
     res.setHeader("Content-Type", "application/zip");
 
     // 3. بدء عملية الضغط (كودك الأصلي)

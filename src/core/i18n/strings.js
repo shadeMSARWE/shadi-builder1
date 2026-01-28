@@ -1,11 +1,11 @@
 /**
- * FERDOUS AI - Frontend i18n (ar/he/en)
- * Loads from backend /api/v1/ferdous/i18n/:lang for consistency
- * Falls back to local strings if API fails
+ * FERDOUS AI - Centralized i18n System
+ * Arabic (RTL), Hebrew (RTL), English (LTR)
+ * No hardcoded text anywhere
  */
-window.__locale = window.__locale || localStorage.getItem("lang") || "ar";
-window.__strings = {
+module.exports = {
   ar: {
+    // App
     appName: "فردوس AI",
     tagline: "نظام التشغيل الذكي الشامل",
     credits: "النقاط",
@@ -16,21 +16,25 @@ window.__strings = {
     download: "تحميل ZIP",
     logout: "تسجيل خروج",
     topUp: "شحن النقاط",
+    // Tabs
     tabWebsite: "إنشاء موقع",
     tabVideo: "إنشاء فيديو",
     tabImage: "إنشاء صورة",
     tabSocial: "محتوى اجتماعي",
     tabAudio: "صوت",
+    // Input
     promptPlaceholder: "اشرح فكرتك... مثال: موقع بنك إلكتروني عصري",
     enhance: "تحسين الوصف",
     enhancing: "جاري التحسين...",
     generate: "ابدأ التوليد",
     generating: "جاري التوليد...",
+    // Status
     statusReady: "جاهز",
     statusAnalyzing: "تحليل الفكرة...",
     statusDesigning: "جاري التصميم...",
     statusBuilding: "بناء الكود...",
     statusFinal: "اللمسات النهائية...",
+    // Video
     duration: "المدة",
     style: "الأسلوب البصري",
     voiceOver: "تعليق صوتي AI",
@@ -38,17 +42,17 @@ window.__strings = {
     bgMusic: "موسيقى خلفية",
     autoSync: "مزامنة صوتية تلقائية",
     format: "نسبة العرض",
+    // Recommendations
     recommendations: "اقتراحات للتحسين",
     autoImprove: "تحسين تلقائي",
     generateMissing: "إنشاء الأجزاء الناقصة",
+    // Errors
     errorPrompt: "أدخل وصفاً أولاً",
     errorNoCredits: "نقاطك غير كافية",
+    // Presets
     presetKids: "فيديو كرتون للأطفال",
     presetCinematic: "قصة سينمائية",
-    presetBusiness: "شرح تجاري",
-    suggestion: "اقتراحنا",
-    newProject: "مشروع جديد",
-    openPreview: "فتح المعاينة"
+    presetBusiness: "شرح تجاري"
   },
   he: {
     appName: "פרדוס AI",
@@ -90,10 +94,7 @@ window.__strings = {
     errorNoCredits: "אין מספיק נקודות",
     presetKids: "וידאו קריקטורה לילדים",
     presetCinematic: "סיפור קולנועי",
-    presetBusiness: "הסבר עסקי",
-    suggestion: "הצעה",
-    newProject: "פרויקט חדש",
-    openPreview: "פתח תצוגה מקדימה"
+    presetBusiness: "הסבר עסקי"
   },
   en: {
     appName: "FERDOUS AI",
@@ -135,31 +136,6 @@ window.__strings = {
     errorNoCredits: "Not enough credits",
     presetKids: "Kids Cartoon Video",
     presetCinematic: "Cinematic Story",
-    presetBusiness: "Business Explainer",
-    suggestion: "Suggestion",
-    newProject: "New project",
-    openPreview: "Open preview"
+    presetBusiness: "Business Explainer"
   }
 };
-
-window.__t = function (key) {
-  var s = window.__strings[window.__locale];
-  return (s && s[key]) || key;
-};
-
-// Try to load from backend on init (optional enhancement)
-(function() {
-  var lang = window.__locale || "ar";
-  fetch("/api/v1/ferdous/i18n/" + lang)
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.ok && d.strings) {
-        window.__strings[lang] = Object.assign(window.__strings[lang] || {}, d.strings);
-        if (d.direction) {
-          document.documentElement.dir = d.direction;
-          document.documentElement.lang = d.lang;
-        }
-      }
-    })
-    .catch(function() {});
-})();

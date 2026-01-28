@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FERDOUS AI Studio</title>
+  <title>FERDOUS AI | The Ultimate AI Operating System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="/i18n.js"></script>
-  <link rel="stylesheet" href="/ferdous.css">
-  <script src="/ferdous-ui.js"></script>
+  <link rel="stylesheet" href="/manus.css">
+  <script src="/manus-ui.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -56,129 +56,113 @@
     }
     .spinner { width: 56px; height: 56px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    /* legacy tab styles removed (FERDOUS uses gold underline) */
+    .tab-active { background: var(--glass); color: var(--text); border-color: var(--primary); }
     .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
     .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
     .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
     #preview { min-height: 420px; }
   </style>
 </head>
-<body class="ferdous flex h-screen">
+<body class="manus flex h-screen">
   <div id="loadingOverlay">
     <div class="spinner mb-6"></div>
     <p id="loadingStatus" class="text-lg font-semibold gradient-text">Loading...</p>
   </div>
 
-  <aside class="f-sidebar p-4">
+  <aside class="m-float-sidebar p-4">
     <div class="h-full flex flex-col">
       <div class="px-2 py-2 flex items-center justify-between">
         <div>
-          <div class="text-base f-brand">FERDOUS AI</div>
-          <div class="text-[11px] f-muted">Premium AI Studio</div>
+          <div class="text-sm font-extrabold" style="letter-spacing:-0.02em" data-i18n="appName">FERDOUS AI</div>
+          <div class="text-[11px] m-muted" data-i18n="tagline">The Ultimate AI Operating System</div>
         </div>
-        <div class="text-[11px] f-muted">Studio</div>
+        <div class="text-[11px] m-muted">FERDOUS 1.0</div>
       </div>
 
-      <div class="f-glass p-4 mt-3">
-        <div class="text-[12px] font-bold f-muted">Credits</div>
+      <div class="m-surface p-4 mt-3">
+        <div class="text-[12px] font-bold m-muted" data-i18n="credits">Credits</div>
         <div class="text-2xl font-extrabold mt-1" id="creditsCount">--</div>
-        <div class="text-[11px] f-muted mt-1">Credits auto-sync with Supabase</div>
-        <a class="inline-block mt-2 text-[12px] font-bold" style="color:var(--f-gold)" href="/pricing.html">Top Up (PayPal)</a>
+        <div class="text-[11px] m-muted mt-1" data-i18n="creditsHint">10/site</div>
+        <a class="inline-block mt-2 text-[12px] font-bold" style="color:var(--m-primary)" href="/pricing.html" data-i18n="topUp">Top Up</a>
       </div>
 
       <div class="mt-4 flex-1 overflow-y-auto">
-        <div class="text-[12px] font-bold f-muted mb-2">History</div>
+        <div class="text-[12px] font-bold m-muted mb-2" data-i18n="history">Project History</div>
         <div id="historyList" class="space-y-1 text-[13px]">
-          <div class="f-muted text-center py-6">No outputs yet</div>
+          <div class="m-muted text-center py-6" data-i18n="noHistory">No projects yet</div>
         </div>
       </div>
 
       <div class="mt-3 flex gap-2">
-        <button type="button" id="langToggle" class="f-btn flex-1 py-2 text-xs font-bold">EN / ع</button>
-        <button type="button" onclick="logout()" class="f-btn flex-1 py-2 text-xs font-bold">Log out</button>
+        <button type="button" id="langToggle" class="m-btn flex-1 py-2 text-xs font-bold">EN / ع</button>
+        <button type="button" onclick="logout()" class="m-btn flex-1 py-2 text-xs font-bold" data-i18n="logout">Log out</button>
       </div>
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col min-w-0 overflow-hidden" style="padding-right:332px">
-    <div class="flex border-b" style="border-color:rgba(255,255,255,0.06)">
-      <button type="button" id="tabWebsite" class="px-6 py-4 text-sm font-extrabold -mb-px" style="border-bottom:2px solid var(--f-gold)">Website</button>
-      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Video</button>
-      <button type="button" id="tabImage" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Image</button>
-      <button type="button" id="tabSocial" class="px-6 py-4 text-sm font-bold f-muted -mb-px">Social</button>
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden" style="padding-right:320px">
+    <div class="flex border-b border-white/5 overflow-x-auto">
+      <button type="button" id="tabWebsite" class="tab-active px-6 py-4 text-sm font-bold border-b-2 border-indigo-500 -mb-px whitespace-nowrap" data-i18n="tabWebsite">Website</button>
+      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabVideo">Video</button>
+      <button type="button" id="tabImage" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabImage">Image</button>
+      <button type="button" id="tabSocial" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabSocial">Social</button>
+      <button type="button" id="tabAudio" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabAudio">Audio</button>
     </div>
 
     <div id="panelWebsite" class="flex-1 flex flex-col overflow-hidden p-6">
       <div class="max-w-4xl w-full mx-auto flex-1 flex flex-col">
-        <div class="f-glass p-4 mb-4 flex-1 flex flex-col min-h-0">
+        <div class="m-surface p-4 mb-4 flex-1 flex flex-col min-h-0">
           <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 mb-4 min-h-[120px]"></div>
-          <div class="f-inputwrap p-3">
-              <textarea id="desc" class="w-full h-20 bg-transparent resize-none outline-none px-2 text-base placeholder-slate-500" placeholder="Describe your landing page..." data-i18n-placeholder="promptPlaceholder"></textarea>
+          <div class="m-gradient-border rounded-[22px]">
+            <div class="m-inputbar p-3">
+              <textarea id="desc" class="w-full h-20 bg-transparent resize-none outline-none px-2 text-base placeholder-slate-500" placeholder="Describe your site..." data-i18n-placeholder="promptPlaceholder"></textarea>
               <div class="flex items-center justify-between pt-2">
                 <div class="flex gap-2">
-                  <button type="button" id="enhanceBtn" class="f-btn px-3 py-2 text-xs font-bold">Enhance</button>
-                  <button type="button" id="editModeBtn" class="f-btn px-3 py-2 text-xs font-bold">Live Editor</button>
-                  <button type="button" id="saveEditsBtn" class="f-btn px-3 py-2 text-xs font-bold hidden">Save</button>
+                  <button type="button" id="enhanceBtn" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="enhance">Enhance Prompt</button>
+                  <button type="button" id="editModeBtn" class="m-btn px-3 py-2 text-xs font-bold">Live Editor</button>
+                  <button type="button" id="saveEditsBtn" class="m-btn px-3 py-2 text-xs font-bold hidden">Save</button>
                 </div>
-                <button type="button" id="buildBtn" class="f-btn f-btn-primary px-6 py-2 text-xs font-extrabold">Generate</button>
+                <button type="button" id="buildBtn" class="m-btn m-btn-primary px-6 py-2 text-xs font-extrabold" data-i18n="generate">Generate</button>
               </div>
-          </div>
-          <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <button type="button" class="f-chip" onclick="insertHint('Landing page for a premium brand with strong CTA and pricing section')">Preset: Landing</button>
-            <button type="button" class="f-chip" onclick="insertHint('Add FAQ, testimonials, and clear benefits list')">Preset: Conversion</button>
-            <button type="button" class="f-chip" onclick="insertHint('Use dark + gold luxury palette, minimal layout, spacious typography')">Preset: Luxury</button>
-          </div>
-        </div>
-        <div id="previewWrap" class="hidden f-glass overflow-hidden flex flex-col">
-          <div class="flex items-center justify-between p-3 border-b" style="border-color:rgba(255,255,255,0.06)">
-            <span class="text-[12px] font-bold f-muted">Live Preview</span>
-            <a id="downloadBtn" href="#" class="f-btn px-3 py-2 text-xs font-bold">Download ZIP</a>
-          </div>
-          <iframe id="preview" class="w-full flex-1 bg-white border-0" src="about:blank" title="Live Preview"></iframe>
-        </div>
-
-        <!-- AI Recommendations Panel -->
-        <div id="recoPanel" class="hidden f-glass mt-4 p-4">
-          <div class="flex items-center justify-between">
-            <div class="text-sm font-extrabold" style="color:var(--f-gold)">AI Recommendations</div>
-            <div class="flex gap-2">
-              <button id="autoImproveBtn" class="f-btn px-3 py-2 text-xs font-bold">Auto Improve</button>
-              <button id="genMissingBtn" class="f-btn px-3 py-2 text-xs font-bold">Generate Missing Parts</button>
             </div>
           </div>
-          <div id="recoList" class="mt-3 space-y-2 text-sm f-muted"></div>
+          <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
+          <div class="mt-3">
+            <div class="text-xs font-bold m-muted mb-2">Quick Start Presets</div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="m-chip preset-btn" data-preset="kids_cartoon" data-i18n="presetKids">Kids Cartoon</button>
+              <button type="button" class="m-chip preset-btn" data-preset="cinematic_story" data-i18n="presetCinematic">Cinematic Story</button>
+              <button type="button" class="m-chip preset-btn" data-preset="business_explainer" data-i18n="presetBusiness">Business Explainer</button>
+            </div>
+          </div>
+          <div id="recommendationsWrap" class="hidden mt-4 m-surface p-4">
+            <div class="text-xs font-bold mb-3" data-i18n="recommendations">Improvement Suggestions</div>
+            <div id="recommendationsList" class="space-y-2 text-sm"></div>
+            <div class="flex gap-2 mt-4">
+              <button type="button" id="autoImproveBtn" class="m-btn m-btn-primary px-4 py-2 text-xs font-bold" data-i18n="autoImprove">Auto Improve</button>
+              <button type="button" id="generateMissingBtn" class="m-btn px-4 py-2 text-xs font-bold" data-i18n="generateMissing">Generate Missing Parts</button>
+            </div>
+          </div>
+        </div>
+        <div id="previewWrap" class="hidden m-surface overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between p-3 border-b" style="border-color:var(--m-border)">
+            <span class="text-[12px] font-bold m-muted" data-i18n="preview">Live Preview</span>
+            <a id="downloadBtn" href="#" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="download">Download ZIP</a>
+          </div>
+          <iframe id="preview" class="w-full flex-1 bg-white border-0" src="about:blank" title="Live Preview"></iframe>
         </div>
       </div>
     </div>
 
     <div id="panelVideo" class="hidden flex-1 flex flex-col overflow-hidden p-6">
       <div class="max-w-4xl w-full mx-auto space-y-6">
-        <div class="f-glass p-6">
-          <label class="block text-sm font-bold f-muted mb-2">Prompt</label>
-          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="One prompt → video output"></textarea>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
+          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
         </div>
-        
-        <!-- Quick Start Presets (1 click) -->
-        <div class="f-glass p-4">
-          <div class="text-sm font-extrabold" style="color:var(--f-gold)">Quick Start</div>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetKids">Kids Cartoon Video</button>
-            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetCine">Cinematic Story</button>
-            <button class="f-btn px-4 py-2 text-xs font-bold" id="presetBiz">Business Explainer</button>
-          </div>
-          <div class="mt-2 text-[12px] f-muted">One click configures duration, voice, language, music, and aspect ratio.</div>
-        </div>
-
-        <!-- Visual-first Style Cards -->
-        <div class="f-glass p-4">
-          <div class="text-sm font-extrabold" style="color:var(--f-gold)">Choose Style (Visual)</div>
-          <div id="styleGrid" class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-        </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="glass-card rounded-2xl p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2">Duration</label>
+          <div class="m-surface p-4">
+            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="duration">Duration</label>
             <select id="videoDuration" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
               <option value="5">5 sec</option>
               <option value="10">10 sec</option>
@@ -186,23 +170,26 @@
               <option value="30">30 sec</option>
             </select>
           </div>
-          <div class="glass-card rounded-2xl p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2">Aspect Ratio</label>
-            <div class="flex gap-2">
-              <button type="button" class="f-btn px-4 py-2 text-xs font-bold" id="fmt169">16:9</button>
-              <button type="button" class="f-btn px-4 py-2 text-xs font-bold" id="fmt916">9:16</button>
-            </div>
+          <div class="m-surface p-4">
+            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="style">Visual Style</label>
+            <select id="videoStyle" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="realistic">Realistic</option>
+              <option value="cinematic">Cinematic</option>
+              <option value="3d_cartoon">3D Cartoon</option>
+              <option value="anime">Anime</option>
+              <option value="digital_art">Digital Art</option>
+            </select>
           </div>
-          <div class="glass-card rounded-2xl p-4 flex flex-col justify-end">
+          <div class="m-surface p-4 flex flex-col justify-end">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
-              <span class="text-sm font-bold">Voice-over</span>
+              <span class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</span>
             </label>
-            <p class="text-[10px] text-slate-500 mt-1">High-fidelity voice (provider hook)</p>
+            <p class="text-[10px] text-slate-500 mt-1" data-i18n="voiceOverHint">Add AI-generated speech</p>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="glass-card rounded-2xl p-4">
+          <div class="m-surface p-4">
             <label class="block text-xs font-bold text-slate-400 mb-2">Voice Language</label>
             <select id="voiceLang" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
               <option value="ar">Arabic</option>
@@ -218,7 +205,7 @@
               <option value="ko">Korean</option>
             </select>
           </div>
-          <div class="glass-card rounded-2xl p-4">
+          <div class="m-surface p-4">
             <label class="block text-xs font-bold text-slate-400 mb-2">Background Music</label>
             <select id="bgMusic" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
               <option value="none">None</option>
@@ -227,7 +214,7 @@
               <option value="lofi">Lo-fi</option>
             </select>
           </div>
-          <div class="glass-card rounded-2xl p-4 flex flex-col justify-end">
+          <div class="m-surface p-4 flex flex-col justify-end">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="autoAudioSync" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
               <span class="text-sm font-bold">Automatic Audio Sync</span>
@@ -235,14 +222,119 @@
             <p class="text-[10px] text-slate-500 mt-1">Auto-sync VO + music timing</p>
           </div>
         </div>
-        <div class="flex justify-end">
-          <button type="button" id="genVideoBtn" class="f-btn f-btn-primary px-8 py-3 rounded-2xl font-black text-sm">Generate</button>
+        <div class="glass-card rounded-2xl p-4">
+          <label class="block text-xs font-bold text-slate-400 mb-2">Format</label>
+          <div class="flex gap-2">
+            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt169">16:9</button>
+            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt916">9:16</button>
+          </div>
         </div>
-        <div id="videoPreviewWrap" class="hidden glass-card rounded-2xl p-4">
+        <div class="flex justify-end">
+          <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
+        </div>
+        <div id="videoPreviewWrap" class="hidden m-surface p-4">
           <p class="text-sm text-slate-400 mb-2" data-i18n="liveEnv">Live</p>
           <div id="videoPreviewPlaceholder" class="rounded-xl bg-white/5 border border-white/10 flex items-center justify-center min-h-[240px] text-slate-500 text-sm">
             Video will appear here when ready. (Engine hook: Runway/Pika)
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelImage" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2" data-i18n="promptPlaceholder">Describe the image...</label>
+          <textarea id="imageDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe the image you want..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <button type="button" class="m-chip preset-card" data-preset="cartoon">Cartoon</button>
+          <button type="button" class="m-chip preset-card" data-preset="anime">Anime</button>
+          <button type="button" class="m-chip preset-card" data-preset="cinematic">Cinematic</button>
+          <button type="button" class="m-chip preset-card" data-preset="realistic">Realistic</button>
+          <button type="button" class="m-chip preset-card" data-preset="digital_art">Digital Art</button>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genImageBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Image</button>
+        </div>
+        <div id="imagePreviewWrap" class="hidden m-surface p-4">
+          <div id="imagePreview" class="rounded-xl bg-white/5 border border-white/10 flex items-center justify-center min-h-[400px] text-slate-500 text-sm">
+            Image will appear here. (Connect DALL-E/Stable Diffusion)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelSocial" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2">Social Post Content</label>
+          <textarea id="socialDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe your social post..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <button type="button" class="m-chip" data-platform="instagram">Instagram</button>
+          <button type="button" class="m-chip" data-platform="tiktok">TikTok</button>
+          <button type="button" class="m-chip" data-platform="youtube">YouTube</button>
+          <button type="button" class="m-chip" data-platform="facebook">Facebook</button>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genSocialBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Social</button>
+        </div>
+        <div id="socialPreviewWrap" class="hidden m-surface p-4">
+          <div id="socialPreview" class="space-y-4 text-slate-400 text-sm">
+            Social content will appear here.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelAudio" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2">Text for Voice Generation</label>
+          <textarea id="audioText" class="w-full h-32 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Enter text to convert to speech..."></textarea>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="m-surface p-4">
+            <label class="block text-xs font-bold mb-2" data-i18n="voiceLanguage">Voice Language</label>
+            <select id="audioLang" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="ar">Arabic</option>
+              <option value="en">English</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="es">Spanish</option>
+              <option value="it">Italian</option>
+              <option value="pt">Portuguese</option>
+              <option value="tr">Turkish</option>
+              <option value="ru">Russian</option>
+              <option value="ja">Japanese</option>
+              <option value="ko">Korean</option>
+            </select>
+          </div>
+          <div class="m-surface p-4">
+            <label class="block text-xs font-bold mb-2">Emotion</label>
+            <select id="audioEmotion" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="neutral">Neutral</option>
+              <option value="happy">Happy</option>
+              <option value="serious">Serious</option>
+              <option value="energetic">Energetic</option>
+            </select>
+          </div>
+          <div class="m-surface p-4">
+            <label class="block text-xs font-bold mb-2">Tone</label>
+            <select id="audioTone" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+              <option value="friendly">Friendly</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genAudioBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Audio</button>
+        </div>
+        <div id="audioPreviewWrap" class="hidden m-surface p-4">
+          <audio id="audioPreview" controls class="w-full"></audio>
+          <div id="audioSubtitles" class="mt-4 text-sm text-slate-400"></div>
         </div>
       </div>
     </div>
@@ -252,7 +344,11 @@
     (function(){
       var l = localStorage.getItem("lang") || "ar";
       window.__locale = l;
-      try { document.documentElement.lang = l === "ar" ? "ar" : "en"; document.documentElement.dir = l === "ar" ? "rtl" : "ltr"; } catch(_) {}
+      try {
+        var dir = (l === "ar" || l === "he") ? "rtl" : "ltr";
+        document.documentElement.lang = l;
+        document.documentElement.dir = dir;
+      } catch(_) {}
     })();
     (function() {
       var SUPABASE_URL = "https://xfzelmpwthqywidyjgzo.supabase.co";
@@ -271,8 +367,9 @@
     function setLang(lang) {
       currentLang = lang;
       window.__locale = lang;
-      document.documentElement.lang = lang === "ar" ? "ar" : "en";
-      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      var dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
+      document.documentElement.lang = lang;
+      document.documentElement.dir = dir;
       localStorage.setItem("lang", lang);
       document.querySelectorAll("[data-i18n]").forEach(function(el) {
         var v = __t(el.getAttribute("data-i18n"));
@@ -286,7 +383,9 @@
     }
 
     document.getElementById("langToggle").addEventListener("click", function() {
-      setLang(currentLang === "ar" ? "en" : "ar");
+      var next = currentLang === "ar" ? "he" : currentLang === "he" ? "en" : "ar";
+      setLang(next);
+      document.getElementById("langToggle").textContent = next === "ar" ? "EN / ע" : next === "he" ? "EN / ع" : "EN / ע";
     });
 
     function addChatLine(text, isUser) {
@@ -348,24 +447,41 @@
       });
     });
 
-    function setActiveTab(tab) {
-      ["Website","Video","Image","Social"].forEach(function(name){
-        var p = document.getElementById("panel" + name);
-        if (p) p.classList.add("hidden");
-        var b = document.getElementById("tab" + name);
-        if (b) { b.classList.remove("f-muted"); b.style.borderBottom = "2px solid transparent"; }
-      });
-      var panel = document.getElementById("panel" + tab);
-      if (panel) panel.classList.remove("hidden");
-      var btn = document.getElementById("tab" + tab);
-      if (btn) { btn.classList.remove("f-muted"); btn.style.borderBottom = "2px solid var(--f-gold)"; }
-    }
-
-    document.getElementById("tabWebsite").addEventListener("click", function() { setActiveTab("Website"); });
+    document.getElementById("tabWebsite").addEventListener("click", function() {
       document.getElementById("panelWebsite").classList.remove("hidden");
-    document.getElementById("tabVideo").addEventListener("click", function() { setActiveTab("Video"); });
-    if (document.getElementById("tabImage")) document.getElementById("tabImage").addEventListener("click", function(){ setActiveTab("Image"); });
-    if (document.getElementById("tabSocial")) document.getElementById("tabSocial").addEventListener("click", function(){ setActiveTab("Social"); });
+      document.getElementById("panelVideo").classList.add("hidden");
+      this.classList.add("tab-active");
+      this.classList.remove("text-slate-500");
+      document.getElementById("tabVideo").classList.remove("tab-active");
+      document.getElementById("tabVideo").classList.add("text-slate-500");
+    });
+    function switchTab(tabId) {
+      var tabs = ["tabWebsite", "tabVideo", "tabImage", "tabSocial", "tabAudio"];
+      var panels = ["panelWebsite", "panelVideo", "panelImage", "panelSocial", "panelAudio"];
+      tabs.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.remove("tab-active", "border-indigo-500");
+          el.classList.add("text-slate-500", "border-transparent");
+        }
+      });
+      panels.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+      var activeTab = document.getElementById(tabId);
+      var activePanel = document.getElementById("panel" + tabId.replace("tab", ""));
+      if (activeTab) {
+        activeTab.classList.add("tab-active", "border-indigo-500");
+        activeTab.classList.remove("text-slate-500", "border-transparent");
+      }
+      if (activePanel) activePanel.classList.remove("hidden");
+    }
+    document.getElementById("tabWebsite").addEventListener("click", function() { switchTab("tabWebsite"); });
+    document.getElementById("tabVideo").addEventListener("click", function() { switchTab("tabVideo"); });
+    document.getElementById("tabImage").addEventListener("click", function() { switchTab("tabImage"); });
+    document.getElementById("tabSocial").addEventListener("click", function() { switchTab("tabSocial"); });
+    document.getElementById("tabAudio").addEventListener("click", function() { switchTab("tabAudio"); });
 
     document.getElementById("enhanceBtn").addEventListener("click", function() {
       var desc = document.getElementById("desc").value.trim();
@@ -391,7 +507,7 @@
         .finally(function() { btn.disabled = false; btn.textContent = __t("enhance"); });
     });
 
-    // Quick prompt chips
+    // Quick prompt chips (Manus-like)
     function insertHint(text) {
       var t = document.getElementById("desc");
       if (!t) return;
@@ -407,71 +523,14 @@
       var b1 = document.getElementById("fmt169");
       var b2 = document.getElementById("fmt916");
       if (!b1 || !b2) return;
-      if (fmt === "16:9") { b1.classList.add("f-btn-primary"); b2.classList.remove("f-btn-primary"); }
-      else { b2.classList.add("f-btn-primary"); b1.classList.remove("f-btn-primary"); }
+      if (fmt === "16:9") { b1.classList.add("m-btn-primary"); b2.classList.remove("m-btn-primary"); }
+      else { b2.classList.add("m-btn-primary"); b1.classList.remove("m-btn-primary"); }
     }
     if (document.getElementById("fmt169")) document.getElementById("fmt169").addEventListener("click", function(){ setFormat("16:9"); });
     if (document.getElementById("fmt916")) document.getElementById("fmt916").addEventListener("click", function(){ setFormat("9:16"); });
     setFormat("16:9");
 
-    // Visual Style Cards (gallery)
-    var STYLE_CARDS = [
-      { id: "cartoon", title: "Cartoon", desc: "Bold shapes, friendly colors", gradient: "linear-gradient(135deg, rgba(243,210,143,0.22), rgba(124,58,237,0.18))" },
-      { id: "anime", title: "Anime", desc: "Expressive, stylized frames", gradient: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(215,180,106,0.14))" },
-      { id: "cinematic", title: "Cinematic", desc: "Lighting + lens look", gradient: "linear-gradient(135deg, rgba(215,180,106,0.18), rgba(15,23,42,0.10))" },
-      { id: "real_life", title: "Real Life", desc: "Natural, realistic footage", gradient: "linear-gradient(135deg, rgba(56,189,248,0.14), rgba(215,180,106,0.14))" },
-      { id: "nature", title: "Nature", desc: "Landscapes + calm", gradient: "linear-gradient(135deg, rgba(34,197,94,0.14), rgba(215,180,106,0.14))" },
-      { id: "kids", title: "Kids", desc: "Safe + playful", gradient: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(124,58,237,0.12))" },
-      { id: "animals", title: "Animals", desc: "Cute wildlife scenes", gradient: "linear-gradient(135deg, rgba(16,185,129,0.14), rgba(243,210,143,0.12))" },
-      { id: "business", title: "Business", desc: "Clean explainer visuals", gradient: "linear-gradient(135deg, rgba(148,163,184,0.14), rgba(215,180,106,0.12))" },
-    ];
-
-    var selectedStyle = "cinematic";
-    function renderStyleCards() {
-      var grid = document.getElementById("styleGrid");
-      if (!grid) return;
-      grid.innerHTML = STYLE_CARDS.map(function(s){
-        var sel = s.id === selectedStyle ? "true" : "false";
-        return (
-          "<div class=\"f-style-card\" data-style=\""+s.id+"\" data-selected=\""+sel+"\">" +
-            "<div class=\"f-style-thumb\" style=\"background:"+s.gradient+"\"></div>" +
-            "<div class=\"p-3\">" +
-              "<div class=\"text-sm font-extrabold\">"+s.title+"</div>" +
-              "<div class=\"text-[12px] f-muted mt-1\">"+s.desc+"</div>" +
-            "</div>" +
-          "</div>"
-        );
-      }).join("");
-
-      FERDOUS.selectOne(grid, ".f-style-card", function(card){
-        selectedStyle = card.getAttribute("data-style") || "cinematic";
-      });
-    }
-    renderStyleCards();
-
-    // Smart Presets (one click sets everything)
-    function applyPreset(p) {
-      if (!p) return;
-      document.getElementById("videoDuration").value = String(p.durationSeconds);
-      setFormat(p.format);
-      document.getElementById("voiceOver").checked = !!p.voiceOver;
-      if (document.getElementById("voiceLang")) document.getElementById("voiceLang").value = p.voiceLanguage;
-      if (document.getElementById("bgMusic")) document.getElementById("bgMusic").value = p.bgMusic;
-      if (document.getElementById("autoAudioSync")) document.getElementById("autoAudioSync").checked = !!p.autoAudioSync;
-      selectedStyle = p.style;
-      renderStyleCards();
-    }
-
-    var PRESETS = {
-      kids: { durationSeconds: 10, style: "kids", voiceOver: true, voiceLanguage: "ar", bgMusic: "upbeat", autoAudioSync: true, format: "9:16" },
-      cine: { durationSeconds: 20, style: "cinematic", voiceOver: true, voiceLanguage: "en", bgMusic: "cinematic", autoAudioSync: true, format: "16:9" },
-      biz:  { durationSeconds: 30, style: "business", voiceOver: true, voiceLanguage: "en", bgMusic: "lofi", autoAudioSync: true, format: "16:9" },
-    };
-    if (document.getElementById("presetKids")) document.getElementById("presetKids").addEventListener("click", function(){ applyPreset(PRESETS.kids); });
-    if (document.getElementById("presetCine")) document.getElementById("presetCine").addEventListener("click", function(){ applyPreset(PRESETS.cine); });
-    if (document.getElementById("presetBiz")) document.getElementById("presetBiz").addEventListener("click", function(){ applyPreset(PRESETS.biz); });
-
-    // Live editor (click-to-edit)
+    // Live editor (basic Manus-like click-to-edit)
     var editMode = false;
     var currentProjectId = null;
     function enableIframeEditing() {
@@ -506,11 +565,11 @@
     if (editBtn) editBtn.addEventListener("click", function() {
       editMode = !editMode;
       if (editMode) {
-        editBtn.classList.add("f-btn-primary");
+        editBtn.classList.add("m-btn-primary");
         if (saveBtn) saveBtn.classList.remove("hidden");
         enableIframeEditing();
       } else {
-        editBtn.classList.remove("f-btn-primary");
+        editBtn.classList.remove("m-btn-primary");
         if (saveBtn) saveBtn.classList.add("hidden");
       }
     });
@@ -539,10 +598,11 @@
       var steps = [__t("statusAnalyzing"), __t("statusDesigning"), __t("statusBuilding"), __t("statusFinal")];
       var i = 0;
       var timer = setInterval(function() { if (i < steps.length) status.textContent = steps[i++]; }, 1400);
-      fetch("/api/v1/brain", {
+      // Use FERDOUS BRAIN - unified endpoint that understands intent
+      fetch("/api/v1/ferdous/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-        body: JSON.stringify({ description: description })
+        body: JSON.stringify({ prompt: description, language: currentLang })
       })
         .then(function(r) { return r.json(); })
         .then(function(d) {
@@ -550,15 +610,64 @@
           overlay.style.display = "none";
           if (!d.ok) throw new Error(d.error || "Generation failed");
           loadCredits();
-          currentProjectId = d.projectId;
-          sessionProjects.push({ id: d.projectId, name: (d.details && d.details.projectName) || __t("newProject"), createdAt: Date.now(), previewUrl: d.previewUrl });
+          
+          // FERDOUS can return multiple outputs - handle first website result
+          var firstWebsite = d.results && d.results.find(function(r) { return r.type === "website"; });
+          if (firstWebsite) {
+            currentProjectId = firstWebsite.projectId;
+            var url = firstWebsite.previewUrl || "/generated/" + firstWebsite.projectId + "/index.html";
+            document.getElementById("preview").src = url;
+            document.getElementById("previewWrap").classList.remove("hidden");
+            document.getElementById("downloadBtn").href = "/api/v1/projects/export/" + firstWebsite.projectId;
+            sessionProjects.push({ id: firstWebsite.projectId, name: __t("newProject"), createdAt: Date.now(), previewUrl: url });
+            addChatLine(__t("openPreview") + ": " + url, false);
+            setTimeout(enableIframeEditing, 800);
+          }
+          
+          // Show recommendations if available
+          if (d.recommendations && d.recommendations.recommendations && d.recommendations.recommendations.length > 0) {
+            var recWrap = document.getElementById("recommendationsWrap");
+            var recList = document.getElementById("recommendationsList");
+            if (recWrap && recList) {
+              recList.innerHTML = d.recommendations.recommendations.slice(0, 5).map(function(r) {
+                var priority = r.priority === "high" ? "🔴" : r.priority === "medium" ? "🟡" : "🟢";
+                return "<div class=\"p-3 rounded-lg bg-white/5 border border-white/10 mb-2\"><div class=\"font-bold text-xs flex items-center gap-2\">" + priority + " " + r.title + "</div><div class=\"text-xs m-muted mt-1\">" + r.description + "</div></div>";
+              }).join("");
+              recWrap.classList.remove("hidden");
+              window.currentRecommendations = d.recommendations.recommendations;
+              window.currentOutputType = firstWebsite ? "website" : (d.results && d.results[0] ? d.results[0].type : "website");
+              window.currentContent = firstWebsite ? url : "";
+            }
+          } else if (firstWebsite) {
+            // Fetch recommendations separately if not included
+            setTimeout(function() {
+              fetch("/api/v1/ferdous/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ outputType: "website", content: url, prompt: description, language: currentLang })
+              })
+                .then(function(r) { return r.json(); })
+                .then(function(rec) {
+                  if (rec.ok && rec.recommendations && rec.recommendations.length > 0) {
+                    var recWrap = document.getElementById("recommendationsWrap");
+                    var recList = document.getElementById("recommendationsList");
+                    if (recWrap && recList) {
+                      recList.innerHTML = rec.recommendations.slice(0, 5).map(function(r) {
+                        var priority = r.priority === "high" ? "🔴" : r.priority === "medium" ? "🟡" : "🟢";
+                        return "<div class=\"p-3 rounded-lg bg-white/5 border border-white/10 mb-2\"><div class=\"font-bold text-xs flex items-center gap-2\">" + priority + " " + r.title + "</div><div class=\"text-xs m-muted mt-1\">" + r.description + "</div></div>";
+                      }).join("");
+                      recWrap.classList.remove("hidden");
+                      window.currentRecommendations = rec.recommendations;
+                      window.currentOutputType = "website";
+                      window.currentContent = url;
+                    }
+                  }
+                })
+                .catch(function() {});
+            }, 2000);
+          }
+          
           loadHistory();
-          var url = d.previewUrl || "/generated/" + d.projectId + "/index.html";
-          document.getElementById("preview").src = url;
-          document.getElementById("previewWrap").classList.remove("hidden");
-          document.getElementById("downloadBtn").href = "/api/v1/projects/export/" + d.projectId;
-          addChatLine(__t("openPreview") + ": " + url, false);
-          setTimeout(enableIframeEditing, 800);
         })
         .catch(function(err) {
           clearInterval(timer);
@@ -571,7 +680,7 @@
       var description = document.getElementById("videoDesc").value.trim();
       if (!description) { alert(__t("errorPrompt")); return; }
       var duration = parseInt(document.getElementById("videoDuration").value, 10) || 10;
-      var style = selectedStyle || "cinematic";
+      var style = document.getElementById("videoStyle").value || "realistic";
       var voiceOver = document.getElementById("voiceOver").checked;
       var voiceLanguage = (document.getElementById("voiceLang") && document.getElementById("voiceLang").value) || "ar";
       var bgMusic = (document.getElementById("bgMusic") && document.getElementById("bgMusic").value) || "none";
@@ -586,8 +695,7 @@
         body: JSON.stringify({
           description: description,
           durationSeconds: duration,
-          // map gallery categories to engine styles
-          style: (style === "cartoon" ? "3d_cartoon" : (style === "real_life" ? "realistic" : style)),
+          style: style,
           voiceOver: voiceOver,
           voiceLanguage: voiceLanguage,
           bgMusic: bgMusic,
@@ -607,6 +715,157 @@
           overlay.style.display = "none";
           alert(err.message || __t("errorNoCredits"));
         });
+    });
+
+    // Quick Start Presets
+    var currentPreset = null;
+    document.querySelectorAll(".preset-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        currentPreset = this.getAttribute("data-preset");
+        var prompt = __t("preset" + currentPreset.charAt(0).toUpperCase() + currentPreset.slice(1));
+        document.getElementById("desc").value = prompt + " ";
+        document.getElementById("desc").focus();
+      });
+    });
+
+    // Auto-Improve handler
+    var autoImproveBtn = document.getElementById("autoImproveBtn");
+    if (autoImproveBtn) autoImproveBtn.addEventListener("click", function() {
+      if (!currentProjectId || !window.currentRecommendations || !window.currentOutputType) { alert("No recommendations available"); return; }
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      var iframe = document.getElementById("preview");
+      var currentContent = iframe && iframe.contentDocument ? iframe.contentDocument.documentElement.outerHTML : window.currentContent || "";
+      fetch("/api/v1/ferdous/auto-improve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({
+          outputType: window.currentOutputType || "website",
+          content: currentContent,
+          recommendations: window.currentRecommendations,
+          language: currentLang
+        })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (d.ok && d.improved) {
+            if (window.currentOutputType === "website" && currentProjectId) {
+              // Save improved HTML
+              fetch("/api/v1/projects/save/" + currentProjectId, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ html: "<!DOCTYPE html>\\n" + d.improved })
+              })
+                .then(function() {
+                  alert("Improved and saved! " + (d.appliedRecommendations || []).join(", "));
+                  iframe.src = iframe.src; // Reload
+                })
+                .catch(function(e) { alert("Saved but preview reload failed: " + e.message); });
+            } else {
+              alert("Improved! " + (d.appliedRecommendations || []).join(", "));
+            }
+          } else alert(d.error || "Auto-improve failed");
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Generate Missing Parts handler
+    var generateMissingBtn = document.getElementById("generateMissingBtn");
+    if (generateMissingBtn) generateMissingBtn.addEventListener("click", function() {
+      if (!window.currentRecommendations) { alert("No recommendations"); return; }
+      var missing = window.currentRecommendations.filter(function(r) { return r.type === "missing_section"; });
+      if (missing.length === 0) { alert("No missing parts detected"); return; }
+      alert("Generate Missing: " + missing.map(function(m) { return m.title; }).join(", "));
+      // TODO: Trigger generation for missing parts
+    });
+
+    // Image generation
+    var genImageBtn = document.getElementById("genImageBtn");
+    if (genImageBtn) genImageBtn.addEventListener("click", function() {
+      var prompt = document.getElementById("imageDesc").value.trim();
+      if (!prompt) { alert(__t("errorPrompt")); return; }
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: prompt, language: currentLang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          var imgResult = d.results && d.results.find(function(r) { return r.type === "image"; });
+          if (imgResult) {
+            document.getElementById("imagePreviewWrap").classList.remove("hidden");
+            document.getElementById("imagePreview").innerHTML = "<p>Image ID: " + (imgResult.imageId || "") + "</p>";
+          }
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Social generation
+    var genSocialBtn = document.getElementById("genSocialBtn");
+    if (genSocialBtn) genSocialBtn.addEventListener("click", function() {
+      var prompt = document.getElementById("socialDesc").value.trim();
+      if (!prompt) { alert(__t("errorPrompt")); return; }
+      var platform = document.querySelector(".m-chip[data-platform].m-btn-primary") ? document.querySelector(".m-chip[data-platform].m-btn-primary").getAttribute("data-platform") : "instagram";
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: prompt + " for " + platform, language: currentLang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          var socialResult = d.results && d.results.find(function(r) { return r.type === "social"; });
+          if (socialResult && socialResult.content) {
+            document.getElementById("socialPreviewWrap").classList.remove("hidden");
+            document.getElementById("socialPreview").innerHTML = "<div class=\"p-4 bg-white/5 rounded-xl\"><p class=\"font-bold mb-2\">" + socialResult.content.text + "</p><p class=\"text-xs\">" + (socialResult.content.hashtags || []).join(" ") + "</p></div>";
+          }
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Audio generation
+    var genAudioBtn = document.getElementById("genAudioBtn");
+    if (genAudioBtn) genAudioBtn.addEventListener("click", function() {
+      var text = document.getElementById("audioText").value.trim();
+      if (!text) { alert(__t("errorPrompt")); return; }
+      var lang = document.getElementById("audioLang") ? document.getElementById("audioLang").value : "ar";
+      var emotion = document.getElementById("audioEmotion") ? document.getElementById("audioEmotion").value : "neutral";
+      var tone = document.getElementById("audioTone") ? document.getElementById("audioTone").value : "professional";
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      // Use audio studio directly or via FERDOUS
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: "Generate audio: " + text, language: lang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          document.getElementById("audioPreviewWrap").classList.remove("hidden");
+          document.getElementById("audioSubtitles").textContent = "Subtitles: " + text;
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Platform selector for social
+    document.querySelectorAll(".m-chip[data-platform]").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        document.querySelectorAll(".m-chip[data-platform]").forEach(function(b) { b.classList.remove("m-btn-primary"); });
+        this.classList.add("m-btn-primary");
+      });
     });
 
     function logout() {

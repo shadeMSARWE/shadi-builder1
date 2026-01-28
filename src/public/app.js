@@ -1,5 +1,5 @@
 /* ======================================================
-   FERDOUS AI – AUTH + STUDIO
+   SHADI BUILDER – AUTH + GENERATE (PRODUCTION FINAL FIX)
 ====================================================== */
 
 // 1️⃣ Supabase config (Production)

@@ -1,6 +1,6 @@
 /**
  * Video pricing by duration + style + audio + format
- * (FERDOUS Studio: short-form video engine)
+ * (Manus-like controls: short-form video engine)
  */
 const DURATIONS_SEC = [5, 10, 20, 30];
 const FORMATS = [

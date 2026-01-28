@@ -51,7 +51,7 @@ router.post("/", auth, async (req, res) => {
             return res.status(400).json({ ok: false, error: "الوصف مطلوب" });
         }
 
-        console.log(`[FERDOUS] Starting build for User: ${userId}`);
+        console.log(`[Shadi-AI] Starting build for User: ${userId}`);
 
         // 2. تحليل الفكرة
         const analysis = await analyze(description);

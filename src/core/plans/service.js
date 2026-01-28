@@ -9,7 +9,7 @@ const PLANS = {
     name: "Pro",
     maxProjects: 100,
     maxGenerations: 9999,
-    features: ["FERDOUS Studio", "Custom Domains", "Priority AI"]
+    features: ["Manus Engine", "Custom Domains", "Priority AI"]
   }
 };
 

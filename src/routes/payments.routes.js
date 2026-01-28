@@ -48,7 +48,7 @@ router.post("/create-order", auth, async (req, res) => {
           currency_code: bundle.currency,
           value: bundle.price
         },
-        description: `Credits bundle ${bundle.name} - FERDOUS AI`
+        description: `باقة ${bundle.name} - Shadi AI Builder`
       }]
     });
 
