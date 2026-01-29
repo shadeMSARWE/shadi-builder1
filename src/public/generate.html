@@ -202,6 +202,24 @@
     @media (min-width: 1280px){
       .cards-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:22px; }
     }
+    @keyframes f-reveal{
+      from{ opacity:0; transform:translateY(8px) scale(0.98); }
+      to{ opacity:1; transform:translateY(0) scale(1); }
+    }
+    .cards-grid .f-card{
+      animation: f-reveal 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
+    }
+    .cards-grid .f-card:nth-child(1){ animation-delay:0.02s; }
+    .cards-grid .f-card:nth-child(2){ animation-delay:0.04s; }
+    .cards-grid .f-card:nth-child(3){ animation-delay:0.06s; }
+    .cards-grid .f-card:nth-child(4){ animation-delay:0.08s; }
+    .cards-grid .f-card:nth-child(5){ animation-delay:0.10s; }
+    .cards-grid .f-card:nth-child(6){ animation-delay:0.12s; }
+    .cards-grid .f-card:nth-child(7){ animation-delay:0.14s; }
+    .cards-grid .f-card:nth-child(8){ animation-delay:0.16s; }
+    .cards-grid .f-card:nth-child(9){ animation-delay:0.18s; }
+    .cards-grid .f-card:nth-child(10){ animation-delay:0.20s; }
+    .cards-grid .f-card:nth-child(n+11){ animation-delay:0.22s; }
     .f-card{
       display:block;
       padding:0;
@@ -215,7 +233,7 @@
       box-shadow: 0 14px 40px rgba(0,0,0,0.35);
     }
     .f-card:hover{
-      transform: translateY(-3px) scale(1.024);
+      transform: translateY(-2px) scale(1.03);
       border-color: rgba(243, 201, 105, 0.35);
       box-shadow: 
         0 0 0 1px rgba(243, 201, 105, 0.20),
@@ -237,6 +255,14 @@
       width:100%;
       aspect-ratio: 16 / 9;
       background: rgba(255,255,255,0.03);
+    }
+    .f-card-media::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.15) 100%);
+      pointer-events:none;
+      opacity:0.6;
     }
     .f-card-media img{
       position:absolute;
@@ -409,6 +435,14 @@
         0 4px 16px rgba(0,0,0,0.70),
         0 0 20px rgba(0,0,0,0.50);
     }
+    .f-section-label{
+      letter-spacing:-0.02em;
+      color: rgba(248,250,252,0.92);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+    .m-surface .f-section-label{
+      color: rgba(248,250,252,0.95);
+    }
   </style>
 </head>
 <body class="manus flex h-screen">
@@ -477,11 +511,11 @@
           <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
           <div class="mt-3">
             <div class="m-surface p-4">
-              <div class="text-xs font-extrabold mb-3" style="letter-spacing:-0.01em">Website / SaaS Builder</div>
+              <div class="text-xs font-extrabold mb-3 f-section-label">Website / SaaS Builder</div>
               <div id="websiteLayoutCards" class="cards-grid"></div>
             </div>
             <div class="m-surface p-4 mt-3">
-              <div class="text-xs font-extrabold mb-3" style="letter-spacing:-0.01em">Quick Start Presets</div>
+              <div class="text-xs font-extrabold mb-3 f-section-label">Quick Start Presets</div>
               <div id="presetCards" class="cards-grid"></div>
             </div>
           </div>
@@ -511,20 +545,20 @@
           <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-extrabold mb-4" style="letter-spacing:-0.01em">Video Intent</label>
+          <label class="block text-sm font-extrabold mb-4 f-section-label">Video Intent</label>
           <div id="videoIntentCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4" data-i18n="duration">Duration</label>
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="duration">Duration</label>
           <div id="videoDurationCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="style">Visual Style</label>
           <div id="videoStyleCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <div class="flex items-center justify-between mb-4">
-            <label class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</label>
+            <label class="text-sm font-bold f-section-label" data-i18n="voiceOver">AI Voice-over</label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
               <span class="text-xs text-slate-400" data-i18n="voiceOverHint">Enable</span>
@@ -533,12 +567,12 @@
           <div id="voiceLangCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4">Background Music</label>
+          <label class="block text-sm font-bold mb-4 f-section-label">Background Music</label>
           <div id="bgMusicCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <div class="flex items-center justify-between mb-4">
-            <label class="text-sm font-bold">Automatic Audio Sync</label>
+            <label class="text-sm font-bold f-section-label">Automatic Audio Sync</label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="autoAudioSync" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
               <span class="text-xs text-slate-400">Enable</span>
@@ -546,7 +580,7 @@
           </div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4" data-i18n="format">Format</label>
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="format">Format</label>
           <div id="formatCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
@@ -568,7 +602,7 @@
           <textarea id="imageDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe the image you want..."></textarea>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="style">Visual Style</label>
           <div id="imageStyleCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
@@ -589,7 +623,7 @@
           <textarea id="socialDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe your social post..."></textarea>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4">Platform</label>
+          <label class="block text-sm font-bold mb-4 f-section-label">Platform</label>
           <div id="platformCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
@@ -610,15 +644,15 @@
           <textarea id="audioText" class="w-full h-32 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Enter text to convert to speech..."></textarea>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4" data-i18n="voiceLanguage">Voice Language</label>
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="voiceLanguage">Voice Language</label>
           <div id="audioLangCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4">Emotion</label>
+          <label class="block text-sm font-bold mb-4 f-section-label">Emotion</label>
           <div id="emotionCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
-          <label class="block text-sm font-bold mb-4">Tone</label>
+          <label class="block text-sm font-bold mb-4 f-section-label">Tone</label>
           <div id="toneCards" class="cards-grid"></div>
         </div>
         </div>

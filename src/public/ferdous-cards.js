@@ -66,7 +66,6 @@ const FORMAT_CARDS = [
   { value: "1:1", label: "1:1", icon: "📷", desc: "Instagram", image: IMG_16x9("photo-1526481280695-3c687fd643ed") }
 ];
 
-// Platform cards (logo + cinematic preview, 16:9)
 const PLATFORM_CARDS = [
   { value: "tiktok", label: "TikTok", icon: "♪", image: IMG_16x9("photo-1518770660439-4636190af475") },
   { value: "youtube", label: "YouTube", icon: "▶", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") },
@@ -184,7 +183,6 @@ function renderStyleCards(containerId, selectedStyle, onSelect) {
     { value: "fantasy", label: isAr ? "خيال" : "Fantasy", image: STYLE_IMAGES.fantasy },
     { value: "sci-fi", label: isAr ? "خيال علمي" : "Sci‑Fi", image: STYLE_IMAGES["sci-fi"] }
   ] : [
-    // Image Studio styles (all required)
     { value: "cinematic", label: isAr ? "سينمائي" : "Cinematic", image: STYLE_IMAGES.cinematic },
     { value: "realistic", label: isAr ? "واقعي" : "Realistic", image: STYLE_IMAGES.realistic },
     { value: "cartoon", label: isAr ? "كرتون" : "Cartoon", image: STYLE_IMAGES.cartoon },
@@ -192,7 +190,9 @@ function renderStyleCards(containerId, selectedStyle, onSelect) {
     { value: "fantasy", label: isAr ? "خيال" : "Fantasy", image: STYLE_IMAGES.fantasy },
     { value: "kids", label: isAr ? "أطفال" : "Kids", image: STYLE_IMAGES.kids },
     { value: "animals", label: isAr ? "حيوانات" : "Animals", image: STYLE_IMAGES.animals },
-    { value: "business", label: isAr ? "تجاري" : "Business", image: STYLE_IMAGES.business }
+    { value: "business", label: isAr ? "تجاري" : "Business", image: STYLE_IMAGES.business },
+    { value: "digital_art", label: isAr ? "فن رقمي" : "Digital Art", image: STYLE_IMAGES.digital_art },
+    { value: "3d_cartoon", label: isAr ? "كرتون 3D" : "3D Cartoon", image: STYLE_IMAGES["3d_cartoon"] }
   ];
 
   renderCinematicCards(containerId, styles, selectedStyle, 'data-style', onSelect);
