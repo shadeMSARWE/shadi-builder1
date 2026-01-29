@@ -21,6 +21,19 @@
       --accent: #a855f7;
       --text: #f1f5f9;
       --muted: #94a3b8;
+
+      /* Override Manus tokens → cinematic dark glass */
+      --m-bg: #07070a;
+      --m-surface: rgba(14, 14, 18, 0.60);
+      --m-surface-2: rgba(10, 10, 13, 0.80);
+      --m-border: rgba(255, 255, 255, 0.08);
+      --m-text: #f8fafc;
+      --m-muted: rgba(248, 250, 252, 0.58);
+      --m-primary: #8b5cf6;
+      --m-primary-2: #6366f1;
+
+      --f-gold: #f3c969;
+      --f-gold-2: #d9a441;
     }
     [dir="ltr"] { font-family: 'Outfit', sans-serif; }
     [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
@@ -63,160 +76,164 @@
     .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
     #preview { min-height: 420px; }
     
-    /* FERDOUS Visual Cards System */
-    .visual-card, .duration-card, .language-card, .music-card, .format-card, .platform-card {
+    /* FERDOUS Cinematic Card System (16:9, HD, image-first) */
+    .cards-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+    @media (min-width: 640px){
+      .cards-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    }
+    @media (min-width: 1024px){
+      .cards-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); }
+    }
+    .f-card{
+      display:block;
+      padding:0;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:transparent;
+      overflow:hidden;
+      cursor:pointer;
+      transform:translateZ(0);
+      transition:transform .20s ease, box-shadow .20s ease, border-color .20s ease, filter .20s ease;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    }
+    .f-card:hover{
+      transform: translateY(-2px) scale(1.012);
+      border-color: rgba(255,255,255,0.16);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.46);
+    }
+    .f-card.selected{
+      border-color: rgba(243, 201, 105, 0.65);
+      box-shadow:
+        0 0 0 1px rgba(243, 201, 105, 0.28),
+        0 18px 70px rgba(0,0,0,0.52),
+        0 0 42px rgba(243, 201, 105, 0.18);
+      filter:saturate(1.06) contrast(1.02);
+    }
+    .f-card-media{
+      position:relative;
+      width:100%;
+      aspect-ratio: 16 / 9;
       background: rgba(255,255,255,0.03);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
     }
-    .visual-card:hover, .duration-card:hover, .language-card:hover, .music-card:hover, .format-card:hover, .platform-card:hover {
-      border-color: rgba(99,102,241,0.5);
-      transform: translateY(-2px);
-      background: rgba(255,255,255,0.05);
+    .f-card-media img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform:scale(1.02);
+      filter:contrast(1.08) saturate(1.05);
     }
-    .visual-card.selected, .duration-card.selected, .language-card.selected, .music-card.selected, .format-card.selected, .platform-card.selected {
-      border-color: #6366f1;
-      background: rgba(99,102,241,0.15);
-      box-shadow: 0 0 20px rgba(99,102,241,0.3);
+    .f-card-vignette{
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(120% 70% at 50% 10%, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.42) 70%, rgba(0,0,0,0.68) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.56) 88%, rgba(0,0,0,0.72) 100%);
+      pointer-events:none;
     }
-    .visual-card-image {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 8px;
-      position: relative;
+    .f-card-meta{
+      position:absolute;
+      left:10px;
+      right:10px;
+      bottom:10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      pointer-events:none;
     }
-    .visual-card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .f-card-title{
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:-0.01em;
+      color: rgba(248,250,252,0.96);
+      text-shadow: 0 6px 22px rgba(0,0,0,0.55);
+      background: rgba(10,10,13,0.42);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 999px;
+      padding: 6px 10px;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
-    .visual-card-check, .platform-card-check {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #6366f1;
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
+    .f-card-badge{
+      position:absolute;
+      top:10px;
+      left:10px;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:0.02em;
+      color: rgba(10,10,13,0.92);
+      background: rgba(243,201,105,0.92);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 5px 9px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
     }
-    .visual-card-label, .duration-card-label, .language-card-label, .music-card-label, .format-card-label, .platform-card-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      color: var(--text);
+    .f-card-check{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(10,10,13,0.92);
+      background: rgba(243,201,105,0.95);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      font-weight: 900;
     }
-    .duration-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80px;
+
+    /* Cinematic empty-state frames (never blank) */
+    .f-empty-frame{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+      min-height: 260px;
     }
-    .duration-card-icon {
-      font-size: 24px;
-      margin-bottom: 4px;
+    .f-empty-frame:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&h=675&q=60");
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px) saturate(1.1) contrast(1.05);
+      transform: scale(1.06);
+      opacity: 0.38;
     }
-    .language-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-height: 70px;
+    .f-empty-frame:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.20), rgba(0,0,0,0.70));
     }
-    .language-card-flag {
-      font-size: 28px;
-    }
-    .music-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      min-height: 100px;
-    }
-    .music-card-image {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .music-card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .music-card-icon {
-      font-size: 20px;
-    }
-    .format-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-height: 90px;
-    }
-    .format-card-icon {
-      font-size: 32px;
-    }
-    .format-card-desc {
-      font-size: 10px;
-      color: var(--muted);
-    }
-    .platform-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      min-height: 120px;
-    }
-    .platform-card-image {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-    }
-    .platform-card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .platform-card-icon {
-      font-size: 24px;
-    }
-    .emotion-card, .tone-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      min-height: 70px;
-    }
-    .emotion-card-icon, .tone-card-icon {
-      font-size: 28px;
-    }
-    .emotion-card-label, .tone-card-label {
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
-    }
-    .cards-grid-large {
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    .f-empty-content{
+      position:relative;
+      z-index:1;
+      height:100%;
+      min-height: 260px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      color: rgba(248,250,252,0.84);
+      text-align:center;
+      font-weight:700;
     }
   </style>
 </head>
@@ -285,11 +302,13 @@
           </div>
           <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
           <div class="mt-3">
-            <div class="text-xs font-bold m-muted mb-2">Quick Start Presets</div>
-            <div class="flex flex-wrap gap-2">
-              <button type="button" class="m-chip preset-btn" data-preset="kids_cartoon" data-i18n="presetKids">Kids Cartoon</button>
-              <button type="button" class="m-chip preset-btn" data-preset="cinematic_story" data-i18n="presetCinematic">Cinematic Story</button>
-              <button type="button" class="m-chip preset-btn" data-preset="business_explainer" data-i18n="presetBusiness">Business Explainer</button>
+            <div class="m-surface p-4">
+              <div class="text-xs font-extrabold mb-3" style="letter-spacing:-0.01em">Website / SaaS Builder</div>
+              <div id="websiteLayoutCards" class="cards-grid"></div>
+            </div>
+            <div class="m-surface p-4 mt-3">
+              <div class="text-xs font-extrabold mb-3" style="letter-spacing:-0.01em">Quick Start Presets</div>
+              <div id="presetCards" class="cards-grid"></div>
             </div>
           </div>
           <div id="recommendationsWrap" class="hidden mt-4 m-surface p-4">
@@ -319,11 +338,11 @@
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="duration">Duration</label>
-          <div id="videoDurationCards" class="cards-grid grid-cols-6"></div>
+          <div id="videoDurationCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
-          <div id="videoStyleCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+          <div id="videoStyleCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <div class="flex items-center justify-between mb-4">
@@ -333,11 +352,11 @@
               <span class="text-xs text-slate-400" data-i18n="voiceOverHint">Enable</span>
             </label>
           </div>
-          <div id="voiceLangCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+          <div id="voiceLangCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4">Background Music</label>
-          <div id="bgMusicCards" class="cards-grid grid-cols-4"></div>
+          <div id="bgMusicCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <div class="flex items-center justify-between mb-4">
@@ -350,15 +369,15 @@
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="format">Format</label>
-          <div id="formatCards" class="cards-grid grid-cols-3"></div>
+          <div id="formatCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
         </div>
         <div id="videoPreviewWrap" class="hidden m-surface p-4">
           <p class="text-sm text-slate-400 mb-2" data-i18n="liveEnv">Live</p>
-          <div id="videoPreviewPlaceholder" class="rounded-xl bg-white/5 border border-white/10 flex items-center justify-center min-h-[240px] text-slate-500 text-sm">
-            Video will appear here when ready. (Engine hook: Runway/Pika)
+          <div id="videoPreviewPlaceholder" class="f-empty-frame">
+            <div class="f-empty-content">Video preview will appear here.</div>
           </div>
         </div>
       </div>
@@ -372,14 +391,14 @@
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
-          <div id="imageStyleCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+          <div id="imageStyleCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genImageBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Image</button>
         </div>
         <div id="imagePreviewWrap" class="hidden m-surface p-4">
-          <div id="imagePreview" class="rounded-xl bg-white/5 border border-white/10 flex items-center justify-center min-h-[400px] text-slate-500 text-sm">
-            Image will appear here. (Connect DALL-E/Stable Diffusion)
+          <div id="imagePreview" class="f-empty-frame">
+            <div class="f-empty-content">Image preview will appear here.</div>
           </div>
         </div>
       </div>
@@ -393,14 +412,14 @@
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4">Platform</label>
-          <div id="platformCards" class="cards-grid grid-cols-2 lg:grid-cols-4"></div>
+          <div id="platformCards" class="cards-grid"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genSocialBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Social</button>
         </div>
         <div id="socialPreviewWrap" class="hidden m-surface p-4">
-          <div id="socialPreview" class="space-y-4 text-slate-400 text-sm">
-            Social content will appear here.
+          <div id="socialPreview" class="f-empty-frame">
+            <div class="f-empty-content">Social preview will appear here.</div>
           </div>
         </div>
       </div>
@@ -414,15 +433,15 @@
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="voiceLanguage">Voice Language</label>
-          <div id="audioLangCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+          <div id="audioLangCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4">Emotion</label>
-          <div id="emotionCards" class="cards-grid grid-cols-4"></div>
+          <div id="emotionCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4">Tone</label>
-          <div id="toneCards" class="cards-grid grid-cols-3"></div>
+          <div id="toneCards" class="cards-grid"></div>
         </div>
         </div>
         <div class="flex justify-end">
@@ -487,7 +506,7 @@
     function addChatLine(text, isUser) {
       var area = document.getElementById("chatArea");
       var div = document.createElement("div");
-      div.className = isUser ? "chat-bubble ml-8 mr-0 p-4" : "glass-card rounded-2xl p-4 mr-8 ml-0";
+      div.className = isUser ? "chat-bubble ml-8 mr-0 p-4" : "glass-panel rounded-2xl p-4 mr-8 ml-0";
       div.textContent = text;
       area.appendChild(div);
       area.scrollTop = area.scrollHeight;
@@ -527,120 +546,81 @@
         .catch(function() {});
     }
 
-    // Visual Cards State
-    var videoState = { duration: 30, style: "realistic", voiceLang: "ar", bgMusic: "none", format: "16:9" };
-    var imageState = { style: "realistic" };
+    // Visual Cards State (UI-only)
+    var videoState = { duration: 30, style: "cinematic", voiceLang: "ar", bgMusic: "cinematic", format: "16:9" };
+    var imageState = { style: "cinematic" };
     var audioState = { lang: "ar", emotion: "neutral", tone: "professional" };
-    var socialState = { platform: "instagram" };
+    var socialState = { platform: "tiktok" };
+    var websiteState = { layout: "landing" };
+    var presetState = { preset: null };
 
-    // Initialize Visual Cards
+    // Initialize Visual Cards (cinematic, 16:9 previews everywhere)
     function initVisualCards() {
       if (!window.FERDOUS_CARDS) {
         setTimeout(initVisualCards, 100);
         return;
       }
       
-      // Video cards
       window.FERDOUS_CARDS.renderDurationCards("videoDurationCards", videoState.duration, function(val) {
         videoState.duration = val;
-        document.querySelectorAll("#videoDurationCards .duration-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-duration") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
       window.FERDOUS_CARDS.renderStyleCards("videoStyleCards", videoState.style, function(val) {
         videoState.style = val;
-        document.querySelectorAll("#videoStyleCards .visual-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-style") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
       window.FERDOUS_CARDS.renderLanguageCards("voiceLangCards", videoState.voiceLang, function(val) {
         videoState.voiceLang = val;
-        document.querySelectorAll("#voiceLangCards .language-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-lang") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
       window.FERDOUS_CARDS.renderMusicCards("bgMusicCards", videoState.bgMusic, function(val) {
         videoState.bgMusic = val;
-        document.querySelectorAll("#bgMusicCards .music-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-music") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
       window.FERDOUS_CARDS.renderFormatCards("formatCards", videoState.format, function(val) {
         videoState.format = val;
-        document.querySelectorAll("#formatCards .format-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-format") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
-      // Image cards
+
       window.FERDOUS_CARDS.renderStyleCards("imageStyleCards", imageState.style, function(val) {
         imageState.style = val;
-        document.querySelectorAll("#imageStyleCards .visual-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-style") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
-      // Platform cards
+
       window.FERDOUS_CARDS.renderPlatformCards("platformCards", socialState.platform, function(val) {
         socialState.platform = val;
-        document.querySelectorAll("#platformCards .platform-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-platform") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
-      // Audio cards
+
       window.FERDOUS_CARDS.renderLanguageCards("audioLangCards", audioState.lang, function(val) {
         audioState.lang = val;
-        document.querySelectorAll("#audioLangCards .language-card").forEach(function(c) {
-          c.classList.remove("selected");
-          if (c.getAttribute("data-lang") == val) c.classList.add("selected");
-        });
+        initVisualCards();
       });
-      
-      // Emotion cards
-      var emotionCards = window.FERDOUS_CARDS.EMOTION_CARDS;
-      var emotionContainer = document.getElementById("emotionCards");
-      if (emotionContainer) {
-        emotionContainer.innerHTML = emotionCards.map(function(e) {
-          var isSelected = audioState.emotion === e.value;
-          return '<button type="button" class="emotion-card ' + (isSelected ? 'selected' : '') + '" data-emotion="' + e.value + '"><div class="emotion-card-icon">' + e.icon + '</div><div class="emotion-card-label">' + e.label + '</div></button>';
-        }).join("");
-        emotionContainer.querySelectorAll(".emotion-card").forEach(function(c) {
-          c.addEventListener("click", function() {
-            audioState.emotion = this.getAttribute("data-emotion");
-            emotionContainer.querySelectorAll(".emotion-card").forEach(function(cc) { cc.classList.remove("selected"); });
-            this.classList.add("selected");
-          });
-        });
-      }
-      
-      // Tone cards
-      var toneCards = window.FERDOUS_CARDS.TONE_CARDS;
-      var toneContainer = document.getElementById("toneCards");
-      if (toneContainer) {
-        toneContainer.innerHTML = toneCards.map(function(t) {
-          var isSelected = audioState.tone === t.value;
-          return '<button type="button" class="tone-card ' + (isSelected ? 'selected' : '') + '" data-tone="' + t.value + '"><div class="tone-card-icon">' + t.icon + '</div><div class="tone-card-label">' + t.label + '</div></button>';
-        }).join("");
-        toneContainer.querySelectorAll(".tone-card").forEach(function(c) {
-          c.addEventListener("click", function() {
-            audioState.tone = this.getAttribute("data-tone");
-            toneContainer.querySelectorAll(".tone-card").forEach(function(cc) { cc.classList.remove("selected"); });
-            this.classList.add("selected");
-          });
-        });
-      }
+      window.FERDOUS_CARDS.renderEmotionCards("emotionCards", audioState.emotion, function(val) {
+        audioState.emotion = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderToneCards("toneCards", audioState.tone, function(val) {
+        audioState.tone = val;
+        initVisualCards();
+      });
+
+      window.FERDOUS_CARDS.renderWebsiteLayoutCards("websiteLayoutCards", websiteState.layout, function(val) {
+        websiteState.layout = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderPresetCards("presetCards", presetState.preset, function(val) {
+        presetState.preset = val;
+        try {
+          var t = document.getElementById("desc");
+          if (t) {
+            var key = val === "kids_cartoon" ? "presetKids" : val === "cinematic_story" ? "presetCinematic" : "presetBusiness";
+            t.value = (__t(key) || "") + "\n" + (t.value || "");
+            t.focus();
+          }
+        } catch (_) {}
+        initVisualCards();
+      });
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -926,17 +906,6 @@
           overlay.style.display = "none";
           alert(err.message || __t("errorNoCredits"));
         });
-    });
-
-    // Quick Start Presets
-    var currentPreset = null;
-    document.querySelectorAll(".preset-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        currentPreset = this.getAttribute("data-preset");
-        var prompt = __t("preset" + currentPreset.charAt(0).toUpperCase() + currentPreset.slice(1));
-        document.getElementById("desc").value = prompt + " ";
-        document.getElementById("desc").focus();
-      });
     });
 
     // Auto-Improve handler

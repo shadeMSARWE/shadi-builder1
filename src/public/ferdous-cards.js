@@ -3,236 +3,267 @@
  * NO dropdowns - ONLY visual cards with preview images
  */
 
-// Style preview images (using Unsplash/placeholder)
+// Cinematic Unsplash (fixed photos, 16:9 HD crops)
+// NOTE: image URLs are intentionally explicit (no random queries).
+const IMG_16x9 = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&h=675&q=80`;
+const FALLBACK_16x9 = IMG_16x9("photo-1526948128573-703ee1aeb6fa"); // cinematic bokeh lights
+
 const STYLE_IMAGES = {
-  realistic: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=200&h=200&fit=crop",
-  cinematic: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200&h=200&fit=crop",
-  "3d_cartoon": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop",
-  anime: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=200&h=200&fit=crop",
-  digital_art: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop",
-  cartoon: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop",
-  fantasy: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=200&h=200&fit=crop",
-  "sci-fi": "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=200&h=200&fit=crop",
-  business: "https://images.unsplash.com/photo-1486312338219-ce68e2c6f44d?w=200&h=200&fit=crop",
-  kids: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=200&fit=crop",
-  animals: "https://images.unsplash.com/photo-1456926631375-92c8ce872def?w=200&h=200&fit=crop",
-  documentary: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200&h=200&fit=crop"
+  // Video + Image styles (cinematic identity per style)
+  cinematic: IMG_16x9("photo-1526948128573-703ee1aeb6fa"), // moody cinema lights
+  realistic: IMG_16x9("photo-1519681393784-d120267933ba"), // sharp studio portrait
+  documentary: IMG_16x9("photo-1520975916090-3105956dac38"), // natgeo-ish field shot
+  anime: IMG_16x9("photo-1520975682031-a2ff34d1a9b4"), // neon city (anime vibe)
+  cartoon: IMG_16x9("photo-1526481280695-3c687fd643ed"), // colorful playful scene
+  "3d_cartoon": IMG_16x9("photo-1602524204631-2c22b7c1c7c2"), // toy-like depth
+  fantasy: IMG_16x9("photo-1519681393784-d120267933ba"), // dramatic
+  "sci-fi": IMG_16x9("photo-1462331940025-496dfbfc7564"), // sci-fi space
+  digital_art: IMG_16x9("photo-1545239351-1141bd82e8a6"), // abstract light
+  business: IMG_16x9("photo-1553877522-43269d4ea984"), // premium office
+  kids: IMG_16x9("photo-1503454537195-1dcabb73ffb9"), // warm kids
+  animals: IMG_16x9("photo-1456926631375-92c8ce872def") // sharp animal closeup
 };
 
-// Duration preset cards
+// Duration preset cards (each has its own 16:9 preview)
 const DURATION_CARDS = [
-  { value: 5, label: "5s", icon: "⚡", color: "from-purple-500 to-pink-500" },
-  { value: 15, label: "15s", icon: "🎬", color: "from-blue-500 to-cyan-500" },
-  { value: 30, label: "30s", icon: "🎥", color: "from-indigo-500 to-purple-500" },
-  { value: 60, label: "1m", icon: "⏱️", color: "from-emerald-500 to-teal-500" },
-  { value: 180, label: "3m", icon: "📹", color: "from-orange-500 to-red-500" },
-  { value: 600, label: "10m", icon: "🎞️", color: "from-rose-500 to-pink-500" }
+  { value: 5, label: "5s", image: IMG_16x9("photo-1517602302552-471fe67acf66") }, // fast cut
+  { value: 15, label: "15s", image: IMG_16x9("photo-1485846234645-a62644f84728") }, // dynamic scene
+  { value: 30, label: "30s", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") }, // cinema screen
+  { value: 60, label: "1m", image: IMG_16x9("photo-1510070009289-b5bc34383727") }, // storytelling
+  { value: 180, label: "3m", image: IMG_16x9("photo-1524253482453-3fed8d2fe12b") }, // documentary
+  { value: 600, label: "10m", image: IMG_16x9("photo-1526948128573-703ee1aeb6fa") } // premium longform
 ];
 
-// Language cards
+// Language cards (each has 16:9 cinematic background + flag overlay)
 const LANGUAGE_CARDS = [
-  { value: "ar", label: "العربية", flag: "🇸🇦", nameEn: "Arabic" },
-  { value: "he", label: "עברית", flag: "🇮🇱", nameEn: "Hebrew" },
-  { value: "en", label: "English", flag: "🇺🇸", nameEn: "English" },
-  { value: "fr", label: "Français", flag: "🇫🇷", nameEn: "French" },
-  { value: "de", label: "Deutsch", flag: "🇩🇪", nameEn: "German" },
-  { value: "es", label: "Español", flag: "🇪🇸", nameEn: "Spanish" },
-  { value: "it", label: "Italiano", flag: "🇮🇹", nameEn: "Italian" },
-  { value: "pt", label: "Português", flag: "🇵🇹", nameEn: "Portuguese" },
-  { value: "tr", label: "Türkçe", flag: "🇹🇷", nameEn: "Turkish" },
-  { value: "ru", label: "Русский", flag: "🇷🇺", nameEn: "Russian" },
-  { value: "ja", label: "日本語", flag: "🇯🇵", nameEn: "Japanese" },
-  { value: "ko", label: "한국어", flag: "🇰🇷", nameEn: "Korean" }
+  { value: "ar", label: "العربية", flag: "🇸🇦", nameEn: "Arabic", image: IMG_16x9("photo-1524492412937-b28074a5d7da") },
+  { value: "he", label: "עברית", flag: "🇮🇱", nameEn: "Hebrew", image: IMG_16x9("photo-1480714378408-67cf0d13bc1b") },
+  { value: "en", label: "English", flag: "🇺🇸", nameEn: "English", image: IMG_16x9("photo-1469474968028-56623f02e42e") },
+  { value: "fr", label: "Français", flag: "🇫🇷", nameEn: "French", image: IMG_16x9("photo-1502602898657-3e91760cbb34") },
+  { value: "de", label: "Deutsch", flag: "🇩🇪", nameEn: "German", image: IMG_16x9("photo-1467269204594-9661b134dd2b") },
+  { value: "es", label: "Español", flag: "🇪🇸", nameEn: "Spanish", image: IMG_16x9("photo-1509840841025-9088ba3b0f6b") },
+  { value: "it", label: "Italiano", flag: "🇮🇹", nameEn: "Italian", image: IMG_16x9("photo-1523906834658-6e24ef2386f9") },
+  { value: "pt", label: "Português", flag: "🇵🇹", nameEn: "Portuguese", image: IMG_16x9("photo-1500964757637-c85e8a162699") },
+  { value: "tr", label: "Türkçe", flag: "🇹🇷", nameEn: "Turkish", image: IMG_16x9("photo-1541432901042-2d8bd64b4a9b") },
+  { value: "ru", label: "Русский", flag: "🇷🇺", nameEn: "Russian", image: IMG_16x9("photo-1513326738677-b964603b136d") },
+  { value: "ja", label: "日本語", flag: "🇯🇵", nameEn: "Japanese", image: IMG_16x9("photo-1526481280695-3c687fd643ed") },
+  { value: "ko", label: "한국어", flag: "🇰🇷", nameEn: "Korean", image: IMG_16x9("photo-1549692520-acc6669e2f0c") }
 ];
 
-// Music cards
+// Music cards (16:9 preview is mandatory)
 const MUSIC_CARDS = [
-  { value: "none", label: "None", icon: "🔇", color: "bg-slate-700" },
-  { value: "cinematic", label: "Cinematic", icon: "🎼", color: "bg-purple-600", preview: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop" },
-  { value: "upbeat", label: "Upbeat", icon: "🎵", color: "bg-yellow-600", preview: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&h=200&fit=crop" },
-  { value: "lofi", label: "Lo-fi", icon: "🎧", color: "bg-indigo-600", preview: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop" }
+  { value: "none", label: "None", icon: "🔇", image: IMG_16x9("photo-1511379938547-c1f69419868d") },
+  { value: "cinematic", label: "Cinematic", icon: "🎼", image: IMG_16x9("photo-1493225457124-a3eb161ffa5f") },
+  { value: "upbeat", label: "Upbeat", icon: "🎵", image: IMG_16x9("photo-1511671782779-c97d3d27a1d4") },
+  { value: "lofi", label: "Lo-fi", icon: "🎧", image: IMG_16x9("photo-1493225457124-a3eb161ffa5f") }
 ];
 
-// Format cards
+// Format cards (16:9 image per format)
 const FORMAT_CARDS = [
-  { value: "16:9", label: "16:9", icon: "📺", desc: "YouTube", aspect: "aspect-video" },
-  { value: "9:16", label: "9:16", icon: "📱", desc: "Reels/TikTok", aspect: "aspect-[9/16]" },
-  { value: "1:1", label: "1:1", icon: "📷", desc: "Instagram", aspect: "aspect-square" }
+  { value: "16:9", label: "16:9", icon: "📺", desc: "YouTube", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") },
+  { value: "9:16", label: "9:16", icon: "📱", desc: "Reels/TikTok", image: IMG_16x9("photo-1518770660439-4636190af475") },
+  { value: "1:1", label: "1:1", icon: "📷", desc: "Instagram", image: IMG_16x9("photo-1526481280695-3c687fd643ed") }
 ];
 
-// Platform cards
+// Platform cards (logo + cinematic preview, 16:9)
 const PLATFORM_CARDS = [
-  { value: "instagram", label: "Instagram", icon: "📷", color: "from-purple-500 to-pink-500", preview: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop" },
-  { value: "tiktok", label: "TikTok", icon: "🎵", color: "from-black to-gray-800", preview: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop" },
-  { value: "youtube", label: "YouTube", icon: "▶️", color: "from-red-500 to-red-700", preview: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop" },
-  { value: "facebook", label: "Facebook", icon: "👥", color: "from-blue-500 to-blue-700", preview: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=200&h=200&fit=crop" }
+  { value: "tiktok", label: "TikTok", icon: "♪", image: IMG_16x9("photo-1518770660439-4636190af475") },
+  { value: "youtube", label: "YouTube", icon: "▶", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") },
+  { value: "instagram", label: "Instagram", icon: "◎", image: IMG_16x9("photo-1526481280695-3c687fd643ed") },
+  { value: "facebook", label: "Facebook", icon: "f", image: IMG_16x9("photo-1611162617474-5b21e879e113") }
 ];
 
-// Emotion cards
+// Emotion cards (16:9 preview, no text-only)
 const EMOTION_CARDS = [
-  { value: "neutral", label: "Neutral", icon: "😐", color: "bg-slate-600" },
-  { value: "happy", label: "Happy", icon: "😊", color: "bg-yellow-500" },
-  { value: "serious", label: "Serious", icon: "😐", color: "bg-gray-700" },
-  { value: "energetic", label: "Energetic", icon: "⚡", color: "bg-orange-500" }
+  { value: "neutral", label: "Neutral", icon: "◼", image: IMG_16x9("photo-1519681393784-d120267933ba") },
+  { value: "happy", label: "Happy", icon: "✦", image: IMG_16x9("photo-1500530855697-b586d89ba3ee") },
+  { value: "serious", label: "Serious", icon: "▣", image: IMG_16x9("photo-1520975916090-3105956dac38") },
+  { value: "energetic", label: "Energetic", icon: "⚡", image: IMG_16x9("photo-1517602302552-471fe67acf66") }
 ];
 
-// Tone cards
+// Tone cards (16:9 preview, no text-only)
 const TONE_CARDS = [
-  { value: "professional", label: "Professional", icon: "💼", color: "bg-blue-600" },
-  { value: "casual", label: "Casual", icon: "👕", color: "bg-green-600" },
-  { value: "friendly", label: "Friendly", icon: "🤝", color: "bg-pink-600" }
+  { value: "professional", label: "Professional", icon: "PRO", image: IMG_16x9("photo-1553877522-43269d4ea984") },
+  { value: "casual", label: "Casual", icon: "CAS", image: IMG_16x9("photo-1520975682031-a2ff34d1a9b4") },
+  { value: "friendly", label: "Friendly", icon: "FRI", image: IMG_16x9("photo-1500530855697-b586d89ba3ee") }
 ];
+
+// Website / SaaS builder layout cards (must look like real product screenshots)
+const WEBSITE_LAYOUT_CARDS = [
+  { value: "landing", label: "Landing Page", image: IMG_16x9("photo-1522202176988-66273c2fd55f") },
+  { value: "dashboard", label: "SaaS Dashboard", image: IMG_16x9("photo-1551288049-bebda4e38f71") },
+  { value: "ecommerce", label: "E-commerce", image: IMG_16x9("photo-1556742049-0cfed4f6a45d") },
+  { value: "banking", label: "Banking UI", image: IMG_16x9("photo-1554224155-6726b3ff858f") }
+];
+
+// Preset cards (cinematic previews)
+const PRESET_CARDS = [
+  { value: "kids_cartoon", label: "Kids Cartoon Video", image: IMG_16x9("photo-1503454537195-1dcabb73ffb9") },
+  { value: "cinematic_story", label: "Cinematic Story", image: IMG_16x9("photo-1485846234645-a62644f84728") },
+  { value: "business_explainer", label: "Business Explainer", image: IMG_16x9("photo-1553877522-43269d4ea984") }
+];
+
+function escapeHtml(s) {
+  return String(s || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function wireFallbackImages(root) {
+  if (!root) return;
+  root.querySelectorAll("img[data-fallback]").forEach((img) => {
+    img.addEventListener("error", () => {
+      if (img.dataset.fallbackApplied) return;
+      img.dataset.fallbackApplied = "1";
+      img.src = img.getAttribute("data-fallback") || FALLBACK_16x9;
+    });
+  });
+}
+
+function renderCinematicCards(containerId, cards, selectedValue, dataAttr, onSelect) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = (cards || []).map((c) => {
+    const isSelected = selectedValue === c.value;
+    const label = c.label;
+    const image = c.image || FALLBACK_16x9;
+    const badge = c.icon ? `<div class="f-card-badge">${escapeHtml(c.icon)}</div>` : "";
+    const check = isSelected ? `<div class="f-card-check">✓</div>` : "";
+    return `
+      <button type="button"
+        class="f-card ${isSelected ? "selected" : ""}"
+        ${dataAttr}="${escapeHtml(c.value)}"
+        aria-pressed="${isSelected ? "true" : "false"}"
+        onclick="${onSelect ? `(${onSelect.toString()})(${typeof c.value === "number" ? c.value : `'${String(c.value).replaceAll("'", "\\'")}'`})` : ""}">
+        <div class="f-card-media">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(label)}" loading="lazy" data-fallback="${escapeHtml(FALLBACK_16x9)}"/>
+          <div class="f-card-vignette"></div>
+          ${badge}
+          ${check}
+          <div class="f-card-meta">
+            <div class="f-card-title">${escapeHtml(label)}</div>
+          </div>
+        </div>
+      </button>
+    `;
+  }).join("");
+
+  wireFallbackImages(container);
+}
 
 /**
  * Render visual style cards
  */
 function renderStyleCards(containerId, selectedStyle, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
+  const isAr = window.__locale === "ar";
   const styles = [
-    { id: "realistic", name: "Realistic", nameAr: "واقعي" },
-    { id: "cinematic", name: "Cinematic", nameAr: "سينمائي" },
-    { id: "3d_cartoon", name: "3D Cartoon", nameAr: "كرتون 3D" },
-    { id: "anime", name: "Anime", nameAr: "أنمي" },
-    { id: "digital_art", name: "Digital Art", nameAr: "فن رقمي" },
-    { id: "cartoon", name: "Cartoon", nameAr: "كرتون" },
-    { id: "fantasy", name: "Fantasy", nameAr: "خيال" },
-    { id: "sci-fi", name: "Sci-Fi", nameAr: "خيال علمي" },
-    { id: "business", name: "Business", nameAr: "تجاري" },
-    { id: "kids", name: "Kids", nameAr: "أطفال" },
-    { id: "animals", name: "Animals", nameAr: "حيوانات" },
-    { id: "documentary", name: "Documentary", nameAr: "وثائقي" }
+    // Required sets (video + image)
+    { value: "cinematic", label: isAr ? "سينمائي" : "Cinematic", image: STYLE_IMAGES.cinematic },
+    { value: "cartoon", label: isAr ? "كرتون (Pixar)" : "Cartoon (Pixar)", image: STYLE_IMAGES.cartoon },
+    { value: "anime", label: isAr ? "أنمي" : "Anime", image: STYLE_IMAGES.anime },
+    { value: "realistic", label: isAr ? "واقعي" : "Realistic", image: STYLE_IMAGES.realistic },
+    { value: "documentary", label: isAr ? "وثائقي" : "Documentary", image: STYLE_IMAGES.documentary },
+    // Extra (still cinematic)
+    { value: "business", label: isAr ? "تجاري" : "Business", image: STYLE_IMAGES.business },
+    { value: "kids", label: isAr ? "أطفال" : "Kids", image: STYLE_IMAGES.kids },
+    { value: "animals", label: isAr ? "حيوانات" : "Animals", image: STYLE_IMAGES.animals },
+    { value: "fantasy", label: isAr ? "خيال" : "Fantasy", image: STYLE_IMAGES.fantasy },
+    { value: "sci-fi", label: isAr ? "خيال علمي" : "Sci‑Fi", image: STYLE_IMAGES["sci-fi"] }
   ];
-  
-  container.innerHTML = styles.map(style => {
-    const isSelected = selectedStyle === style.id;
-    const img = STYLE_IMAGES[style.id] || STYLE_IMAGES.realistic;
-    return `
-      <button type="button" 
-        class="visual-card ${isSelected ? 'selected' : ''}" 
-        data-style="${style.id}"
-        onclick="${onSelect ? `(${onSelect.toString()})('${style.id}')` : ''}">
-        <div class="visual-card-image">
-          <img src="${img}" alt="${style.name}" loading="lazy" />
-          ${isSelected ? '<div class="visual-card-check">✓</div>' : ''}
-        </div>
-        <div class="visual-card-label">${window.__locale === 'ar' ? style.nameAr : style.name}</div>
-      </button>
-    `;
-  }).join("");
+
+  renderCinematicCards(containerId, styles, selectedStyle, 'data-style', onSelect);
 }
 
 /**
  * Render duration cards
  */
 function renderDurationCards(containerId, selectedDuration, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = DURATION_CARDS.map(dur => {
-    const isSelected = selectedDuration === dur.value;
-    return `
-      <button type="button" 
-        class="duration-card ${isSelected ? 'selected' : ''}" 
-        data-duration="${dur.value}"
-        onclick="${onSelect ? `(${onSelect.toString()})(${dur.value})` : ''}">
-        <div class="duration-card-icon">${dur.icon}</div>
-        <div class="duration-card-label">${dur.label}</div>
-      </button>
-    `;
-  }).join("");
+  renderCinematicCards(containerId, DURATION_CARDS, selectedDuration, 'data-duration', onSelect);
 }
 
 /**
  * Render language cards
  */
 function renderLanguageCards(containerId, selectedLang, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = LANGUAGE_CARDS.map(lang => {
-    const isSelected = selectedLang === lang.value;
-    const label = window.__locale === 'ar' ? lang.label : lang.nameEn;
-    return `
-      <button type="button" 
-        class="language-card ${isSelected ? 'selected' : ''}" 
-        data-lang="${lang.value}"
-        onclick="${onSelect ? `(${onSelect.toString()})('${lang.value}')` : ''}">
-        <div class="language-card-flag">${lang.flag}</div>
-        <div class="language-card-label">${label}</div>
-      </button>
-    `;
-  }).join("");
+  const isAr = window.__locale === "ar";
+  const cards = LANGUAGE_CARDS.map((l) => ({
+    value: l.value,
+    label: isAr ? `${l.flag} ${l.label}` : `${l.flag} ${l.nameEn}`,
+    image: l.image || FALLBACK_16x9,
+    icon: l.flag
+  }));
+  renderCinematicCards(containerId, cards, selectedLang, 'data-lang', onSelect);
 }
 
 /**
  * Render music cards
  */
 function renderMusicCards(containerId, selectedMusic, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = MUSIC_CARDS.map(music => {
-    const isSelected = selectedMusic === music.value;
-    return `
-      <button type="button" 
-        class="music-card ${isSelected ? 'selected' : ''}" 
-        data-music="${music.value}"
-        onclick="${onSelect ? `(${onSelect.toString()})('${music.value}')` : ''}">
-        ${music.preview ? `<div class="music-card-image"><img src="${music.preview}" alt="${music.label}" /></div>` : ''}
-        <div class="music-card-icon">${music.icon}</div>
-        <div class="music-card-label">${music.label}</div>
-      </button>
-    `;
-  }).join("");
+  renderCinematicCards(
+    containerId,
+    MUSIC_CARDS.map((m) => ({ value: m.value, label: m.label, image: m.image, icon: m.icon })),
+    selectedMusic,
+    'data-music',
+    onSelect
+  );
 }
 
 /**
  * Render format cards
  */
 function renderFormatCards(containerId, selectedFormat, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = FORMAT_CARDS.map(format => {
-    const isSelected = selectedFormat === format.value;
-    return `
-      <button type="button" 
-        class="format-card ${isSelected ? 'selected' : ''}" 
-        data-format="${format.value}"
-        onclick="${onSelect ? `(${onSelect.toString()})('${format.value}')` : ''}">
-        <div class="format-card-icon">${format.icon}</div>
-        <div class="format-card-label">${format.label}</div>
-        <div class="format-card-desc">${format.desc}</div>
-      </button>
-    `;
-  }).join("");
+  renderCinematicCards(
+    containerId,
+    FORMAT_CARDS.map((f) => ({ value: f.value, label: `${f.label} · ${f.desc}`, image: f.image, icon: f.icon })),
+    selectedFormat,
+    'data-format',
+    onSelect
+  );
 }
 
 /**
  * Render platform cards
  */
 function renderPlatformCards(containerId, selectedPlatform, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = PLATFORM_CARDS.map(platform => {
-    const isSelected = selectedPlatform === platform.value;
-    return `
-      <button type="button" 
-        class="platform-card ${isSelected ? 'selected' : ''}" 
-        data-platform="${platform.value}"
-        onclick="${onSelect ? `(${onSelect.toString()})('${platform.value}')` : ''}">
-        <div class="platform-card-image">
-          <img src="${platform.preview}" alt="${platform.label}" />
-          ${isSelected ? '<div class="platform-card-check">✓</div>' : ''}
-        </div>
-        <div class="platform-card-icon">${platform.icon}</div>
-        <div class="platform-card-label">${platform.label}</div>
-      </button>
-    `;
-  }).join("");
+  renderCinematicCards(
+    containerId,
+    PLATFORM_CARDS.map((p) => ({ value: p.value, label: p.label, image: p.image, icon: p.icon })),
+    selectedPlatform,
+    'data-platform',
+    onSelect
+  );
+}
+
+function renderEmotionCards(containerId, selected, onSelect) {
+  renderCinematicCards(
+    containerId,
+    EMOTION_CARDS.map((e) => ({ value: e.value, label: e.label, image: e.image, icon: e.icon })),
+    selected,
+    'data-emotion',
+    onSelect
+  );
+}
+
+function renderToneCards(containerId, selected, onSelect) {
+  renderCinematicCards(
+    containerId,
+    TONE_CARDS.map((t) => ({ value: t.value, label: t.label, image: t.image, icon: t.icon })),
+    selected,
+    'data-tone',
+    onSelect
+  );
+}
+
+function renderWebsiteLayoutCards(containerId, selected, onSelect) {
+  renderCinematicCards(containerId, WEBSITE_LAYOUT_CARDS, selected, 'data-layout', onSelect);
+}
+
+function renderPresetCards(containerId, selected, onSelect) {
+  renderCinematicCards(containerId, PRESET_CARDS, selected, 'data-preset', onSelect);
 }
 
 // Export for use in generate.html
@@ -243,6 +274,10 @@ window.FERDOUS_CARDS = {
   renderMusicCards,
   renderFormatCards,
   renderPlatformCards,
+  renderEmotionCards,
+  renderToneCards,
+  renderWebsiteLayoutCards,
+  renderPresetCards,
   STYLE_IMAGES,
   DURATION_CARDS,
   LANGUAGE_CARDS,
@@ -250,5 +285,8 @@ window.FERDOUS_CARDS = {
   FORMAT_CARDS,
   PLATFORM_CARDS,
   EMOTION_CARDS,
-  TONE_CARDS
+  TONE_CARDS,
+  WEBSITE_LAYOUT_CARDS,
+  PRESET_CARDS,
+  FALLBACK_16x9
 };
