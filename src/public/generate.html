@@ -37,20 +37,93 @@
     }
     [dir="ltr"] { font-family: 'Outfit', sans-serif; }
     [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+    
+    /* Premium Manus overrides (cinematic dark glass) */
+    .m-surface{
+      background: rgba(14, 14, 18, 0.68) !important;
+      backdrop-filter: blur(26px) saturate(1.12) !important;
+      -webkit-backdrop-filter: blur(26px) saturate(1.12) !important;
+      border: 1px solid rgba(255,255,255,0.09) !important;
+      box-shadow: 
+        0 14px 45px rgba(0,0,0,0.48),
+        inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    }
+    .m-float-sidebar{
+      background: rgba(10, 10, 13, 0.85) !important;
+      backdrop-filter: blur(30px) saturate(1.15) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(1.15) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      box-shadow: 
+        0 20px 60px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-inputbar{
+      background: rgba(14, 14, 18, 0.75) !important;
+      backdrop-filter: blur(20px) saturate(1.1) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(1.1) !important;
+      border: 1px solid rgba(243,201,105,0.28) !important;
+      box-shadow: 
+        0 0 0 3px rgba(243,201,105,0.08),
+        0 10px 35px rgba(0,0,0,0.40),
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+    .m-inputbar:focus-within{
+      border-color: rgba(243,201,105,0.45) !important;
+      box-shadow: 
+        0 0 0 4px rgba(243,201,105,0.12),
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 14px 45px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-btn{
+      background: rgba(14, 14, 18, 0.70) !important;
+      backdrop-filter: blur(16px) saturate(1.1) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(1.1) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      box-shadow: 
+        0 8px 28px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+      transition: transform .18s cubic-bezier(0.4,0,0.2,1), box-shadow .18s ease !important;
+    }
+    .m-btn:hover{
+      transform: translateY(-1.5px) scale(1.01) !important;
+      box-shadow: 
+        0 12px 38px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-btn-primary{
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90)) !important;
+      color: rgba(10,10,13,0.96) !important;
+      border: 0 !important;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 10px 30px rgba(0,0,0,0.40),
+        0 0 25px rgba(243,201,105,0.25) !important;
+    }
+    .m-btn-primary:hover{
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.35),
+        0 14px 40px rgba(0,0,0,0.50),
+        0 0 35px rgba(243,201,105,0.35) !important;
+    }
     body {
-      background: var(--bg);
-      background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.12), transparent),
-                        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(168, 85, 247, 0.08), transparent);
+      background: #050508;
+      background-image: 
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(99, 102, 241, 0.08), transparent),
+        radial-gradient(ellipse 70% 50% at 100% 100%, rgba(168, 85, 247, 0.06), transparent),
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(243, 201, 105, 0.04), transparent);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
     }
     .glass-panel {
-      background: var(--surface);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      background: rgba(14, 14, 18, 0.72);
+      backdrop-filter: blur(28px) saturate(1.1);
+      -webkit-backdrop-filter: blur(28px) saturate(1.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 
+        0 12px 40px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.05);
     }
     .glass-card {
       background: var(--glass);
@@ -62,31 +135,72 @@
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px 20px 6px 20px;
     }
-    .gradient-text { background: linear-gradient(135deg, #c4b5fd, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-text { 
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90), rgba(243,201,105,0.95)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      background-clip: text;
+      filter: drop-shadow(0 2px 8px rgba(243,201,105,0.40));
+    }
     #loadingOverlay {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(10,10,15,0.95); backdrop-filter: blur(12px);
+      background: rgba(5,5,8,0.96); 
+      backdrop-filter: blur(20px) saturate(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.1);
       display: none; align-items: center; justify-content: center; flex-direction: column;
     }
-    .spinner { width: 56px; height: 56px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .spinner { 
+      width: 64px; 
+      height: 64px; 
+      border: 3.5px solid rgba(255,255,255,0.08); 
+      border-top-color: rgba(243,201,105,0.85); 
+      border-radius: 50%; 
+      animation: spin 0.9s cubic-bezier(0.4,0,0.2,1) infinite;
+      box-shadow: 0 0 25px rgba(243,201,105,0.25);
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .tab-active { background: var(--glass); color: var(--text); border-color: var(--primary); }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
-    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
+    .tab-active { 
+      background: rgba(14, 14, 18, 0.65); 
+      color: rgba(243,201,105,0.95); 
+      border-color: rgba(243,201,105,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .btn-primary { 
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90)); 
+      color: rgba(10,10,13,0.96); 
+      font-weight: 900;
+      transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s ease, filter 0.22s ease;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 8px 24px rgba(0,0,0,0.35),
+        0 0 20px rgba(243,201,105,0.20);
+    }
+    .btn-primary:hover:not(:disabled) { 
+      transform: translateY(-2px) scale(1.02); 
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.35),
+        0 12px 32px rgba(0,0,0,0.45),
+        0 0 30px rgba(243,201,105,0.30);
+      filter: brightness(1.05);
+    }
     .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
     #preview { min-height: 420px; }
     
     /* FERDOUS Cinematic Card System (16:9, HD, image-first) */
     .cards-grid{
       display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:14px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
     }
     @media (min-width: 640px){
-      .cards-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .cards-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
     }
     @media (min-width: 1024px){
-      .cards-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); }
+      .cards-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+    }
+    @media (min-width: 1280px){
+      .cards-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:22px; }
     }
     .f-card{
       display:block;
@@ -101,17 +215,22 @@
       box-shadow: 0 14px 40px rgba(0,0,0,0.35);
     }
     .f-card:hover{
-      transform: translateY(-2px) scale(1.012);
-      border-color: rgba(255,255,255,0.16);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.46);
+      transform: translateY(-3px) scale(1.024);
+      border-color: rgba(243, 201, 105, 0.35);
+      box-shadow: 
+        0 0 0 1px rgba(243, 201, 105, 0.20),
+        0 20px 70px rgba(0,0,0,0.50),
+        0 0 35px rgba(243, 201, 105, 0.12);
+      filter: saturate(1.08) contrast(1.04) brightness(1.02);
     }
     .f-card.selected{
-      border-color: rgba(243, 201, 105, 0.65);
+      border-color: rgba(243, 201, 105, 0.75);
       box-shadow:
-        0 0 0 1px rgba(243, 201, 105, 0.28),
-        0 18px 70px rgba(0,0,0,0.52),
-        0 0 42px rgba(243, 201, 105, 0.18);
-      filter:saturate(1.06) contrast(1.02);
+        0 0 0 2px rgba(243, 201, 105, 0.35),
+        0 22px 80px rgba(0,0,0,0.58),
+        0 0 55px rgba(243, 201, 105, 0.25),
+        inset 0 0 20px rgba(243, 201, 105, 0.08);
+      filter: saturate(1.10) contrast(1.05) brightness(1.04);
     }
     .f-card-media{
       position:relative;
@@ -126,15 +245,32 @@
       height:100%;
       object-fit:cover;
       transform:scale(1.02);
-      filter:contrast(1.08) saturate(1.05);
+      filter:contrast(1.12) saturate(1.08) brightness(0.92);
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .f-card:hover .f-card-media img{
+      transform:scale(1.04);
+      filter:contrast(1.15) saturate(1.12) brightness(0.95);
+    }
+    .f-card.selected .f-card-media img{
+      transform:scale(1.03);
+      filter:contrast(1.18) saturate(1.15) brightness(0.98);
     }
     .f-card-vignette{
       position:absolute;
       inset:0;
       background:
-        radial-gradient(120% 70% at 50% 10%, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.42) 70%, rgba(0,0,0,0.68) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.56) 88%, rgba(0,0,0,0.72) 100%);
+        radial-gradient(ellipse 140% 80% at 50% 5%, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.75) 100%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,0,0,0.85), transparent);
       pointer-events:none;
+      opacity: 0.88;
+    }
+    .f-card.selected .f-card-vignette{
+      background:
+        radial-gradient(ellipse 140% 80% at 50% 5%, rgba(243,201,105,0.08) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.75) 100%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,0,0,0.85), transparent);
     }
     .f-card-meta{
       position:absolute;
@@ -149,20 +285,31 @@
     }
     .f-card-title{
       font-size:12px;
-      font-weight:800;
-      letter-spacing:-0.01em;
-      color: rgba(248,250,252,0.96);
-      text-shadow: 0 6px 22px rgba(0,0,0,0.55);
-      background: rgba(10,10,13,0.42);
-      border: 1px solid rgba(255,255,255,0.10);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      font-weight:900;
+      letter-spacing:-0.015em;
+      color: rgba(248,250,252,0.98);
+      text-shadow: 
+        0 2px 8px rgba(0,0,0,0.75),
+        0 0 12px rgba(0,0,0,0.50);
+      background: rgba(10,10,13,0.68);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(14px) saturate(1.2);
+      -webkit-backdrop-filter: blur(14px) saturate(1.2);
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 7px 12px;
       max-width: 100%;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.40);
+    }
+    .f-card.selected .f-card-title{
+      background: rgba(243,201,105,0.15);
+      border-color: rgba(243,201,105,0.35);
+      color: rgba(243,201,105,0.98);
+      text-shadow: 
+        0 2px 8px rgba(0,0,0,0.80),
+        0 0 16px rgba(243,201,105,0.40);
     }
     .f-card-badge{
       position:absolute;
@@ -171,69 +318,96 @@
       font-size:11px;
       font-weight:900;
       letter-spacing:0.02em;
-      color: rgba(10,10,13,0.92);
-      background: rgba(243,201,105,0.92);
-      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(10,10,13,0.96);
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.92));
+      border: 1.5px solid rgba(255,255,255,0.22);
       border-radius: 999px;
-      padding: 5px 9px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      padding: 5px 10px;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 14px 35px rgba(0,0,0,0.40),
+        0 0 20px rgba(243,201,105,0.30);
+      z-index: 2;
     }
     .f-card-check{
       position:absolute;
       top:10px;
       right:10px;
-      width:26px;
-      height:26px;
+      width:28px;
+      height:28px;
       border-radius:999px;
       display:flex;
       align-items:center;
       justify-content:center;
-      color: rgba(10,10,13,0.92);
-      background: rgba(243,201,105,0.95);
-      border: 1px solid rgba(255,255,255,0.20);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      color: rgba(10,10,13,0.96);
+      background: linear-gradient(135deg, rgba(243,201,105,0.98), rgba(217,164,65,0.95));
+      border: 1.5px solid rgba(255,255,255,0.25);
+      box-shadow: 
+        0 0 0 2px rgba(243,201,105,0.30),
+        0 14px 35px rgba(0,0,0,0.40),
+        0 0 25px rgba(243,201,105,0.35);
       font-weight: 900;
+      font-size: 14px;
+      z-index: 2;
     }
 
-    /* Cinematic empty-state frames (never blank) */
+    /* Cinematic empty-state frames (never blank - always cinematic) */
     .f-empty-frame{
       position:relative;
       border-radius: 18px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
-      min-height: 260px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(10,10,13,0.40);
+      box-shadow: 
+        0 16px 50px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      min-height: 280px;
+      aspect-ratio: 16 / 9;
     }
     .f-empty-frame:before{
       content:"";
       position:absolute;
-      inset:0;
-      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&h=675&q=60");
+      inset:-20px;
+      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1400&h=788&q=80");
       background-size: cover;
       background-position: center;
-      filter: blur(10px) saturate(1.1) contrast(1.05);
-      transform: scale(1.06);
-      opacity: 0.38;
+      filter: blur(14px) saturate(1.15) contrast(1.10) brightness(0.65);
+      transform: scale(1.08);
+      opacity: 0.52;
     }
     .f-empty-frame:after{
       content:"";
       position:absolute;
       inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.20), rgba(0,0,0,0.70));
+      background: 
+        radial-gradient(ellipse 100% 60% at 50% 0%, rgba(0,0,0,0.00), rgba(0,0,0,0.45)),
+        linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.75) 100%);
     }
     .f-empty-content{
       position:relative;
       z-index:1;
       height:100%;
-      min-height: 260px;
+      min-height: 280px;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding: 24px;
-      color: rgba(248,250,252,0.84);
+      padding: 32px;
+      color: rgba(248,250,252,0.92);
       text-align:center;
-      font-weight:700;
+      font-weight:800;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      text-shadow: 
+        0 4px 16px rgba(0,0,0,0.70),
+        0 0 20px rgba(0,0,0,0.50);
+    }
+    .f-empty-frame > *:not(:before):not(:after) {
+      position: relative;
+      z-index: 1;
+      color: rgba(248,250,252,0.92);
+      text-shadow: 
+        0 4px 16px rgba(0,0,0,0.70),
+        0 0 20px rgba(0,0,0,0.50);
     }
   </style>
 </head>
@@ -335,6 +509,10 @@
         <div class="m-surface p-6">
           <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
           <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-extrabold mb-4" style="letter-spacing:-0.01em">Video Intent</label>
+          <div id="videoIntentCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4" data-i18n="duration">Duration</label>
@@ -561,6 +739,17 @@
         return;
       }
       
+      window.FERDOUS_CARDS.renderVideoIntentCards("videoIntentCards", null, function(val) {
+        try {
+          var t = document.getElementById("videoDesc");
+          if (t) {
+            var intentLabel = window.FERDOUS_CARDS.VIDEO_INTENT_CARDS.find(function(c) { return c.value === val; });
+            if (intentLabel) t.value = (t.value ? t.value + "\n" : "") + intentLabel.label + " video";
+            t.focus();
+          }
+        } catch (_) {}
+        initVisualCards();
+      });
       window.FERDOUS_CARDS.renderDurationCards("videoDurationCards", videoState.duration, function(val) {
         videoState.duration = val;
         initVisualCards();

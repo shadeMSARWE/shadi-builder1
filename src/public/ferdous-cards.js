@@ -9,27 +9,28 @@ const IMG_16x9 = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop
 const FALLBACK_16x9 = IMG_16x9("photo-1526948128573-703ee1aeb6fa"); // cinematic bokeh lights
 
 const STYLE_IMAGES = {
-  // Video + Image styles (cinematic identity per style)
-  cinematic: IMG_16x9("photo-1526948128573-703ee1aeb6fa"), // moody cinema lights
-  realistic: IMG_16x9("photo-1519681393784-d120267933ba"), // sharp studio portrait
-  documentary: IMG_16x9("photo-1520975916090-3105956dac38"), // natgeo-ish field shot
-  anime: IMG_16x9("photo-1520975682031-a2ff34d1a9b4"), // neon city (anime vibe)
-  cartoon: IMG_16x9("photo-1526481280695-3c687fd643ed"), // colorful playful scene
-  "3d_cartoon": IMG_16x9("photo-1602524204631-2c22b7c1c7c2"), // toy-like depth
-  fantasy: IMG_16x9("photo-1519681393784-d120267933ba"), // dramatic
-  "sci-fi": IMG_16x9("photo-1462331940025-496dfbfc7564"), // sci-fi space
-  digital_art: IMG_16x9("photo-1545239351-1141bd82e8a6"), // abstract light
+  // Video + Image styles (cinematic identity per style - dark, high contrast)
+  cinematic: IMG_16x9("photo-1526948128573-703ee1aeb6fa"), // moody cinema bokeh
+  realistic: IMG_16x9("photo-1519681393784-d120267933ba"), // sharp dramatic portrait
+  documentary: IMG_16x9("photo-1520975916090-3105956dac38"), // natgeo field
+  anime: IMG_16x9("photo-1520975682031-a2ff34d1a9b4"), // neon cyberpunk
+  cartoon: IMG_16x9("photo-1602524204631-2c22b7c1c7c2"), // pixar depth
+  "3d_cartoon": IMG_16x9("photo-1602524204631-2c22b7c1c7c2"), // 3d depth
+  fantasy: IMG_16x9("photo-1519681393784-d120267933ba"), // dramatic fantasy
+  "sci-fi": IMG_16x9("photo-1462331940025-496dfbfc7564"), // space sci-fi
+  digital_art: IMG_16x9("photo-1545239351-1141bd82e8a6"), // abstract neon
   business: IMG_16x9("photo-1553877522-43269d4ea984"), // premium office
   kids: IMG_16x9("photo-1503454537195-1dcabb73ffb9"), // warm kids
-  animals: IMG_16x9("photo-1456926631375-92c8ce872def") // sharp animal closeup
+  animals: IMG_16x9("photo-1456926631375-92c8ce872def") // sharp wildlife
 };
 
-// Duration preset cards (each has its own 16:9 preview)
+// Duration preset cards (each has its own 16:9 cinematic preview)
 const DURATION_CARDS = [
   { value: 5, label: "5s", image: IMG_16x9("photo-1517602302552-471fe67acf66") }, // fast cut
-  { value: 15, label: "15s", image: IMG_16x9("photo-1485846234645-a62644f84728") }, // dynamic scene
+  { value: 10, label: "10s", image: IMG_16x9("photo-1485846234645-a62644f84728") }, // dynamic scene
   { value: 30, label: "30s", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") }, // cinema screen
   { value: 60, label: "1m", image: IMG_16x9("photo-1510070009289-b5bc34383727") }, // storytelling
+  { value: 120, label: "2m", image: IMG_16x9("photo-1524253482453-3fed8d2fe12b") }, // short doc
   { value: 180, label: "3m", image: IMG_16x9("photo-1524253482453-3fed8d2fe12b") }, // documentary
   { value: 600, label: "10m", image: IMG_16x9("photo-1526948128573-703ee1aeb6fa") } // premium longform
 ];
@@ -78,7 +79,8 @@ const EMOTION_CARDS = [
   { value: "neutral", label: "Neutral", icon: "◼", image: IMG_16x9("photo-1519681393784-d120267933ba") },
   { value: "happy", label: "Happy", icon: "✦", image: IMG_16x9("photo-1500530855697-b586d89ba3ee") },
   { value: "serious", label: "Serious", icon: "▣", image: IMG_16x9("photo-1520975916090-3105956dac38") },
-  { value: "energetic", label: "Energetic", icon: "⚡", image: IMG_16x9("photo-1517602302552-471fe67acf66") }
+  { value: "energetic", label: "Energetic", icon: "⚡", image: IMG_16x9("photo-1517602302552-471fe67acf66") },
+  { value: "calm", label: "Calm", icon: "◯", image: IMG_16x9("photo-1519681393784-d120267933ba") }
 ];
 
 // Tone cards (16:9 preview, no text-only)
@@ -94,6 +96,16 @@ const WEBSITE_LAYOUT_CARDS = [
   { value: "dashboard", label: "SaaS Dashboard", image: IMG_16x9("photo-1551288049-bebda4e38f71") },
   { value: "ecommerce", label: "E-commerce", image: IMG_16x9("photo-1556742049-0cfed4f6a45d") },
   { value: "banking", label: "Banking UI", image: IMG_16x9("photo-1554224155-6726b3ff858f") }
+];
+
+// Video Intent Cards (NEW - cinematic previews for common video types)
+const VIDEO_INTENT_CARDS = [
+  { value: "cinematic_story", label: "Cinematic Story", image: IMG_16x9("photo-1485846234645-a62644f84728") },
+  { value: "cats_animals", label: "Cats / Animals", image: IMG_16x9("photo-1456926631375-92c8ce872def") },
+  { value: "body_fitness", label: "Body / Fitness", image: IMG_16x9("photo-1517602302552-471fe67acf66") },
+  { value: "kids", label: "Kids", image: IMG_16x9("photo-1503454537195-1dcabb73ffb9") },
+  { value: "business_ads", label: "Business / Ads", image: IMG_16x9("photo-1553877522-43269d4ea984") },
+  { value: "documentary", label: "Documentary", image: IMG_16x9("photo-1520975916090-3105956dac38") }
 ];
 
 // Preset cards (cinematic previews)
@@ -160,19 +172,27 @@ function renderCinematicCards(containerId, cards, selectedValue, dataAttr, onSel
  */
 function renderStyleCards(containerId, selectedStyle, onSelect) {
   const isAr = window.__locale === "ar";
-  const styles = [
-    // Required sets (video + image)
+  const isVideo = containerId && containerId.includes("video");
+  const styles = isVideo ? [
+    // Video Studio styles (all required)
     { value: "cinematic", label: isAr ? "سينمائي" : "Cinematic", image: STYLE_IMAGES.cinematic },
-    { value: "cartoon", label: isAr ? "كرتون (Pixar)" : "Cartoon (Pixar)", image: STYLE_IMAGES.cartoon },
-    { value: "anime", label: isAr ? "أنمي" : "Anime", image: STYLE_IMAGES.anime },
     { value: "realistic", label: isAr ? "واقعي" : "Realistic", image: STYLE_IMAGES.realistic },
     { value: "documentary", label: isAr ? "وثائقي" : "Documentary", image: STYLE_IMAGES.documentary },
-    // Extra (still cinematic)
-    { value: "business", label: isAr ? "تجاري" : "Business", image: STYLE_IMAGES.business },
+    { value: "cartoon", label: isAr ? "كرتون" : "Cartoon", image: STYLE_IMAGES.cartoon },
     { value: "kids", label: isAr ? "أطفال" : "Kids", image: STYLE_IMAGES.kids },
     { value: "animals", label: isAr ? "حيوانات" : "Animals", image: STYLE_IMAGES.animals },
     { value: "fantasy", label: isAr ? "خيال" : "Fantasy", image: STYLE_IMAGES.fantasy },
     { value: "sci-fi", label: isAr ? "خيال علمي" : "Sci‑Fi", image: STYLE_IMAGES["sci-fi"] }
+  ] : [
+    // Image Studio styles (all required)
+    { value: "cinematic", label: isAr ? "سينمائي" : "Cinematic", image: STYLE_IMAGES.cinematic },
+    { value: "realistic", label: isAr ? "واقعي" : "Realistic", image: STYLE_IMAGES.realistic },
+    { value: "cartoon", label: isAr ? "كرتون" : "Cartoon", image: STYLE_IMAGES.cartoon },
+    { value: "anime", label: isAr ? "أنمي" : "Anime", image: STYLE_IMAGES.anime },
+    { value: "fantasy", label: isAr ? "خيال" : "Fantasy", image: STYLE_IMAGES.fantasy },
+    { value: "kids", label: isAr ? "أطفال" : "Kids", image: STYLE_IMAGES.kids },
+    { value: "animals", label: isAr ? "حيوانات" : "Animals", image: STYLE_IMAGES.animals },
+    { value: "business", label: isAr ? "تجاري" : "Business", image: STYLE_IMAGES.business }
   ];
 
   renderCinematicCards(containerId, styles, selectedStyle, 'data-style', onSelect);
@@ -266,6 +286,10 @@ function renderPresetCards(containerId, selected, onSelect) {
   renderCinematicCards(containerId, PRESET_CARDS, selected, 'data-preset', onSelect);
 }
 
+function renderVideoIntentCards(containerId, selected, onSelect) {
+  renderCinematicCards(containerId, VIDEO_INTENT_CARDS, selected, 'data-intent', onSelect);
+}
+
 // Export for use in generate.html
 window.FERDOUS_CARDS = {
   renderStyleCards,
@@ -278,6 +302,7 @@ window.FERDOUS_CARDS = {
   renderToneCards,
   renderWebsiteLayoutCards,
   renderPresetCards,
+  renderVideoIntentCards,
   STYLE_IMAGES,
   DURATION_CARDS,
   LANGUAGE_CARDS,
@@ -288,5 +313,6 @@ window.FERDOUS_CARDS = {
   TONE_CARDS,
   WEBSITE_LAYOUT_CARDS,
   PRESET_CARDS,
+  VIDEO_INTENT_CARDS,
   FALLBACK_16x9
 };
