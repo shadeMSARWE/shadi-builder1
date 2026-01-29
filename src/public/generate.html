@@ -10,6 +10,7 @@
   <script src="/i18n.js"></script>
   <link rel="stylesheet" href="/manus.css">
   <script src="/manus-ui.js"></script>
+  <script src="/ferdous-cards.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -61,6 +62,162 @@
     .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); }
     .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
     #preview { min-height: 420px; }
+    
+    /* FERDOUS Visual Cards System */
+    .visual-card, .duration-card, .language-card, .music-card, .format-card, .platform-card {
+      background: rgba(255,255,255,0.03);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .visual-card:hover, .duration-card:hover, .language-card:hover, .music-card:hover, .format-card:hover, .platform-card:hover {
+      border-color: rgba(99,102,241,0.5);
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.05);
+    }
+    .visual-card.selected, .duration-card.selected, .language-card.selected, .music-card.selected, .format-card.selected, .platform-card.selected {
+      border-color: #6366f1;
+      background: rgba(99,102,241,0.15);
+      box-shadow: 0 0 20px rgba(99,102,241,0.3);
+    }
+    .visual-card-image {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .visual-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .visual-card-check, .platform-card-check {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #6366f1;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .visual-card-label, .duration-card-label, .language-card-label, .music-card-label, .format-card-label, .platform-card-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text);
+    }
+    .duration-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+    }
+    .duration-card-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .language-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-height: 70px;
+    }
+    .language-card-flag {
+      font-size: 28px;
+    }
+    .music-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-height: 100px;
+    }
+    .music-card-image {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .music-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .music-card-icon {
+      font-size: 20px;
+    }
+    .format-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-height: 90px;
+    }
+    .format-card-icon {
+      font-size: 32px;
+    }
+    .format-card-desc {
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .platform-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-height: 120px;
+    }
+    .platform-card-image {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .platform-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .platform-card-icon {
+      font-size: 24px;
+    }
+    .emotion-card, .tone-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-height: 70px;
+    }
+    .emotion-card-icon, .tone-card-icon {
+      font-size: 28px;
+    }
+    .emotion-card-label, .tone-card-label {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+    .cards-grid-large {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
   </style>
 </head>
 <body class="manus flex h-screen">
@@ -160,74 +317,40 @@
           <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
           <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="duration">Duration</label>
-            <select id="videoDuration" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="5">5 sec</option>
-              <option value="10">10 sec</option>
-              <option value="20">20 sec</option>
-              <option value="30">30 sec</option>
-            </select>
-          </div>
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2" data-i18n="style">Visual Style</label>
-            <select id="videoStyle" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="realistic">Realistic</option>
-              <option value="cinematic">Cinematic</option>
-              <option value="3d_cartoon">3D Cartoon</option>
-              <option value="anime">Anime</option>
-              <option value="digital_art">Digital Art</option>
-            </select>
-          </div>
-          <div class="m-surface p-4 flex flex-col justify-end">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4" data-i18n="duration">Duration</label>
+          <div id="videoDurationCards" class="cards-grid grid-cols-6"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
+          <div id="videoStyleCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+        </div>
+        <div class="m-surface p-6">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
-              <span class="text-sm font-bold" data-i18n="voiceOver">AI Voice-over</span>
+              <span class="text-xs text-slate-400" data-i18n="voiceOverHint">Enable</span>
             </label>
-            <p class="text-[10px] text-slate-500 mt-1" data-i18n="voiceOverHint">Add AI-generated speech</p>
           </div>
+          <div id="voiceLangCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2">Voice Language</label>
-            <select id="voiceLang" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="ar">Arabic</option>
-              <option value="en">English</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="es">Spanish</option>
-              <option value="it">Italian</option>
-              <option value="pt">Portuguese</option>
-              <option value="tr">Turkish</option>
-              <option value="ru">Russian</option>
-              <option value="ja">Japanese</option>
-              <option value="ko">Korean</option>
-            </select>
-          </div>
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold text-slate-400 mb-2">Background Music</label>
-            <select id="bgMusic" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="none">None</option>
-              <option value="cinematic">Cinematic</option>
-              <option value="upbeat">Upbeat</option>
-              <option value="lofi">Lo-fi</option>
-            </select>
-          </div>
-          <div class="m-surface p-4 flex flex-col justify-end">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4">Background Music</label>
+          <div id="bgMusicCards" class="cards-grid grid-cols-4"></div>
+        </div>
+        <div class="m-surface p-6">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-sm font-bold">Automatic Audio Sync</label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="autoAudioSync" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
-              <span class="text-sm font-bold">Automatic Audio Sync</span>
+              <span class="text-xs text-slate-400">Enable</span>
             </label>
-            <p class="text-[10px] text-slate-500 mt-1">Auto-sync VO + music timing</p>
           </div>
         </div>
-        <div class="glass-card rounded-2xl p-4">
-          <label class="block text-xs font-bold text-slate-400 mb-2">Format</label>
-          <div class="flex gap-2">
-            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt169">16:9</button>
-            <button type="button" class="m-btn px-4 py-2 text-xs font-bold" id="fmt916">9:16</button>
-          </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4" data-i18n="format">Format</label>
+          <div id="formatCards" class="cards-grid grid-cols-3"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
@@ -247,12 +370,9 @@
           <label class="block text-sm font-bold mb-2" data-i18n="promptPlaceholder">Describe the image...</label>
           <textarea id="imageDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe the image you want..."></textarea>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <button type="button" class="m-chip preset-card" data-preset="cartoon">Cartoon</button>
-          <button type="button" class="m-chip preset-card" data-preset="anime">Anime</button>
-          <button type="button" class="m-chip preset-card" data-preset="cinematic">Cinematic</button>
-          <button type="button" class="m-chip preset-card" data-preset="realistic">Realistic</button>
-          <button type="button" class="m-chip preset-card" data-preset="digital_art">Digital Art</button>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4" data-i18n="style">Visual Style</label>
+          <div id="imageStyleCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genImageBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Image</button>
@@ -271,11 +391,9 @@
           <label class="block text-sm font-bold mb-2">Social Post Content</label>
           <textarea id="socialDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe your social post..."></textarea>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <button type="button" class="m-chip" data-platform="instagram">Instagram</button>
-          <button type="button" class="m-chip" data-platform="tiktok">TikTok</button>
-          <button type="button" class="m-chip" data-platform="youtube">YouTube</button>
-          <button type="button" class="m-chip" data-platform="facebook">Facebook</button>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4">Platform</label>
+          <div id="platformCards" class="cards-grid grid-cols-2 lg:grid-cols-4"></div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genSocialBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Social</button>
@@ -294,40 +412,18 @@
           <label class="block text-sm font-bold mb-2">Text for Voice Generation</label>
           <textarea id="audioText" class="w-full h-32 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Enter text to convert to speech..."></textarea>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold mb-2" data-i18n="voiceLanguage">Voice Language</label>
-            <select id="audioLang" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="ar">Arabic</option>
-              <option value="en">English</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="es">Spanish</option>
-              <option value="it">Italian</option>
-              <option value="pt">Portuguese</option>
-              <option value="tr">Turkish</option>
-              <option value="ru">Russian</option>
-              <option value="ja">Japanese</option>
-              <option value="ko">Korean</option>
-            </select>
-          </div>
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold mb-2">Emotion</label>
-            <select id="audioEmotion" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="neutral">Neutral</option>
-              <option value="happy">Happy</option>
-              <option value="serious">Serious</option>
-              <option value="energetic">Energetic</option>
-            </select>
-          </div>
-          <div class="m-surface p-4">
-            <label class="block text-xs font-bold mb-2">Tone</label>
-            <select id="audioTone" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none">
-              <option value="professional">Professional</option>
-              <option value="casual">Casual</option>
-              <option value="friendly">Friendly</option>
-            </select>
-          </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4" data-i18n="voiceLanguage">Voice Language</label>
+          <div id="audioLangCards" class="cards-grid grid-cols-4 lg:grid-cols-6"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4">Emotion</label>
+          <div id="emotionCards" class="cards-grid grid-cols-4"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4">Tone</label>
+          <div id="toneCards" class="cards-grid grid-cols-3"></div>
+        </div>
         </div>
         <div class="flex justify-end">
           <button type="button" id="genAudioBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Audio</button>
@@ -431,9 +527,126 @@
         .catch(function() {});
     }
 
+    // Visual Cards State
+    var videoState = { duration: 30, style: "realistic", voiceLang: "ar", bgMusic: "none", format: "16:9" };
+    var imageState = { style: "realistic" };
+    var audioState = { lang: "ar", emotion: "neutral", tone: "professional" };
+    var socialState = { platform: "instagram" };
+
+    // Initialize Visual Cards
+    function initVisualCards() {
+      if (!window.FERDOUS_CARDS) {
+        setTimeout(initVisualCards, 100);
+        return;
+      }
+      
+      // Video cards
+      window.FERDOUS_CARDS.renderDurationCards("videoDurationCards", videoState.duration, function(val) {
+        videoState.duration = val;
+        document.querySelectorAll("#videoDurationCards .duration-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-duration") == val) c.classList.add("selected");
+        });
+      });
+      
+      window.FERDOUS_CARDS.renderStyleCards("videoStyleCards", videoState.style, function(val) {
+        videoState.style = val;
+        document.querySelectorAll("#videoStyleCards .visual-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-style") == val) c.classList.add("selected");
+        });
+      });
+      
+      window.FERDOUS_CARDS.renderLanguageCards("voiceLangCards", videoState.voiceLang, function(val) {
+        videoState.voiceLang = val;
+        document.querySelectorAll("#voiceLangCards .language-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-lang") == val) c.classList.add("selected");
+        });
+      });
+      
+      window.FERDOUS_CARDS.renderMusicCards("bgMusicCards", videoState.bgMusic, function(val) {
+        videoState.bgMusic = val;
+        document.querySelectorAll("#bgMusicCards .music-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-music") == val) c.classList.add("selected");
+        });
+      });
+      
+      window.FERDOUS_CARDS.renderFormatCards("formatCards", videoState.format, function(val) {
+        videoState.format = val;
+        document.querySelectorAll("#formatCards .format-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-format") == val) c.classList.add("selected");
+        });
+      });
+      
+      // Image cards
+      window.FERDOUS_CARDS.renderStyleCards("imageStyleCards", imageState.style, function(val) {
+        imageState.style = val;
+        document.querySelectorAll("#imageStyleCards .visual-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-style") == val) c.classList.add("selected");
+        });
+      });
+      
+      // Platform cards
+      window.FERDOUS_CARDS.renderPlatformCards("platformCards", socialState.platform, function(val) {
+        socialState.platform = val;
+        document.querySelectorAll("#platformCards .platform-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-platform") == val) c.classList.add("selected");
+        });
+      });
+      
+      // Audio cards
+      window.FERDOUS_CARDS.renderLanguageCards("audioLangCards", audioState.lang, function(val) {
+        audioState.lang = val;
+        document.querySelectorAll("#audioLangCards .language-card").forEach(function(c) {
+          c.classList.remove("selected");
+          if (c.getAttribute("data-lang") == val) c.classList.add("selected");
+        });
+      });
+      
+      // Emotion cards
+      var emotionCards = window.FERDOUS_CARDS.EMOTION_CARDS;
+      var emotionContainer = document.getElementById("emotionCards");
+      if (emotionContainer) {
+        emotionContainer.innerHTML = emotionCards.map(function(e) {
+          var isSelected = audioState.emotion === e.value;
+          return '<button type="button" class="emotion-card ' + (isSelected ? 'selected' : '') + '" data-emotion="' + e.value + '"><div class="emotion-card-icon">' + e.icon + '</div><div class="emotion-card-label">' + e.label + '</div></button>';
+        }).join("");
+        emotionContainer.querySelectorAll(".emotion-card").forEach(function(c) {
+          c.addEventListener("click", function() {
+            audioState.emotion = this.getAttribute("data-emotion");
+            emotionContainer.querySelectorAll(".emotion-card").forEach(function(cc) { cc.classList.remove("selected"); });
+            this.classList.add("selected");
+          });
+        });
+      }
+      
+      // Tone cards
+      var toneCards = window.FERDOUS_CARDS.TONE_CARDS;
+      var toneContainer = document.getElementById("toneCards");
+      if (toneContainer) {
+        toneContainer.innerHTML = toneCards.map(function(t) {
+          var isSelected = audioState.tone === t.value;
+          return '<button type="button" class="tone-card ' + (isSelected ? 'selected' : '') + '" data-tone="' + t.value + '"><div class="tone-card-icon">' + t.icon + '</div><div class="tone-card-label">' + t.label + '</div></button>';
+        }).join("");
+        toneContainer.querySelectorAll(".tone-card").forEach(function(c) {
+          c.addEventListener("click", function() {
+            audioState.tone = this.getAttribute("data-tone");
+            toneContainer.querySelectorAll(".tone-card").forEach(function(cc) { cc.classList.remove("selected"); });
+            this.classList.add("selected");
+          });
+        });
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
       currentLang = localStorage.getItem("lang") || "ar";
       setLang(currentLang);
+      initVisualCards();
       window._supabase.auth.getSession().then(function(_ref) {
         var data = _ref.data;
         if (!data || !data.session) {
@@ -475,7 +688,15 @@
         activeTab.classList.add("tab-active", "border-indigo-500");
         activeTab.classList.remove("text-slate-500", "border-transparent");
       }
-      if (activePanel) activePanel.classList.remove("hidden");
+      if (activePanel) {
+        activePanel.classList.remove("hidden");
+        // Ensure visual cards are rendered when tab becomes visible
+        setTimeout(function() {
+          if (window.FERDOUS_CARDS && typeof initVisualCards === "function") {
+            initVisualCards();
+          }
+        }, 100);
+      }
     }
     document.getElementById("tabWebsite").addEventListener("click", function() { switchTab("tabWebsite"); });
     document.getElementById("tabVideo").addEventListener("click", function() { switchTab("tabVideo"); });
@@ -517,18 +738,7 @@
     window.insertHint = insertHint;
 
     // Video format buttons
-    var currentFormat = "16:9";
-    function setFormat(fmt) {
-      currentFormat = fmt;
-      var b1 = document.getElementById("fmt169");
-      var b2 = document.getElementById("fmt916");
-      if (!b1 || !b2) return;
-      if (fmt === "16:9") { b1.classList.add("m-btn-primary"); b2.classList.remove("m-btn-primary"); }
-      else { b2.classList.add("m-btn-primary"); b1.classList.remove("m-btn-primary"); }
-    }
-    if (document.getElementById("fmt169")) document.getElementById("fmt169").addEventListener("click", function(){ setFormat("16:9"); });
-    if (document.getElementById("fmt916")) document.getElementById("fmt916").addEventListener("click", function(){ setFormat("9:16"); });
-    setFormat("16:9");
+    // Format handled by visual cards now
 
     // Live editor (basic Manus-like click-to-edit)
     var editMode = false;
@@ -679,12 +889,13 @@
     document.getElementById("genVideoBtn").addEventListener("click", function() {
       var description = document.getElementById("videoDesc").value.trim();
       if (!description) { alert(__t("errorPrompt")); return; }
-      var duration = parseInt(document.getElementById("videoDuration").value, 10) || 10;
-      var style = document.getElementById("videoStyle").value || "realistic";
+      var duration = videoState.duration || 30;
+      var style = videoState.style || "realistic";
       var voiceOver = document.getElementById("voiceOver").checked;
-      var voiceLanguage = (document.getElementById("voiceLang") && document.getElementById("voiceLang").value) || "ar";
-      var bgMusic = (document.getElementById("bgMusic") && document.getElementById("bgMusic").value) || "none";
+      var voiceLanguage = videoState.voiceLang || "ar";
+      var bgMusic = videoState.bgMusic || "none";
       var autoAudioSync = !!(document.getElementById("autoAudioSync") && document.getElementById("autoAudioSync").checked);
+      var format = videoState.format || "16:9";
       var overlay = document.getElementById("loadingOverlay");
       var status = document.getElementById("loadingStatus");
       overlay.style.display = "flex";
@@ -700,7 +911,7 @@
           voiceLanguage: voiceLanguage,
           bgMusic: bgMusic,
           autoAudioSync: autoAudioSync,
-          format: currentFormat
+          format: format
         })
       })
         .then(function(r) { return r.json(); })
@@ -811,7 +1022,7 @@
     if (genSocialBtn) genSocialBtn.addEventListener("click", function() {
       var prompt = document.getElementById("socialDesc").value.trim();
       if (!prompt) { alert(__t("errorPrompt")); return; }
-      var platform = document.querySelector(".m-chip[data-platform].m-btn-primary") ? document.querySelector(".m-chip[data-platform].m-btn-primary").getAttribute("data-platform") : "instagram";
+      var platform = socialState.platform || "instagram";
       var overlay = document.getElementById("loadingOverlay");
       overlay.style.display = "flex";
       fetch("/api/v1/ferdous/generate", {
@@ -838,9 +1049,9 @@
     if (genAudioBtn) genAudioBtn.addEventListener("click", function() {
       var text = document.getElementById("audioText").value.trim();
       if (!text) { alert(__t("errorPrompt")); return; }
-      var lang = document.getElementById("audioLang") ? document.getElementById("audioLang").value : "ar";
-      var emotion = document.getElementById("audioEmotion") ? document.getElementById("audioEmotion").value : "neutral";
-      var tone = document.getElementById("audioTone") ? document.getElementById("audioTone").value : "professional";
+      var lang = audioState.lang || "ar";
+      var emotion = audioState.emotion || "neutral";
+      var tone = audioState.tone || "professional";
       var overlay = document.getElementById("loadingOverlay");
       overlay.style.display = "flex";
       // Use audio studio directly or via FERDOUS
@@ -860,13 +1071,7 @@
         .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
     });
 
-    // Platform selector for social
-    document.querySelectorAll(".m-chip[data-platform]").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        document.querySelectorAll(".m-chip[data-platform]").forEach(function(b) { b.classList.remove("m-btn-primary"); });
-        this.classList.add("m-btn-primary");
-      });
-    });
+    // Platform selector handled by visual cards
 
     function logout() {
       window._supabase.auth.signOut().then(function() {
