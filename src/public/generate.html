@@ -135,6 +135,51 @@
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px 20px 6px 20px;
     }
+    /* ChatArea cinematic placeholder (CSS-only; no blank states) */
+    @keyframes f-chat-shimmer {
+      0%   { background-position: 22% 24%, 74% 48%, 34% 78%, -220% 0; opacity: 1; }
+      50%  { background-position: 22% 24%, 74% 48%, 34% 78%, 220% 0; opacity: 1; }
+      100% { background-position: 22% 24%, 74% 48%, 34% 78%, 220% 0; opacity: 1; }
+    }
+    #chatArea:empty{
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      box-shadow:
+        0 14px 45px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    #chatArea:empty::before{
+      content:"";
+      position:absolute;
+      inset:-22px;
+      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1400&h=788&q=80");
+      background-size: cover;
+      background-position: center;
+      filter: blur(16px) saturate(1.12) contrast(1.08) brightness(0.55);
+      transform: scale(1.10);
+      opacity: 0.50;
+      pointer-events:none;
+    }
+    #chatArea:empty::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(ellipse 200px 56px at 22% 24%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 62%, rgba(255,255,255,0.00) 70%),
+        radial-gradient(ellipse 260px 62px at 74% 48%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 62%, rgba(255,255,255,0.00) 70%),
+        radial-gradient(ellipse 220px 52px at 34% 78%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 62%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(120deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.00) 100%);
+      background-size: auto, auto, auto, 220% 220%;
+      background-position: 22% 24%, 74% 48%, 34% 78%, -220% 0;
+      background-repeat: no-repeat;
+      opacity: 1;
+      mix-blend-mode: soft-light;
+      animation: f-chat-shimmer 2.8s ease-in-out infinite;
+    }
     .gradient-text { 
       background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90), rgba(243,201,105,0.95)); 
       -webkit-background-clip: text; 
