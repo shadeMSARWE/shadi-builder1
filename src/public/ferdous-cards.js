@@ -59,6 +59,17 @@ const MUSIC_CARDS = [
   { value: "lofi", label: "Lo-fi", icon: "🎧", image: IMG_16x9("photo-1493225457124-a3eb161ffa5f") }
 ];
 
+// Toggle-style cards (still visual cards; UI-only helpers)
+const VOICE_OVER_CARDS = [
+  { value: "on", label: "Voice-over ON", icon: "🎙", image: IMG_16x9("photo-1493225457124-a3eb161ffa5f") },
+  { value: "off", label: "Voice-over OFF", icon: "🔇", image: IMG_16x9("photo-1511379938547-c1f69419868d") }
+];
+
+const AUDIO_SYNC_CARDS = [
+  { value: "on", label: "Auto-Sync ON", icon: "⟲", image: IMG_16x9("photo-1511671782779-c97d3d27a1d4") },
+  { value: "off", label: "Auto-Sync OFF", icon: "✕", image: IMG_16x9("photo-1511379938547-c1f69419868d") }
+];
+
 // Format cards (16:9 image per format)
 const FORMAT_CARDS = [
   { value: "16:9", label: "16:9", icon: "📺", desc: "YouTube", image: IMG_16x9("photo-1489599849927-2ee91cede3ba") },
@@ -290,12 +301,36 @@ function renderVideoIntentCards(containerId, selected, onSelect) {
   renderCinematicCards(containerId, VIDEO_INTENT_CARDS, selected, 'data-intent', onSelect);
 }
 
+function renderVoiceOverCards(containerId, selected, onSelect) {
+  const isAr = window.__locale === "ar";
+  const cards = VOICE_OVER_CARDS.map((c) => ({
+    value: c.value,
+    label: isAr ? (c.value === "on" ? "تعليق صوتي: تشغيل" : "تعليق صوتي: إيقاف") : c.label,
+    image: c.image,
+    icon: c.icon
+  }));
+  renderCinematicCards(containerId, cards, selected, "data-voiceover", onSelect);
+}
+
+function renderAudioSyncCards(containerId, selected, onSelect) {
+  const isAr = window.__locale === "ar";
+  const cards = AUDIO_SYNC_CARDS.map((c) => ({
+    value: c.value,
+    label: isAr ? (c.value === "on" ? "مزامنة تلقائية: تشغيل" : "مزامنة تلقائية: إيقاف") : c.label,
+    image: c.image,
+    icon: c.icon
+  }));
+  renderCinematicCards(containerId, cards, selected, "data-audiosync", onSelect);
+}
+
 // Export for use in generate.html
 window.FERDOUS_CARDS = {
   renderStyleCards,
   renderDurationCards,
   renderLanguageCards,
   renderMusicCards,
+  renderVoiceOverCards,
+  renderAudioSyncCards,
   renderFormatCards,
   renderPlatformCards,
   renderEmotionCards,
@@ -307,6 +342,8 @@ window.FERDOUS_CARDS = {
   DURATION_CARDS,
   LANGUAGE_CARDS,
   MUSIC_CARDS,
+  VOICE_OVER_CARDS,
+  AUDIO_SYNC_CARDS,
   FORMAT_CARDS,
   PLATFORM_CARDS,
   EMOTION_CARDS,

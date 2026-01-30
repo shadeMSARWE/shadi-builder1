@@ -256,6 +256,16 @@
       aspect-ratio: 16 / 9;
       background: rgba(255,255,255,0.03);
     }
+    .f-card-media::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:0.10;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.40'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
     .f-card-media::after{
       content:"";
       position:absolute;
@@ -264,6 +274,9 @@
       pointer-events:none;
       opacity:0.6;
     }
+    .f-card-media::before,
+    .f-card-media::after{ z-index: 1; }
+    .f-card-media img{ z-index: 0; }
     .f-card-media img{
       position:absolute;
       inset:0;
@@ -564,6 +577,7 @@
               <span class="text-xs text-slate-400" data-i18n="voiceOverHint">Enable</span>
             </label>
           </div>
+          <div id="voiceOverCards" class="cards-grid mb-4"></div>
           <div id="voiceLangCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
@@ -578,6 +592,7 @@
               <span class="text-xs text-slate-400">Enable</span>
             </label>
           </div>
+          <div id="audioSyncCards" class="cards-grid"></div>
         </div>
         <div class="m-surface p-6">
           <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="format">Format</label>
@@ -792,6 +807,16 @@
         videoState.style = val;
         initVisualCards();
       });
+
+      // Visual-card mirrors for toggles (checkboxes stay visible & functional)
+      try {
+        var vo = document.getElementById("voiceOver");
+        var voiceSel = (vo && vo.checked) ? "on" : "off";
+        window.FERDOUS_CARDS.renderVoiceOverCards("voiceOverCards", voiceSel, function(val) {
+          if (vo) vo.checked = (val === "on");
+          initVisualCards();
+        });
+      } catch (_) {}
       window.FERDOUS_CARDS.renderLanguageCards("voiceLangCards", videoState.voiceLang, function(val) {
         videoState.voiceLang = val;
         initVisualCards();
@@ -800,6 +825,15 @@
         videoState.bgMusic = val;
         initVisualCards();
       });
+
+      try {
+        var as = document.getElementById("autoAudioSync");
+        var syncSel = (as && as.checked) ? "on" : "off";
+        window.FERDOUS_CARDS.renderAudioSyncCards("audioSyncCards", syncSel, function(val) {
+          if (as) as.checked = (val === "on");
+          initVisualCards();
+        });
+      } catch (_) {}
       window.FERDOUS_CARDS.renderFormatCards("formatCards", videoState.format, function(val) {
         videoState.format = val;
         initVisualCards();
