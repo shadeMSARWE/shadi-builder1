@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    serverComponentsExternalPackages: ['archiver'],
-  },
+  serverExternalPackages: ['archiver'],
 };
 
 module.exports = nextConfig;

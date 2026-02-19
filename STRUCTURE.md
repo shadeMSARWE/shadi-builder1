@@ -1,61 +1,81 @@
-# FERDOUS AI - Project Structure
+# FERDOUS AI OS - Production Architecture
+
+## Folder Structure
 
 ```
-ferdous-ai/
-├── app/                    # Next.js 14 App Router
-│   ├── api/               # API routes
-│   │   ├── generate/      # Central generation
-│   │   ├── tools/        # Module list
-│   │   ├── projects/     # Project CRUD
-│   │   ├── credits/      # Credit balance
-│   │   └── export/       # ZIP download
-│   ├── dashboard/
-│   ├── login/
-│   ├── layout.tsx
-│   ├── page.tsx
-│   └── globals.css
-├── core/                   # FERDOUS Core Engine
-│   ├── engine/
-│   │   └── orchestrator.ts  # Central orchestrator
-│   └── types/
-│       └── index.ts
-├── modules/                # 10 independent sections
-│   ├── website/           # Website Builder (implemented)
-│   ├── store/             # Online Store
-│   ├── app/               # App Builder
-│   ├── saas/              # SaaS Builder
-│   ├── game/              # Game Builder
-│   ├── video/             # Video Generator
-│   ├── image/             # Image Lab
-│   ├── voice/             # Voice Generator
-│   ├── social/            # Social Engine
-│   ├── advanced/          # Advanced Tools
-│   └── registry.ts
-├── engines/
-│   └── file-generator.ts   # File generation engine
-├── services/
-│   └── credits.ts         # Credit system
-├── lib/
-│   ├── supabase.ts
-│   └── utils.ts
-├── components/             # UI components
-├── supabase/
-│   └── schema.sql         # DB schema
-└── public/
-    └── generated/         # Generated projects (runtime)
+/core
+  auth/          - getUserFromToken, extractBearerToken
+  credits/       - getCredits, deductCredits, canAfford, logUsage
+  jobs/          - enqueue, processQueue (async job queue)
+  storage/       - writeFiles, getProjectPath, GENERATED paths
+  database/      - createProject, getProjectsByUser
+  ai/            - chatJson (OpenAI wrapper)
+  queue/         - re-export jobs
+
+/engines
+  website/       - WEBSITE_ENGINE_PRO (controller, schema, prompts, file-generator)
+  store/         - eCommerce (products, cart, checkout)
+  saas/          - Landing, dashboard, pricing
+  app/           - React Native scaffold
+  game/          - 2D/3D scaffold
+  video/         - Script, scenes, SRT
+  image/         - Config for DALL-E/SD
+  voice/         - TTS config
+  social/        - Hooks, captions, hashtags
+  advanced/      - Prompt enhancer
+  loader.ts      - Registers all engines
+
+/api
+  generate/      - POST (central orchestration)
+  website/generate/
+  store/generate/
+  credits/       - GET
+  projects/      - GET
+  export/[projectId]/ - GET (ZIP)
+  i18n/[lang]/   - GET
+
+/generated (public/generated/)
+  websites/
+  stores/
+  saas/
+  apps/
+  games/
+  videos/
+  images/
+  voices/
+  social/
+  advanced/
+
+/ui
+  layouts/DashboardLayout.tsx
+  dashboard/EnginePanel.tsx
+
+/system
+  orchestrator.ts - orchestrate()
+  router.ts      - route(prompt) -> engineId
+  registry.ts    - register, get, list
 ```
 
-## Module Structure (per section)
+## Engine Flow
 
-Each module exports:
-- `id`, `name`, `description`, `credits`
-- `getPrompt(input, options)` → { system, user }
-- `getSchema()` → JSON schema
-- `generate(output, options)` → GenerationResult
+1. User prompt → Router detects engine
+2. Orchestrator checks credits, calls engine
+3. Engine: AI → structured JSON → validate → file generator
+4. Files written to public/generated/{engine}/{projectId}/
+5. Project metadata saved to Supabase
+6. Credits deducted, usage logged
 
-## Core Engine Flow
+## i18n
 
-1. User prompt → `analyzePrompt()` → GenerationPlan
-2. Plan → `executePlan()` → parallel module execution
-3. Each module: AI → structured JSON → file generator
-4. Result → preview URL, ZIP export, deployment
+- Arabic (RTL), Hebrew (RTL), English (LTR)
+- /api/i18n/[lang] returns strings
+- lib/i18n/strings.ts
+
+## Run
+
+```bash
+npm install
+npm run dev
+```
+
+Set .env with Supabase + OpenAI keys. Run supabase/schema.sql.
