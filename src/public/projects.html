@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Workspace | Shadi AI</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/manus.css">
+  <script src="/manus-ui.js"></script>
+
+  <style>
+    body { font-family: Tajawal; background: #020617; color: #fff; }
+    .glass { background: rgba(15,23,42,.7); backdrop-filter: blur(14px); border: 1px solid #1e293b; }
+  </style>
+</head>
+
+<body class="manus h-screen flex overflow-hidden">
+
+<!-- 🔐 AUTH -->
+<script>
+  const supabase = window.supabase.createClient(
+    "https://xfzelmpwthqywidyjgzo.supabase.co",
+    "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H"
+  );
+
+  (async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) {
+      location.href="/login.html";
+      return;
+    }
+    localStorage.setItem("token", data.session.access_token);
+  })();
+</script>
+
+<!-- SIDEBAR (PAGES) -->
+<aside class="w-72 glass p-6 flex flex-col">
+  <h2 class="text-xl font-black mb-6">📄 الصفحات</h2>
+
+  <div id="pages" class="space-y-2 text-sm"></div>
+
+  <button onclick="addPage()"
+    class="mt-4 bg-indigo-600 hover:bg-indigo-500 py-2 rounded-xl font-bold">
+    + صفحة جديدة
+  </button>
+
+  <div class="mt-auto pt-6 border-t border-slate-800">
+    <a href="/projects.html" class="text-slate-400 underline">← رجوع للمشاريع</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="flex-1 p-8 grid grid-cols-2 gap-6 overflow-hidden">
+
+  <!-- EDITOR -->
+  <div class="glass p-6 rounded-3xl flex flex-col">
+    <h2 class="text-2xl font-black mb-4">✍️ Editor</h2>
+
+    <textarea id="desc"
+      class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm mb-4"
+      placeholder="عدّل وصف الصفحة أو السكشن..."></textarea>
+
+    <button onclick="regenerate()"
+      class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold">
+      🔄 Regenerate
+    </button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="glass p-4 rounded-3xl flex flex-col">
+    <h2 class="text-2xl font-black mb-4">👁️ Preview</h2>
+
+    <iframe id="preview"
+      class="flex-1 rounded-xl bg-white"></iframe>
+  </div>
+
+</main>
+
+<script>
+  const token = localStorage.getItem("token");
+  const projectId = new URLSearchParams(location.search).get("id");
+
+  if (!projectId) {
+    alert("Project ID missing");
+    location.href = "/projects.html";
+  }
+
+  const pagesEl = document.getElementById("pages");
+  let currentPage = null;
+
+  /* تحميل بيانات المشروع */
+  fetch("/api/v1/projects/" + projectId, {
+    headers: { Authorization: "Bearer " + token }
+  })
+  .then(r => r.json())
+  .then(d => {
+    renderPages(d.pages || []);
+    if (d.previewUrl) {
+      document.getElementById("preview").src = d.previewUrl;
+    }
+  });
+
+  /* رسم الصفحات */
+  function renderPages(pages) {
+    if (pages.length === 0) {
+      pages = [{ id: "home", name: "Home" }];
+    }
+
+    pagesEl.innerHTML = pages.map(p => `
+      <button onclick="selectPage('${p.id}')"
+        class="w-full text-right px-4 py-2 rounded-xl hover:bg-slate-800">
+        ${p.name}
+      </button>
+    `).join("");
+
+    selectPage(pages[0].id);
+  }
+
+  function selectPage(id) {
+    currentPage = id;
+    document.getElementById("desc").value =
+      "وصف الصفحة: " + id;
+  }
+
+  /* إضافة صفحة */
+  function addPage() {
+    const name = prompt("اسم الصفحة:");
+    if (!name) return;
+
+    pagesEl.innerHTML += `
+      <button class="w-full text-right px-4 py-2 rounded-xl bg-slate-800">
+        ${name}
+      </button>
+    `;
+  }
+
+  /* regenerate */
+  function regenerate() {
+    const description = document.getElementById("desc").value;
+
+    fetch("/api/v1/projects/regenerate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify({
+        projectId,
+        page: currentPage,
+        description
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.previewUrl) {
+        document.getElementById("preview").src = d.previewUrl;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
+

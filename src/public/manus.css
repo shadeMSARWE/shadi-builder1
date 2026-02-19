@@ -1,0 +1,79 @@
+/* Manus-inspired UI system (light, floating sidebar, soft shadows) */
+:root{
+  --m-bg:#f7f7f5;
+  --m-surface:#ffffff;
+  --m-surface-2:#f1f1ef;
+  --m-border:rgba(15, 23, 42, 0.08);
+  --m-text:#0f172a;
+  --m-muted:rgba(15, 23, 42, 0.55);
+  --m-primary:#3b82f6;
+  --m-primary-2:#8b5cf6;
+  --m-shadow:0 10px 30px rgba(15, 23, 42, 0.08);
+  --m-shadow-soft:0 6px 18px rgba(15, 23, 42, 0.06);
+  --m-radius:18px;
+}
+body.manus{
+  background:var(--m-bg);
+  color:var(--m-text);
+}
+.m-surface{
+  background:var(--m-surface);
+  border:1px solid var(--m-border);
+  border-radius:var(--m-radius);
+  box-shadow:var(--m-shadow-soft);
+}
+.m-float-sidebar{
+  position:fixed;
+  top:12px;
+  right:12px;
+  bottom:12px;
+  width:300px;
+  background:var(--m-surface-2);
+  border:1px solid var(--m-border);
+  border-radius:22px;
+  box-shadow:var(--m-shadow);
+  overflow:hidden;
+}
+.m-inputbar{
+  background:var(--m-surface);
+  border:1px solid rgba(59,130,246,0.25);
+  border-radius:20px;
+  box-shadow:0 0 0 4px rgba(59,130,246,0.06), var(--m-shadow-soft);
+}
+.m-inputbar:focus-within{
+  border-color:rgba(139,92,246,0.35);
+  box-shadow:0 0 0 5px rgba(139,92,246,0.10), 0 0 0 1px rgba(59,130,246,0.08), var(--m-shadow);
+}
+.m-gradient-border{
+  position:relative;
+}
+.m-gradient-border:before{
+  content:\"\"; position:absolute; inset:-1px; border-radius:inherit;
+  background:linear-gradient(135deg, rgba(59,130,246,0.40), rgba(139,92,246,0.35));
+  z-index:0;
+}
+.m-gradient-border > *{ position:relative; z-index:1; }
+.m-chip{
+  background:rgba(15,23,42,0.04);
+  border:1px solid rgba(15,23,42,0.08);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  color:rgba(15,23,42,0.7);
+}
+.m-chip:hover{ background:rgba(15,23,42,0.06); }
+.m-btn{
+  border-radius:14px;
+  border:1px solid rgba(15,23,42,0.10);
+  background:var(--m-surface);
+  box-shadow:var(--m-shadow-soft);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.m-btn:hover{ transform:translateY(-1px); box-shadow:var(--m-shadow); }
+.m-btn-primary{
+  border:0;
+  color:white;
+  background:linear-gradient(135deg, var(--m-primary), var(--m-primary-2));
+  box-shadow:0 12px 26px rgba(59,130,246,0.20);
+}
+.m-muted{ color:var(--m-muted); }

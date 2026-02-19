@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ferdous-bg: #050508;
+  --ferdous-surface: #0e0e12;
+  --ferdous-glass: rgba(255, 255, 255, 0.03);
+  --ferdous-primary: #6366f1;
+  --ferdous-accent: #a855f7;
+  --ferdous-gold: #f3c969;
+  --ferdous-neon: #00ff88;
+}
+
+body {
+  background: var(--ferdous-bg);
+  color: #f8fafc;
+}
+
+.glass-panel {
+  @apply backdrop-blur-xl border border-white/5;
+  background: rgba(14, 14, 18, 0.72);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #f3c969, #d9a441);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+.tool-card {
+  @apply transition-all duration-200 cursor-pointer;
+}
+.tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+}

@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FERDOUS AI | The Ultimate AI Operating System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/i18n.js"></script>
+  <link rel="stylesheet" href="/manus.css">
+  <script src="/manus-ui.js"></script>
+  <script src="/ferdous-cards.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(18, 18, 24, 0.85);
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --primary: #6366f1;
+      --accent: #a855f7;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+
+      /* Override Manus tokens → cinematic dark glass */
+      --m-bg: #07070a;
+      --m-surface: rgba(14, 14, 18, 0.60);
+      --m-surface-2: rgba(10, 10, 13, 0.80);
+      --m-border: rgba(255, 255, 255, 0.08);
+      --m-text: #f8fafc;
+      --m-muted: rgba(248, 250, 252, 0.58);
+      --m-primary: #8b5cf6;
+      --m-primary-2: #6366f1;
+
+      --f-gold: #f3c969;
+      --f-gold-2: #d9a441;
+    }
+    [dir="ltr"] { font-family: 'Outfit', sans-serif; }
+    [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+    
+    /* Premium Manus overrides (cinematic dark glass) */
+    .m-surface{
+      background: rgba(14, 14, 18, 0.68) !important;
+      backdrop-filter: blur(26px) saturate(1.12) !important;
+      -webkit-backdrop-filter: blur(26px) saturate(1.12) !important;
+      border: 1px solid rgba(255,255,255,0.09) !important;
+      box-shadow: 
+        0 14px 45px rgba(0,0,0,0.48),
+        inset 0 1px 0 rgba(255,255,255,0.06) !important;
+    }
+    .m-float-sidebar{
+      background: rgba(10, 10, 13, 0.85) !important;
+      backdrop-filter: blur(30px) saturate(1.15) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(1.15) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      box-shadow: 
+        0 20px 60px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-inputbar{
+      background: rgba(14, 14, 18, 0.75) !important;
+      backdrop-filter: blur(20px) saturate(1.1) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(1.1) !important;
+      border: 1px solid rgba(243,201,105,0.28) !important;
+      box-shadow: 
+        0 0 0 3px rgba(243,201,105,0.08),
+        0 10px 35px rgba(0,0,0,0.40),
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+    .m-inputbar:focus-within{
+      border-color: rgba(243,201,105,0.45) !important;
+      box-shadow: 
+        0 0 0 4px rgba(243,201,105,0.12),
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 14px 45px rgba(0,0,0,0.50),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-btn{
+      background: rgba(14, 14, 18, 0.70) !important;
+      backdrop-filter: blur(16px) saturate(1.1) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(1.1) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      box-shadow: 
+        0 8px 28px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+      transition: transform .18s cubic-bezier(0.4,0,0.2,1), box-shadow .18s ease !important;
+    }
+    .m-btn:hover{
+      transform: translateY(-1.5px) scale(1.01) !important;
+      box-shadow: 
+        0 12px 38px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.08) !important;
+    }
+    .m-btn-primary{
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90)) !important;
+      color: rgba(10,10,13,0.96) !important;
+      border: 0 !important;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 10px 30px rgba(0,0,0,0.40),
+        0 0 25px rgba(243,201,105,0.25) !important;
+    }
+    .m-btn-primary:hover{
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.35),
+        0 14px 40px rgba(0,0,0,0.50),
+        0 0 35px rgba(243,201,105,0.35) !important;
+    }
+        body {
+      background: #050508;
+            background-image: 
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(99, 102, 241, 0.08), transparent),
+        radial-gradient(ellipse 70% 50% at 100% 100%, rgba(168, 85, 247, 0.06), transparent),
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(243, 201, 105, 0.04), transparent);
+      color: var(--text);
+      min-height: 100vh;
+            overflow-x: hidden;
+        }
+    .glass-panel {
+      background: rgba(14, 14, 18, 0.72);
+      backdrop-filter: blur(28px) saturate(1.1);
+      -webkit-backdrop-filter: blur(28px) saturate(1.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 
+        0 12px 40px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+    }
+    .chat-bubble {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px 20px 6px 20px;
+    }
+    /* ChatArea cinematic placeholder (CSS-only; no blank states) */
+    @keyframes f-chat-shimmer {
+      0%   { background-position: 22% 24%, 74% 48%, 34% 78%, -220% 0; opacity: 1; }
+      50%  { background-position: 22% 24%, 74% 48%, 34% 78%, 220% 0; opacity: 1; }
+      100% { background-position: 22% 24%, 74% 48%, 34% 78%, 220% 0; opacity: 1; }
+    }
+    #chatArea:empty{
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.02);
+      box-shadow:
+        0 14px 45px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    #chatArea:empty::before{
+      content:"";
+      position:absolute;
+      inset:-22px;
+      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1400&h=788&q=80");
+      background-size: cover;
+      background-position: center;
+      filter: blur(16px) saturate(1.12) contrast(1.08) brightness(0.55);
+      transform: scale(1.10);
+      opacity: 0.50;
+      pointer-events:none;
+    }
+    #chatArea:empty::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(ellipse 200px 56px at 22% 24%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 62%, rgba(255,255,255,0.00) 70%),
+        radial-gradient(ellipse 260px 62px at 74% 48%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 62%, rgba(255,255,255,0.00) 70%),
+        radial-gradient(ellipse 220px 52px at 34% 78%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 62%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(120deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.00) 100%);
+      background-size: auto, auto, auto, 220% 220%;
+      background-position: 22% 24%, 74% 48%, 34% 78%, -220% 0;
+      background-repeat: no-repeat;
+      opacity: 1;
+      mix-blend-mode: soft-light;
+      animation: f-chat-shimmer 2.8s ease-in-out infinite;
+    }
+    .gradient-text { 
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90), rgba(243,201,105,0.95)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      background-clip: text;
+      filter: drop-shadow(0 2px 8px rgba(243,201,105,0.40));
+    }
+    #loadingOverlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(5,5,8,0.96); 
+      backdrop-filter: blur(20px) saturate(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.1);
+      display: none; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .spinner { 
+      width: 64px; 
+      height: 64px; 
+      border: 3.5px solid rgba(255,255,255,0.08); 
+      border-top-color: rgba(243,201,105,0.85); 
+      border-radius: 50%; 
+      animation: spin 0.9s cubic-bezier(0.4,0,0.2,1) infinite;
+      box-shadow: 0 0 25px rgba(243,201,105,0.25);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .tab-active { 
+      background: rgba(14, 14, 18, 0.65); 
+      color: rgba(243,201,105,0.95); 
+      border-color: rgba(243,201,105,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .btn-primary { 
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.90)); 
+      color: rgba(10,10,13,0.96); 
+      font-weight: 900;
+      transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s ease, filter 0.22s ease;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 8px 24px rgba(0,0,0,0.35),
+        0 0 20px rgba(243,201,105,0.20);
+    }
+    .btn-primary:hover:not(:disabled) { 
+      transform: translateY(-2px) scale(1.02); 
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.35),
+        0 12px 32px rgba(0,0,0,0.45),
+        0 0 30px rgba(243,201,105,0.30);
+      filter: brightness(1.05);
+    }
+    .history-item:hover { background: rgba(255,255,255,0.05); border-radius: 12px; }
+    #preview { min-height: 420px; }
+    
+    /* FERDOUS Cinematic Card System (16:9, HD, image-first) */
+    .cards-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+    @media (min-width: 640px){
+      .cards-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    }
+    @media (min-width: 1024px){
+      .cards-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+    }
+    @media (min-width: 1280px){
+      .cards-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:22px; }
+    }
+    @keyframes f-reveal{
+      from{ opacity:0; transform:translateY(8px) scale(0.98); }
+      to{ opacity:1; transform:translateY(0) scale(1); }
+    }
+    .cards-grid .f-card{
+      animation: f-reveal 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
+    }
+    .cards-grid .f-card:nth-child(1){ animation-delay:0.02s; }
+    .cards-grid .f-card:nth-child(2){ animation-delay:0.04s; }
+    .cards-grid .f-card:nth-child(3){ animation-delay:0.06s; }
+    .cards-grid .f-card:nth-child(4){ animation-delay:0.08s; }
+    .cards-grid .f-card:nth-child(5){ animation-delay:0.10s; }
+    .cards-grid .f-card:nth-child(6){ animation-delay:0.12s; }
+    .cards-grid .f-card:nth-child(7){ animation-delay:0.14s; }
+    .cards-grid .f-card:nth-child(8){ animation-delay:0.16s; }
+    .cards-grid .f-card:nth-child(9){ animation-delay:0.18s; }
+    .cards-grid .f-card:nth-child(10){ animation-delay:0.20s; }
+    .cards-grid .f-card:nth-child(n+11){ animation-delay:0.22s; }
+    .f-card{
+      display:block;
+      padding:0;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:transparent;
+      overflow:hidden;
+      cursor:pointer;
+      transform:translateZ(0);
+      transition:transform .20s ease, box-shadow .20s ease, border-color .20s ease, filter .20s ease;
+      box-shadow:
+        0 18px 55px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(15,15,20,0.85);
+    }
+    .f-card:hover{
+      transform: translateY(-2px) scale(1.03);
+      border-color: rgba(243, 201, 105, 0.35);
+      box-shadow: 
+        0 0 0 1px rgba(243, 201, 105, 0.20),
+        0 20px 70px rgba(0,0,0,0.50),
+        0 0 35px rgba(243, 201, 105, 0.12);
+      filter: saturate(1.08) contrast(1.04) brightness(1.02);
+    }
+    .f-card.selected{
+      border-color: rgba(243, 201, 105, 0.75);
+      box-shadow:
+        0 0 0 2px rgba(243, 201, 105, 0.35),
+        0 22px 80px rgba(0,0,0,0.58),
+        0 0 55px rgba(243, 201, 105, 0.25),
+        inset 0 0 28px rgba(243, 201, 105, 0.18);
+      filter: saturate(1.10) contrast(1.05) brightness(1.04);
+    }
+    .f-card-media{
+      position:relative;
+      width:100%;
+      aspect-ratio: 16 / 9;
+      background: rgba(255,255,255,0.03);
+    }
+    .f-card-media::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:0.16;
+      mix-blend-mode: soft-light;
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.09) 0, transparent 45%),
+        radial-gradient(circle at 100% 0, rgba(0,0,0,0.22) 0, transparent 50%),
+        radial-gradient(circle at 0 100%, rgba(0,0,0,0.20) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(255,255,255,0.06) 0, transparent 60%);
+      background-size: 140px 140px, 180px 180px, 200px 200px, 220px 220px;
+    }
+    .f-card-media::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image: linear-gradient(120deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.00) 100%);
+      background-size: 220% 220%;
+      background-position: -140% 0;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .45s ease, background-position .65s ease;
+    }
+    .f-card-media::before,
+    .f-card-media::after{ z-index: 1; }
+    .f-card-media img{ z-index: 0; }
+    .f-card-media img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform:scale(1.02);
+      filter:contrast(1.12) saturate(1.08) brightness(0.92);
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .f-card:hover .f-card-media img{
+      transform:scale(1.04);
+      filter:contrast(1.15) saturate(1.12) brightness(0.95);
+    }
+    .f-card:hover .f-card-media::after{
+      opacity:0.35;
+      background-position: 120% 0;
+    }
+    .f-card.selected .f-card-media img{
+      transform:scale(1.03);
+      filter:contrast(1.18) saturate(1.15) brightness(0.98);
+    }
+    .f-card-vignette{
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 32%, rgba(0,0,0,0.40) 70%, rgba(0,0,0,0.85) 100%),
+        radial-gradient(ellipse 140% 80% at 50% 5%, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.75) 100%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,0,0,0.85), transparent);
+      pointer-events:none;
+      opacity: 0.9;
+    }
+    .f-card.selected .f-card-vignette{
+      background:
+        radial-gradient(circle at 50% 42%, rgba(243,201,105,0.30) 0%, rgba(243,201,105,0.08) 32%, rgba(0,0,0,0.45) 70%, rgba(0,0,0,0.90) 100%),
+        radial-gradient(ellipse 140% 80% at 50% 5%, rgba(243,201,105,0.10) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.78) 100%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,0,0,0.90), transparent);
+    }
+    .f-card-meta{
+      position:absolute;
+      left:10px;
+      right:10px;
+      bottom:10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      pointer-events:none;
+    }
+    .f-card-title{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:-0.015em;
+      color: rgba(248,250,252,0.98);
+      text-shadow: 
+        0 2px 8px rgba(0,0,0,0.75),
+        0 0 12px rgba(0,0,0,0.50);
+      background: rgba(10,10,13,0.68);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(14px) saturate(1.2);
+      -webkit-backdrop-filter: blur(14px) saturate(1.2);
+      border-radius: 999px;
+      padding: 7px 12px;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.40);
+    }
+    .f-card.selected .f-card-title{
+      background: rgba(243,201,105,0.15);
+      border-color: rgba(243,201,105,0.35);
+      color: rgba(243,201,105,0.98);
+      text-shadow: 
+        0 2px 8px rgba(0,0,0,0.80),
+        0 0 16px rgba(243,201,105,0.40);
+    }
+    .f-card-badge{
+      position:absolute;
+      top:10px;
+      left:10px;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:0.02em;
+      color: rgba(10,10,13,0.96);
+      background: linear-gradient(135deg, rgba(243,201,105,0.95), rgba(217,164,65,0.92));
+      border: 1.5px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 5px 10px;
+      box-shadow: 
+        0 0 0 1px rgba(243,201,105,0.25),
+        0 14px 35px rgba(0,0,0,0.40),
+        0 0 20px rgba(243,201,105,0.30);
+      z-index: 2;
+    }
+    .f-card-check{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(10,10,13,0.96);
+      background: linear-gradient(135deg, rgba(243,201,105,0.98), rgba(217,164,65,0.95));
+      border: 1.5px solid rgba(255,255,255,0.25);
+      box-shadow: 
+        0 0 0 2px rgba(243,201,105,0.30),
+        0 14px 35px rgba(0,0,0,0.40),
+        0 0 25px rgba(243,201,105,0.35);
+      font-weight: 900;
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    /* Cinematic empty-state frames (never blank - always cinematic) */
+    .f-empty-frame{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(10,10,13,0.40);
+      box-shadow: 
+        0 16px 50px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      min-height: 280px;
+      aspect-ratio: 16 / 9;
+    }
+    .f-empty-frame:before{
+      content:"";
+      position:absolute;
+      inset:-20px;
+      background-image: url("https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1400&h=788&q=80");
+      background-size: cover;
+      background-position: center;
+      filter: blur(14px) saturate(1.15) contrast(1.10) brightness(0.65);
+      transform: scale(1.08);
+      opacity: 0.52;
+    }
+    .f-empty-frame:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: 
+        radial-gradient(ellipse 100% 60% at 50% 0%, rgba(0,0,0,0.00), rgba(0,0,0,0.45)),
+        linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.75) 100%);
+    }
+    .f-empty-content{
+      position:relative;
+      z-index:1;
+      height:100%;
+      min-height: 280px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 32px;
+      color: rgba(248,250,252,0.92);
+      text-align:center;
+      font-weight:800;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      text-shadow: 
+        0 4px 16px rgba(0,0,0,0.70),
+        0 0 20px rgba(0,0,0,0.50);
+    }
+    @keyframes f-shimmer{
+      0%{ transform: translateX(-140%) skewX(-16deg); opacity:0; }
+      20%{ opacity:0.22; }
+      60%{ opacity:0.16; }
+      100%{ transform: translateX(140%) skewX(-16deg); opacity:0; }
+    }
+    .f-empty-content:before{
+      content:"";
+      position:absolute;
+      inset:18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(14px) saturate(1.1);
+      -webkit-backdrop-filter: blur(14px) saturate(1.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .f-empty-content:after{
+      content:"";
+      position:absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 45%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.00), rgba(255,255,255,0.14), rgba(255,255,255,0.00));
+      filter: blur(0.4px);
+      animation: f-shimmer 2.4s ease-in-out infinite;
+      opacity: 0.0;
+      pointer-events:none;
+    }
+    .f-empty-frame > *:not(:before):not(:after) {
+      position: relative;
+      z-index: 1;
+      color: rgba(248,250,252,0.92);
+      text-shadow: 
+        0 4px 16px rgba(0,0,0,0.70),
+        0 0 20px rgba(0,0,0,0.50);
+    }
+    .f-section-label{
+      letter-spacing:-0.02em;
+      color: rgba(248,250,252,0.92);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+    .m-surface .f-section-label{
+      color: rgba(248,250,252,0.95);
+    }
+
+    /* Hide legacy toggles visually (keep in DOM; cards drive selection) */
+    #voiceOver,
+    #autoAudioSync{
+      position:absolute !important;
+      width:1px !important;
+      height:1px !important;
+      opacity:0 !important;
+      pointer-events:none !important;
+    }
+    #voiceOver + span,
+    #autoAudioSync + span{
+      display:none !important;
+    }
+    </style>
+</head>
+<body class="manus flex h-screen">
+  <div id="loadingOverlay">
+    <div class="spinner mb-6"></div>
+    <p id="loadingStatus" class="text-lg font-semibold gradient-text">Loading...</p>
+  </div>
+
+  <aside class="m-float-sidebar p-4">
+    <div class="h-full flex flex-col">
+      <div class="px-2 py-2 flex items-center justify-between">
+        <div>
+          <div class="text-sm font-extrabold" style="letter-spacing:-0.02em" data-i18n="appName">FERDOUS AI</div>
+          <div class="text-[11px] m-muted" data-i18n="tagline">The Ultimate AI Operating System</div>
+        </div>
+        <div class="text-[11px] m-muted">FERDOUS 1.0</div>
+      </div>
+
+      <div class="m-surface p-4 mt-3">
+        <div class="text-[12px] font-bold m-muted" data-i18n="credits">Credits</div>
+        <div class="text-2xl font-extrabold mt-1" id="creditsCount">--</div>
+        <div class="text-[11px] m-muted mt-1" data-i18n="creditsHint">10/site</div>
+        <a class="inline-block mt-2 text-[12px] font-bold" style="color:var(--m-primary)" href="/pricing.html" data-i18n="topUp">Top Up</a>
+    </div>
+
+      <div class="mt-4 flex-1 overflow-y-auto">
+        <div class="text-[12px] font-bold m-muted mb-2" data-i18n="history">Project History</div>
+        <div id="historyList" class="space-y-1 text-[13px]">
+          <div class="f-empty-frame" style="min-height:180px; aspect-ratio:auto;">
+            <div class="f-empty-content" style="min-height:180px;" data-i18n="noHistory">No projects yet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 flex gap-2">
+        <button type="button" id="langToggle" class="m-btn flex-1 py-2 text-xs font-bold">EN / ع</button>
+        <button type="button" onclick="logout()" class="m-btn flex-1 py-2 text-xs font-bold" data-i18n="logout">Log out</button>
+            </div>
+        </div>
+    </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden" style="padding-right:320px">
+    <div class="flex border-b border-white/5 overflow-x-auto">
+      <button type="button" id="tabWebsite" class="tab-active px-6 py-4 text-sm font-bold border-b-2 border-indigo-500 -mb-px whitespace-nowrap" data-i18n="tabWebsite">Website</button>
+      <button type="button" id="tabVideo" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabVideo">Video</button>
+      <button type="button" id="tabImage" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabImage">Image</button>
+      <button type="button" id="tabSocial" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabSocial">Social</button>
+      <button type="button" id="tabAudio" class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-white border-b-2 border-transparent -mb-px whitespace-nowrap" data-i18n="tabAudio">Audio</button>
+                    </div>
+
+    <div id="panelWebsite" class="flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto flex-1 flex flex-col">
+        <div class="m-surface p-4 mb-4 flex-1 flex flex-col min-h-0">
+          <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 mb-4 min-h-[120px]"></div>
+          <div class="m-gradient-border rounded-[22px]">
+            <div class="m-inputbar p-3">
+              <textarea id="desc" class="w-full h-20 bg-transparent resize-none outline-none px-2 text-base placeholder-slate-500" placeholder="Describe your site..." data-i18n-placeholder="promptPlaceholder"></textarea>
+              <div class="flex items-center justify-between pt-2">
+                <div class="flex gap-2">
+                  <button type="button" id="enhanceBtn" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="enhance">Enhance Prompt</button>
+                  <button type="button" id="editModeBtn" class="m-btn px-3 py-2 text-xs font-bold">Live Editor</button>
+                  <button type="button" id="saveEditsBtn" class="m-btn px-3 py-2 text-xs font-bold hidden">Save</button>
+                </div>
+                <button type="button" id="buildBtn" class="m-btn m-btn-primary px-6 py-2 text-xs font-extrabold" data-i18n="generate">Generate</button>
+              </div>
+            </div>
+          </div>
+          <div id="enhanceHint" class="hidden mx-2 mb-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"></div>
+          <div class="mt-3">
+            <div class="m-surface p-4">
+              <div class="text-xs font-extrabold mb-3 f-section-label">Website / SaaS Builder</div>
+              <div id="websiteLayoutCards" class="cards-grid"></div>
+            </div>
+            <div class="m-surface p-4 mt-3">
+              <div class="text-xs font-extrabold mb-3 f-section-label">Quick Start Presets</div>
+              <div id="presetCards" class="cards-grid"></div>
+                </div>
+                </div>
+          <div id="recommendationsWrap" class="hidden mt-4 m-surface p-4">
+            <div class="text-xs font-bold mb-3" data-i18n="recommendations">Improvement Suggestions</div>
+            <div id="recommendationsList" class="space-y-2 text-sm"></div>
+            <div class="flex gap-2 mt-4">
+              <button type="button" id="autoImproveBtn" class="m-btn m-btn-primary px-4 py-2 text-xs font-bold" data-i18n="autoImprove">Auto Improve</button>
+              <button type="button" id="generateMissingBtn" class="m-btn px-4 py-2 text-xs font-bold" data-i18n="generateMissing">Generate Missing Parts</button>
+            </div>
+          </div>
+        </div>
+        <div id="previewWrap" class="hidden m-surface overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between p-3 border-b" style="border-color:var(--m-border)">
+            <span class="text-[12px] font-bold m-muted" data-i18n="preview">Live Preview</span>
+            <a id="downloadBtn" href="#" class="m-btn px-3 py-2 text-xs font-bold" data-i18n="download">Download ZIP</a>
+          </div>
+          <iframe id="preview" class="w-full flex-1 bg-white border-0" src="about:blank" title="Live Preview"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelVideo" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold text-slate-400 mb-2" data-i18n="videoPromptPlaceholder">Describe the video scene...</label>
+          <textarea id="videoDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" data-i18n-placeholder="videoPromptPlaceholder" placeholder="Describe the video scene in detail..."></textarea>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-extrabold mb-4 f-section-label">Video Intent</label>
+          <div id="videoIntentCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="duration">Duration</label>
+          <div id="videoDurationCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="style">Visual Style</label>
+          <div id="videoStyleCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-sm font-bold f-section-label" data-i18n="voiceOver">AI Voice-over</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="voiceOver" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
+              <span class="text-xs text-slate-400" data-i18n="voiceOverHint">Enable</span>
+            </label>
+          </div>
+          <div id="voiceOverCards" class="cards-grid mb-4"></div>
+          <div id="voiceLangCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label">Background Music</label>
+          <div id="bgMusicCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-sm font-bold f-section-label">Automatic Audio Sync</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="autoAudioSync" class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
+              <span class="text-xs text-slate-400">Enable</span>
+            </label>
+          </div>
+          <div id="audioSyncCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="format">Format</label>
+          <div id="formatCards" class="cards-grid"></div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genVideoBtn" class="btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generateVideo">Generate Video</button>
+        </div>
+        <div id="videoPreviewWrap" class="hidden m-surface p-4">
+          <p class="text-sm text-slate-400 mb-2" data-i18n="liveEnv">Live</p>
+          <div id="videoPreviewPlaceholder" class="f-empty-frame">
+            <div class="f-empty-content">Video preview will appear here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelImage" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2" data-i18n="promptPlaceholder">Describe the image...</label>
+          <textarea id="imageDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe the image you want..."></textarea>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="style">Visual Style</label>
+          <div id="imageStyleCards" class="cards-grid"></div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genImageBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Image</button>
+        </div>
+        <div id="imagePreviewWrap" class="hidden m-surface p-4">
+          <div id="imagePreview" class="f-empty-frame">
+            <div class="f-empty-content">Image preview will appear here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelSocial" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2">Social Post Content</label>
+          <textarea id="socialDesc" class="w-full h-24 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Describe your social post..."></textarea>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label">Platform</label>
+          <div id="platformCards" class="cards-grid"></div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genSocialBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Social</button>
+        </div>
+        <div id="socialPreviewWrap" class="hidden m-surface p-4">
+          <div id="socialPreview" class="f-empty-frame">
+            <div class="f-empty-content">Social preview will appear here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panelAudio" class="hidden flex-1 flex flex-col overflow-hidden p-6">
+      <div class="max-w-4xl w-full mx-auto space-y-6">
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-2">Text for Voice Generation</label>
+          <textarea id="audioText" class="w-full h-32 bg-white/5 rounded-xl border border-white/10 p-4 resize-none outline-none placeholder-slate-600" placeholder="Enter text to convert to speech..."></textarea>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label" data-i18n="voiceLanguage">Voice Language</label>
+          <div id="audioLangCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label">Emotion</label>
+          <div id="emotionCards" class="cards-grid"></div>
+        </div>
+        <div class="m-surface p-6">
+          <label class="block text-sm font-bold mb-4 f-section-label">Tone</label>
+          <div id="toneCards" class="cards-grid"></div>
+        </div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="genAudioBtn" class="m-btn m-btn-primary px-8 py-3 rounded-2xl font-bold text-sm" data-i18n="generate">Generate Audio</button>
+        </div>
+        <div id="audioPreviewWrap" class="hidden m-surface p-4">
+          <audio id="audioPreview" controls class="w-full"></audio>
+          <div id="audioSubtitles" class="mt-4 text-sm text-slate-400"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    (function(){
+      var l = localStorage.getItem("lang") || "ar";
+      window.__locale = l;
+      try {
+        var dir = (l === "ar" || l === "he") ? "rtl" : "ltr";
+        document.documentElement.lang = l;
+        document.documentElement.dir = dir;
+      } catch(_) {}
+    })();
+    (function() {
+      var SUPABASE_URL = "https://xfzelmpwthqywidyjgzo.supabase.co";
+      var SUPABASE_ANON = "sb_publishable_1T-D3i1El5LLR94ev4RQWA_2zRULS9H";
+      try {
+        if (window.__SUPABASE_URL) SUPABASE_URL = window.__SUPABASE_URL;
+        if (window.__SUPABASE_ANON) SUPABASE_ANON = window.__SUPABASE_ANON;
+      } catch (_) {}
+      window._supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    })();
+
+    var token = localStorage.getItem("token");
+    var currentLang = (localStorage.getItem("lang") || "ar");
+    var sessionProjects = [];
+
+    function setLang(lang) {
+      currentLang = lang;
+      window.__locale = lang;
+      var dir = (lang === "ar" || lang === "he") ? "rtl" : "ltr";
+      document.documentElement.lang = lang;
+      document.documentElement.dir = dir;
+      localStorage.setItem("lang", lang);
+      document.querySelectorAll("[data-i18n]").forEach(function(el) {
+        var v = __t(el.getAttribute("data-i18n"));
+        if (v) el.textContent = v;
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(function(el) {
+        var v = __t(el.getAttribute("data-i18n-placeholder"));
+        if (v) el.placeholder = v;
+      });
+      document.getElementById("langToggle").textContent = lang === "ar" ? "EN / ع" : "EN / ع";
+    }
+
+    document.getElementById("langToggle").addEventListener("click", function() {
+      var next = currentLang === "ar" ? "he" : currentLang === "he" ? "en" : "ar";
+      setLang(next);
+      document.getElementById("langToggle").textContent = next === "ar" ? "EN / ע" : next === "he" ? "EN / ع" : "EN / ע";
+    });
+
+    function addChatLine(text, isUser) {
+      var area = document.getElementById("chatArea");
+      var div = document.createElement("div");
+      div.className = isUser ? "chat-bubble ml-8 mr-0 p-4" : "glass-panel rounded-2xl p-4 mr-8 ml-0";
+      div.textContent = text;
+      area.appendChild(div);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function loadCredits() {
+      if (!token) return;
+      fetch("/api/v1/users/me", { headers: { "Authorization": "Bearer " + token } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var el = document.getElementById("creditsCount");
+          if (d.ok && typeof d.credits === "number") el.textContent = d.credits;
+          else if (d.ok) el.textContent = "∞";
+          else el.textContent = "—";
+        })
+        .catch(function() { document.getElementById("creditsCount").textContent = "—"; });
+    }
+
+    function loadHistory() {
+      if (!token) return;
+      fetch("/api/v1/projects/list", { headers: { "Authorization": "Bearer " + token } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var list = (d.projects || []).concat(sessionProjects);
+          list = list.sort(function(a,b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+          var el = document.getElementById("historyList");
+          if (!list.length) {
+            el.innerHTML =
+              "<div class=\"f-empty-frame\" style=\"min-height:180px; aspect-ratio:auto;\">" +
+              "<div class=\"f-empty-content\" style=\"min-height:180px;\">" + __t("noHistory") + "</div>" +
+              "</div>";
+            return;
+          }
+          el.innerHTML = list.slice(0, 20).map(function(p) {
+            var name = (p.name || p.id || "Project").slice(0, 28);
+            var url = p.previewUrl || ("/generated/" + p.id + "/index.html");
+            return "<a href=\"" + url + "\" target=\"_blank\" class=\"history-item block py-2 px-2 rounded-xl text-slate-400 hover:text-white truncate\" title=\"" + name + "\">" + name + "</a>";
+          }).join("");
+        })
+        .catch(function() {});
+    }
+
+    // Visual Cards State (UI-only)
+    var videoState = { duration: 30, style: "cinematic", voiceLang: "ar", bgMusic: "cinematic", format: "16:9" };
+    var imageState = { style: "cinematic" };
+    var audioState = { lang: "ar", emotion: "neutral", tone: "professional" };
+    var socialState = { platform: "tiktok" };
+    var websiteState = { layout: "landing" };
+    var presetState = { preset: null };
+
+    // Initialize Visual Cards (cinematic, 16:9 previews everywhere)
+    function initVisualCards() {
+      if (!window.FERDOUS_CARDS) {
+        setTimeout(initVisualCards, 100);
+        return;
+      }
+      
+      window.FERDOUS_CARDS.renderVideoIntentCards("videoIntentCards", null, function(val) {
+        try {
+          var t = document.getElementById("videoDesc");
+          if (t) {
+            var intentLabel = window.FERDOUS_CARDS.VIDEO_INTENT_CARDS.find(function(c) { return c.value === val; });
+            if (intentLabel) t.value = (t.value ? t.value + "\n" : "") + intentLabel.label + " video";
+            t.focus();
+          }
+        } catch (_) {}
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderDurationCards("videoDurationCards", videoState.duration, function(val) {
+        videoState.duration = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderStyleCards("videoStyleCards", videoState.style, function(val) {
+        videoState.style = val;
+        initVisualCards();
+      });
+
+      // Visual-card mirrors for toggles (checkboxes stay visible & functional)
+      try {
+        var vo = document.getElementById("voiceOver");
+        var voiceSel = (vo && vo.checked) ? "on" : "off";
+        window.FERDOUS_CARDS.renderVoiceOverCards("voiceOverCards", voiceSel, function(val) {
+          if (vo) vo.checked = (val === "on");
+          initVisualCards();
+        });
+      } catch (_) {}
+      window.FERDOUS_CARDS.renderLanguageCards("voiceLangCards", videoState.voiceLang, function(val) {
+        videoState.voiceLang = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderMusicCards("bgMusicCards", videoState.bgMusic, function(val) {
+        videoState.bgMusic = val;
+        initVisualCards();
+      });
+
+      try {
+        var as = document.getElementById("autoAudioSync");
+        var syncSel = (as && as.checked) ? "on" : "off";
+        window.FERDOUS_CARDS.renderAudioSyncCards("audioSyncCards", syncSel, function(val) {
+          if (as) as.checked = (val === "on");
+          initVisualCards();
+        });
+      } catch (_) {}
+      window.FERDOUS_CARDS.renderFormatCards("formatCards", videoState.format, function(val) {
+        videoState.format = val;
+        initVisualCards();
+      });
+
+      window.FERDOUS_CARDS.renderStyleCards("imageStyleCards", imageState.style, function(val) {
+        imageState.style = val;
+        initVisualCards();
+      });
+
+      window.FERDOUS_CARDS.renderPlatformCards("platformCards", socialState.platform, function(val) {
+        socialState.platform = val;
+        initVisualCards();
+      });
+
+      window.FERDOUS_CARDS.renderLanguageCards("audioLangCards", audioState.lang, function(val) {
+        audioState.lang = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderEmotionCards("emotionCards", audioState.emotion, function(val) {
+        audioState.emotion = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderToneCards("toneCards", audioState.tone, function(val) {
+        audioState.tone = val;
+        initVisualCards();
+      });
+
+      window.FERDOUS_CARDS.renderWebsiteLayoutCards("websiteLayoutCards", websiteState.layout, function(val) {
+        websiteState.layout = val;
+        initVisualCards();
+      });
+      window.FERDOUS_CARDS.renderPresetCards("presetCards", presetState.preset, function(val) {
+        presetState.preset = val;
+        try {
+          var t = document.getElementById("desc");
+          if (t) {
+            var key = val === "kids_cartoon" ? "presetKids" : val === "cinematic_story" ? "presetCinematic" : "presetBusiness";
+            t.value = (__t(key) || "") + "\n" + (t.value || "");
+            t.focus();
+          }
+        } catch (_) {}
+        initVisualCards();
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      currentLang = localStorage.getItem("lang") || "ar";
+      setLang(currentLang);
+      initVisualCards();
+      window._supabase.auth.getSession().then(function(_ref) {
+        var data = _ref.data;
+        if (!data || !data.session) {
+          window.location.replace("/login.html");
+          return;
+        }
+        token = data.session.access_token;
+        localStorage.setItem("token", token);
+        loadCredits();
+        loadHistory();
+      });
+    });
+
+    document.getElementById("tabWebsite").addEventListener("click", function() {
+      document.getElementById("panelWebsite").classList.remove("hidden");
+      document.getElementById("panelVideo").classList.add("hidden");
+      this.classList.add("tab-active");
+      this.classList.remove("text-slate-500");
+      document.getElementById("tabVideo").classList.remove("tab-active");
+      document.getElementById("tabVideo").classList.add("text-slate-500");
+    });
+    function switchTab(tabId) {
+      var tabs = ["tabWebsite", "tabVideo", "tabImage", "tabSocial", "tabAudio"];
+      var panels = ["panelWebsite", "panelVideo", "panelImage", "panelSocial", "panelAudio"];
+      tabs.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.remove("tab-active", "border-indigo-500");
+          el.classList.add("text-slate-500", "border-transparent");
+        }
+      });
+      panels.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+      var activeTab = document.getElementById(tabId);
+      var activePanel = document.getElementById("panel" + tabId.replace("tab", ""));
+      if (activeTab) {
+        activeTab.classList.add("tab-active", "border-indigo-500");
+        activeTab.classList.remove("text-slate-500", "border-transparent");
+      }
+      if (activePanel) {
+        activePanel.classList.remove("hidden");
+        // Ensure visual cards are rendered when tab becomes visible
+        setTimeout(function() {
+          if (window.FERDOUS_CARDS && typeof initVisualCards === "function") {
+            initVisualCards();
+          }
+        }, 100);
+      }
+    }
+    document.getElementById("tabWebsite").addEventListener("click", function() { switchTab("tabWebsite"); });
+    document.getElementById("tabVideo").addEventListener("click", function() { switchTab("tabVideo"); });
+    document.getElementById("tabImage").addEventListener("click", function() { switchTab("tabImage"); });
+    document.getElementById("tabSocial").addEventListener("click", function() { switchTab("tabSocial"); });
+    document.getElementById("tabAudio").addEventListener("click", function() { switchTab("tabAudio"); });
+
+    document.getElementById("enhanceBtn").addEventListener("click", function() {
+      var desc = document.getElementById("desc").value.trim();
+      if (!desc) { alert(__t("errorPrompt")); return; }
+      var btn = this;
+      var hint = document.getElementById("enhanceHint");
+      btn.disabled = true;
+      btn.textContent = __t("enhancing");
+      hint.classList.add("hidden");
+      fetch("/api/v1/brain/enhance-prompt", {
+                    method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ description: desc })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok && d.enhanced) {
+            document.getElementById("desc").value = d.enhanced;
+            if (d.suggestions) { hint.textContent = __t("suggestion") + ": " + d.suggestions; hint.classList.remove("hidden"); }
+          } else alert(d.error || "Could not enhance.");
+        })
+        .catch(function(e) { alert(e.message); })
+        .finally(function() { btn.disabled = false; btn.textContent = __t("enhance"); });
+    });
+
+    // Quick prompt chips (Manus-like)
+    function insertHint(text) {
+      var t = document.getElementById("desc");
+      if (!t) return;
+      t.value = (t.value ? (t.value + "\n") : "") + text + " ";
+      t.focus();
+    }
+    window.insertHint = insertHint;
+
+    // Video format buttons
+    // Format handled by visual cards now
+
+    // Live editor (basic Manus-like click-to-edit)
+    var editMode = false;
+    var currentProjectId = null;
+    function enableIframeEditing() {
+      var iframe = document.getElementById("preview");
+      if (!iframe || !iframe.contentWindow) return;
+      try {
+        var doc = iframe.contentDocument;
+        if (!doc) return;
+        doc.addEventListener("click", function(e) {
+          if (!editMode) return;
+          e.preventDefault();
+          e.stopPropagation();
+          var el = e.target;
+          if (!el) return;
+          if (el.tagName === "IMG") {
+            var next = prompt("Image URL", el.getAttribute("src") || "");
+            if (next) el.setAttribute("src", next);
+            return;
+          }
+          var editableTags = ["P","H1","H2","H3","H4","SPAN","A","LI","BUTTON"];
+          if (editableTags.indexOf(el.tagName) !== -1) {
+            el.setAttribute("contenteditable", "true");
+            el.style.outline = "2px solid rgba(59,130,246,0.35)";
+            el.focus();
+          }
+        }, true);
+      } catch (_) {}
+    }
+
+    var editBtn = document.getElementById("editModeBtn");
+    var saveBtn = document.getElementById("saveEditsBtn");
+    if (editBtn) editBtn.addEventListener("click", function() {
+      editMode = !editMode;
+      if (editMode) {
+        editBtn.classList.add("m-btn-primary");
+        if (saveBtn) saveBtn.classList.remove("hidden");
+        enableIframeEditing();
+      } else {
+        editBtn.classList.remove("m-btn-primary");
+        if (saveBtn) saveBtn.classList.add("hidden");
+      }
+    });
+
+    if (saveBtn) saveBtn.addEventListener("click", function() {
+      if (!currentProjectId) { alert("No project to save yet."); return; }
+      var iframe = document.getElementById("preview");
+      if (!iframe || !iframe.contentDocument) { alert("Preview not ready."); return; }
+      var html = iframe.contentDocument.documentElement.outerHTML;
+      fetch("/api/v1/projects/save/" + currentProjectId, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ html: "<!DOCTYPE html>\\n" + html })
+      }).then(function(r){ return r.json(); })
+        .then(function(d){ if (!d.ok) throw new Error(d.error || "Save failed"); alert("Saved"); })
+        .catch(function(e){ alert(e.message); });
+    });
+
+    document.getElementById("buildBtn").addEventListener("click", function() {
+      var description = document.getElementById("desc").value.trim();
+      if (!description) { alert(__t("errorPrompt")); return; }
+      addChatLine(description, true);
+      var overlay = document.getElementById("loadingOverlay");
+      var status = document.getElementById("loadingStatus");
+      overlay.style.display = "flex";
+      var steps = [__t("statusAnalyzing"), __t("statusDesigning"), __t("statusBuilding"), __t("statusFinal")];
+      var i = 0;
+      var timer = setInterval(function() { if (i < steps.length) status.textContent = steps[i++]; }, 1400);
+      // Use FERDOUS BRAIN - unified endpoint that understands intent
+      fetch("/api/v1/tools/website/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: description, language: currentLang, layout: websiteState.layout || "landing", theme: "dark" })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          clearInterval(timer);
+                    overlay.style.display = "none"; 
+          if (!d.ok) throw new Error(d.error || "Generation failed");
+          loadCredits();
+          
+          var firstWebsite = d.projectId ? { projectId: d.projectId, previewUrl: d.previewUrl } : (d.results && d.results.find(function(r) { return r.type === "website"; }));
+          if (firstWebsite) {
+            currentProjectId = firstWebsite.projectId;
+            var url = firstWebsite.previewUrl || "/generated/" + firstWebsite.projectId + "/index.html";
+            document.getElementById("preview").src = url;
+            document.getElementById("previewWrap").classList.remove("hidden");
+            document.getElementById("downloadBtn").href = "/api/v1/projects/export/" + firstWebsite.projectId;
+            sessionProjects.push({ id: firstWebsite.projectId, name: __t("newProject"), createdAt: Date.now(), previewUrl: url });
+            addChatLine(__t("openPreview") + ": " + url, false);
+            setTimeout(enableIframeEditing, 800);
+          }
+          
+          // Show recommendations if available
+          if (d.recommendations && d.recommendations.recommendations && d.recommendations.recommendations.length > 0) {
+            var recWrap = document.getElementById("recommendationsWrap");
+            var recList = document.getElementById("recommendationsList");
+            if (recWrap && recList) {
+              recList.innerHTML = d.recommendations.recommendations.slice(0, 5).map(function(r) {
+                var priority = r.priority === "high" ? "🔴" : r.priority === "medium" ? "🟡" : "🟢";
+                return "<div class=\"p-3 rounded-lg bg-white/5 border border-white/10 mb-2\"><div class=\"font-bold text-xs flex items-center gap-2\">" + priority + " " + r.title + "</div><div class=\"text-xs m-muted mt-1\">" + r.description + "</div></div>";
+              }).join("");
+              recWrap.classList.remove("hidden");
+              window.currentRecommendations = d.recommendations.recommendations;
+              window.currentOutputType = firstWebsite ? "website" : (d.results && d.results[0] ? d.results[0].type : "website");
+              window.currentContent = firstWebsite ? url : "";
+            }
+          } else if (firstWebsite) {
+            // Fetch recommendations separately if not included
+            setTimeout(function() {
+              fetch("/api/v1/ferdous/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ outputType: "website", content: url, prompt: description, language: currentLang })
+              })
+                .then(function(r) { return r.json(); })
+                .then(function(rec) {
+                  if (rec.ok && rec.recommendations && rec.recommendations.length > 0) {
+                    var recWrap = document.getElementById("recommendationsWrap");
+                    var recList = document.getElementById("recommendationsList");
+                    if (recWrap && recList) {
+                      recList.innerHTML = rec.recommendations.slice(0, 5).map(function(r) {
+                        var priority = r.priority === "high" ? "🔴" : r.priority === "medium" ? "🟡" : "🟢";
+                        return "<div class=\"p-3 rounded-lg bg-white/5 border border-white/10 mb-2\"><div class=\"font-bold text-xs flex items-center gap-2\">" + priority + " " + r.title + "</div><div class=\"text-xs m-muted mt-1\">" + r.description + "</div></div>";
+                      }).join("");
+                      recWrap.classList.remove("hidden");
+                      window.currentRecommendations = rec.recommendations;
+                      window.currentOutputType = "website";
+                      window.currentContent = url;
+                    }
+                  }
+                })
+                .catch(function() {});
+            }, 2000);
+          }
+          
+          loadHistory();
+        })
+        .catch(function(err) {
+          clearInterval(timer);
+          overlay.style.display = "none";
+          alert(err.message || __t("errorNoCredits"));
+        });
+    });
+
+    document.getElementById("genVideoBtn").addEventListener("click", function() {
+      var description = document.getElementById("videoDesc").value.trim();
+      if (!description) { alert(__t("errorPrompt")); return; }
+      var duration = videoState.duration || 30;
+      var style = videoState.style || "realistic";
+      var voiceOver = document.getElementById("voiceOver").checked;
+      var voiceLanguage = videoState.voiceLang || "ar";
+      var bgMusic = videoState.bgMusic || "none";
+      var autoAudioSync = !!(document.getElementById("autoAudioSync") && document.getElementById("autoAudioSync").checked);
+      var format = videoState.format || "16:9";
+      var overlay = document.getElementById("loadingOverlay");
+      var status = document.getElementById("loadingStatus");
+      overlay.style.display = "flex";
+      status.textContent = "Creating video job...";
+      fetch("/api/v1/videos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({
+          description: description,
+          durationSeconds: duration,
+          style: style,
+          voiceOver: voiceOver,
+          voiceLanguage: voiceLanguage,
+          bgMusic: bgMusic,
+          autoAudioSync: autoAudioSync,
+          format: format
+        })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Video creation failed");
+          loadCredits();
+          document.getElementById("videoPreviewWrap").classList.remove("hidden");
+          document.getElementById("videoPreviewPlaceholder").textContent = "Video job " + (d.videoId || "") + " created. (Connect Runway/Pika for output)";
+        })
+        .catch(function(err) {
+          overlay.style.display = "none";
+          alert(err.message || __t("errorNoCredits"));
+        });
+    });
+
+    // Auto-Improve handler
+    var autoImproveBtn = document.getElementById("autoImproveBtn");
+    if (autoImproveBtn) autoImproveBtn.addEventListener("click", function() {
+      if (!currentProjectId || !window.currentRecommendations || !window.currentOutputType) { alert("No recommendations available"); return; }
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      var iframe = document.getElementById("preview");
+      var currentContent = iframe && iframe.contentDocument ? iframe.contentDocument.documentElement.outerHTML : window.currentContent || "";
+      fetch("/api/v1/ferdous/auto-improve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({
+          outputType: window.currentOutputType || "website",
+          content: currentContent,
+          recommendations: window.currentRecommendations,
+          language: currentLang
+        })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (d.ok && d.improved) {
+            if (window.currentOutputType === "website" && currentProjectId) {
+              // Save improved HTML
+              fetch("/api/v1/projects/save/" + currentProjectId, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ html: "<!DOCTYPE html>\\n" + d.improved })
+              })
+                .then(function() {
+                  alert("Improved and saved! " + (d.appliedRecommendations || []).join(", "));
+                  iframe.src = iframe.src; // Reload
+                })
+                .catch(function(e) { alert("Saved but preview reload failed: " + e.message); });
+            } else {
+              alert("Improved! " + (d.appliedRecommendations || []).join(", "));
+            }
+          } else alert(d.error || "Auto-improve failed");
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Generate Missing Parts handler
+    var generateMissingBtn = document.getElementById("generateMissingBtn");
+    if (generateMissingBtn) generateMissingBtn.addEventListener("click", function() {
+      if (!window.currentRecommendations) { alert("No recommendations"); return; }
+      var missing = window.currentRecommendations.filter(function(r) { return r.type === "missing_section"; });
+      if (missing.length === 0) { alert("No missing parts detected"); return; }
+      alert("Generate Missing: " + missing.map(function(m) { return m.title; }).join(", "));
+      // TODO: Trigger generation for missing parts
+    });
+
+    // Image generation
+    var genImageBtn = document.getElementById("genImageBtn");
+    if (genImageBtn) genImageBtn.addEventListener("click", function() {
+      var prompt = document.getElementById("imageDesc").value.trim();
+      if (!prompt) { alert(__t("errorPrompt")); return; }
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: prompt, language: currentLang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          var imgResult = d.results && d.results.find(function(r) { return r.type === "image"; });
+          if (imgResult) {
+            document.getElementById("imagePreviewWrap").classList.remove("hidden");
+            document.getElementById("imagePreview").innerHTML = "<p>Image ID: " + (imgResult.imageId || "") + "</p>";
+          }
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Social generation
+    var genSocialBtn = document.getElementById("genSocialBtn");
+    if (genSocialBtn) genSocialBtn.addEventListener("click", function() {
+      var prompt = document.getElementById("socialDesc").value.trim();
+      if (!prompt) { alert(__t("errorPrompt")); return; }
+      var platform = socialState.platform || "instagram";
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: prompt + " for " + platform, language: currentLang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          var socialResult = d.results && d.results.find(function(r) { return r.type === "social"; });
+          if (socialResult && socialResult.content) {
+            document.getElementById("socialPreviewWrap").classList.remove("hidden");
+            document.getElementById("socialPreview").innerHTML = "<div class=\"p-4 bg-white/5 rounded-xl\"><p class=\"font-bold mb-2\">" + socialResult.content.text + "</p><p class=\"text-xs\">" + (socialResult.content.hashtags || []).join(" ") + "</p></div>";
+          }
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Audio generation
+    var genAudioBtn = document.getElementById("genAudioBtn");
+    if (genAudioBtn) genAudioBtn.addEventListener("click", function() {
+      var text = document.getElementById("audioText").value.trim();
+      if (!text) { alert(__t("errorPrompt")); return; }
+      var lang = audioState.lang || "ar";
+      var emotion = audioState.emotion || "neutral";
+      var tone = audioState.tone || "professional";
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      // Use audio studio directly or via FERDOUS
+      fetch("/api/v1/ferdous/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ prompt: "Generate audio: " + text, language: lang })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          overlay.style.display = "none";
+          if (!d.ok) throw new Error(d.error || "Failed");
+          loadCredits();
+          document.getElementById("audioPreviewWrap").classList.remove("hidden");
+          document.getElementById("audioSubtitles").textContent = "Subtitles: " + text;
+        })
+        .catch(function(e) { overlay.style.display = "none"; alert(e.message); });
+    });
+
+    // Platform selector handled by visual cards
+
+    function logout() {
+      window._supabase.auth.signOut().then(function() {
+            localStorage.clear();
+            window.location.href = "/login.html";
+      });
+        }
+    </script>
+</body>
+</html>
